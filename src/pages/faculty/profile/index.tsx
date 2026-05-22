@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 import { Accordion } from '@/components/ui/accordion'
-import { Edit3Icon, SparklesIcon, PlusIcon, Trash2Icon, FileTextIcon } from 'lucide-react'
+import { Edit3Icon, SparklesIcon, PlusIcon, Trash2Icon, FileTextIcon, DownloadIcon } from 'lucide-react'
 import { analyzeDocument } from '@/tools/ai/analyzeDocument'
 import ProfileHeader from './ProfileHeader'
 import ProfileSection from './ProfileSection'
@@ -360,14 +360,14 @@ export default function ProfilePage () {
 
   return (
     <SidebarProvider>
-      <Toaster position="top-right" />
+      <Toaster position="top-right" className="print:hidden" />
       <div className='flex w-screen min-h-screen flex-col md:flex-row'>
-        <AppSidebar className='hidden md:block' />
+        <AppSidebar className='hidden md:block print:hidden' />
         <div className='flex-1 flex flex-col overflow-auto'>
-          <div className='md:hidden p-4 border-b'>
+          <div className='md:hidden p-4 border-b print:hidden'>
             <SidebarTrigger />
           </div>
-          <main className='flex-1 w-full bg-gray-100 p-4 md:p-6 lg:p-8'>
+          <main className='flex-1 w-full bg-gray-100 p-4 md:p-6 lg:p-8 print:bg-white print:p-0'>
             <ProfileHeader
               userId={userId}
               onProfileImageUpload={handleProfileImageUpload}
@@ -377,7 +377,7 @@ export default function ProfilePage () {
 
             <div className='mt-6 max-w-4xl mx-auto space-y-3'>
               {/* Auto-Fill Action Banner */}
-              <Card className="bg-indigo-50 border-indigo-100 shadow-sm overflow-hidden mb-4">
+              <Card className="bg-indigo-50 border-indigo-100 shadow-sm overflow-hidden mb-4 print:hidden">
                 <CardContent className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
                     <h3 className="font-semibold text-indigo-800 flex items-center">
@@ -388,14 +388,24 @@ export default function ProfilePage () {
                       Upload your CV, Certificate, or Diploma and let AI extract the details for you.
                     </p>
                   </div>
-                  <Button 
-                    onClick={() => autoFillInputRef.current?.click()}
-                    disabled={isAutoFilling}
-                    className="bg-indigo-600 hover:bg-indigo-700 whitespace-nowrap"
-                  >
-                    <FileTextIcon className="w-4 h-4 mr-2" />
-                    {isAutoFilling ? 'Extracting...' : 'Upload & Auto-fill'}
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline"
+                      onClick={() => window.print()}
+                      className="border-indigo-200 text-indigo-700 hover:bg-indigo-100"
+                    >
+                      <DownloadIcon className="w-4 h-4 mr-2" />
+                      Export PDF
+                    </Button>
+                    <Button 
+                      onClick={() => autoFillInputRef.current?.click()}
+                      disabled={isAutoFilling}
+                      className="bg-indigo-600 hover:bg-indigo-700 whitespace-nowrap"
+                    >
+                      <FileTextIcon className="w-4 h-4 mr-2" />
+                      {isAutoFilling ? 'Extracting...' : 'Upload & Auto-fill'}
+                    </Button>
+                  </div>
                   <input
                     type="file"
                     ref={autoFillInputRef}
@@ -407,14 +417,14 @@ export default function ProfilePage () {
               </Card>
 
               {/* Profile Description Card */}
-              <Card className="bg-white rounded-md shadow-sm overflow-hidden">
-                <CardHeader className="flex justify-between items-center">
+              <Card className="bg-white rounded-md shadow-sm overflow-hidden print:shadow-none print:border-none">
+                <CardHeader className="flex justify-between items-center print:p-2">
                   <CardTitle className="font-semibold text-md sm:text-lg text-green-600">
                     Profile Description
                   </CardTitle>
                   <Dialog>
                     <DialogTrigger asChild>
-                      <button className='text-gray-500 hover:text-gray-700'>
+                      <button className='text-gray-500 hover:text-gray-700 print:hidden'>
                         <Edit3Icon className='w-5 h-5' />
                       </button>
                     </DialogTrigger>

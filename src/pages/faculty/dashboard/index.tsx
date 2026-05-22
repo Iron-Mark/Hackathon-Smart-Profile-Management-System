@@ -1,14 +1,14 @@
+import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
-import { useState } from 'react'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 import { Separator } from '@/components/ui/separator'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Skeleton } from "@/components/ui/skeleton"
 import DropZone from '@/components/drop-zone'
 import { Toaster, toast } from 'sonner'
 import determineDocumentTypeAndUpload from '@/tools/determineDocumentTypeAndUpload'
 import getFromDatabase from '@/tools/database/getFromDatabase'
-import { useEffect } from 'react'
 import { useUserId } from '@/hooks/use-userId'
 
 interface FacultyDashboardProps {
@@ -25,6 +25,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
   const [pendingCount, setPendingCount] = useState<number>(0)
   const [completion, setCompletion] = useState<number>(0)
   const [notificationsCount, setNotificationsCount] = useState<number>(0)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const handleFileUpload = (files: File[]) => {
     const newUniqueFiles = files.filter(
@@ -53,6 +54,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
 
   const fetchDashboardData = async (uid: string) => {
     try {
+      setIsLoading(true)
       const [account, pendingSubs, prof, edu, work, dev, allSubs] = await Promise.all([
         getFromDatabase({ table: 'account_details', getAll: true, match: { id: uid } }),
         getFromDatabase({ table: 'submissions', getAll: true, match: { user_id: uid, status: 'Pending' } }),
@@ -80,14 +82,13 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
       setNotificationsCount(reviewedSubs.length);
 
       if (reviewedSubs.length > 0) {
-        const returnedCount = reviewedSubs.filter((sub: any) => sub.status === 'Returned').length;
-        const approvedCount = reviewedSubs.filter((sub: any) => sub.status === 'Approved').length;
-        if (returnedCount > 0) toast.error(`You have ${returnedCount} returned document(s) requiring attention.`);
-        if (approvedCount > 0) toast.success(`You have ${approvedCount} approved document(s).`);
+        // Reviewed submissions found
       }
       
     } catch (error) {
       console.error('Error fetching dashboard data:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -145,62 +146,35 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
             {children ?? (
               <>
                 <h1 className='text-3xl font-extrabold text-gray-800 mb-2'>
-                  Welcome, {name}
+                  {isLoading ? <Skeleton className="h-9 w-64" /> : `Welcome, ${name}`}
                 </h1>
                 <p className='text-gray-600 mb-6'>
-                  Track your records and compliance status here.
+                  {isLoading ? <Skeleton className="h-4 w-80" /> : 'Track your records and compliance status here.'}
                 </p>
                 <Separator className='mb-6' />
 
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 relative'>
                   <div>
                     <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
-                      <Card className='shadow-sm hover:shadow-md transition-shadow'>
-                        <CardHeader>
-                          <CardTitle className='text-sm text-gray-500'>
-                            Profile Completion
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className='text-2xl font-bold text-green-400'>
-                            {completion}%
-                          </p>
-                        </CardContent>
-                      </Card>
-                      <Card className='shadow-sm hover:shadow-md transition-shadow'>
-                        <CardHeader>
-                          <CardTitle className='text-sm text-gray-500'>
-                            Pending Approvals
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className='text-2xl font-bold text-amber-400'>
-                            {pendingCount}
-                          </p>
-                        </CardContent>
-                      </Card>
-                      <Card className='shadow-sm hover:shadow-md transition-shadow'>
-                        <CardHeader>
-                          <CardTitle className='text-sm text-gray-500'>
-                            Notifications
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className='text-2xl font-bold text-stone-800'>
-                            {notificationsCount}
-                          </p>
-                        </CardContent>
-                      </Card>
-                      <Card className='shadow-sm hover:shadow-md transition-shadow'>
-                        <CardHeader>
-                          <CardTitle className='text-sm text-gray-500'>
-                            Upcoming Deadlines
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className='text-2xl font-bold text-red-500'>3</p>
-                        </CardContent>
-                      </Card>
+                      {[
+                        { label: 'Profile Completion', val: `${completion}%`, color: 'text-green-400' },
+                        { label: 'Pending Approvals', val: pendingCount, color: 'text-amber-400' },
+                        { label: 'Notifications', val: notificationsCount, color: 'text-stone-800' },
+                        { label: 'Upcoming Deadlines', val: '3', color: 'text-red-500' }
+                      ].map((item, i) => (
+                        <Card key={i} className='shadow-sm hover:shadow-md transition-shadow'>
+                          <CardHeader>
+                            <CardTitle className='text-sm text-gray-500'>
+                              {item.label}
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p className={`text-2xl font-bold ${item.color}`}>
+                              {isLoading ? <Skeleton className="h-8 w-12" /> : item.val}
+                            </p>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
                   </div>
 
@@ -223,7 +197,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                             className='shadow-sm hover:shadow-md transition-shadow'
                           >
                             <CardHeader>
-                              <CardTitle className='text-sm text-gray-500'>
+                              <CardTitle className='text-sm text-gray-500 truncate'>
                                 {result.fileName}
                               </CardTitle>
                             </CardHeader>
@@ -239,10 +213,10 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                               </div>
                               {result.documentType ? (
                                 <p className='text-sm text-green-600'>
-                                  Document Type: {result.documentType}
+                                  Type: {result.documentType}
                                 </p>
                               ) : (
-                                <p className='text-sm text-gray-600'>
+                                <p className='text-sm text-gray-600 animate-pulse'>
                                   Processing...
                                 </p>
                               )}

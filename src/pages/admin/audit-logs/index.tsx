@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import getFromDatabase from "@/tools/database/getFromDatabase";
 
 interface AuditLog {
@@ -115,9 +116,6 @@ export default function AdminAuditLogsPage() {
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  {isLoading ? (
-                    <p className="text-center py-4">Loading logs...</p>
-                  ) : (
                     <table className="w-full text-left table-auto">
                       <thead>
                         <tr className="border-b">
@@ -128,19 +126,29 @@ export default function AdminAuditLogsPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {logs.map((log) => (
-                          <tr key={log.id} className="border-b hover:bg-gray-100">
-                            <td className="px-4 py-2 whitespace-nowrap">
-                              {new Date(log.timestamp).toLocaleString()}
-                            </td>
-                            <td className="px-4 py-2">{log.user_email}</td>
-                            <td className="px-4 py-2 font-mono text-xs">{log.action}</td>
-                            <td className="px-4 py-2">{log.details}</td>
-                          </tr>
-                        ))}
+                        {isLoading ? (
+                          Array.from({ length: 5 }).map((_, i) => (
+                            <tr key={i} className="border-b">
+                              <td className="px-4 py-4"><Skeleton className="h-4 w-32" /></td>
+                              <td className="px-4 py-4"><Skeleton className="h-4 w-40" /></td>
+                              <td className="px-4 py-4"><Skeleton className="h-4 w-24" /></td>
+                              <td className="px-4 py-4"><Skeleton className="h-4 w-full" /></td>
+                            </tr>
+                          ))
+                        ) : (
+                          logs.map((log) => (
+                            <tr key={log.id} className="border-b hover:bg-gray-100">
+                              <td className="px-4 py-2 whitespace-nowrap">
+                                {new Date(log.timestamp).toLocaleString()}
+                              </td>
+                              <td className="px-4 py-2">{log.user_email}</td>
+                              <td className="px-4 py-2 font-mono text-xs">{log.action}</td>
+                              <td className="px-4 py-2">{log.details}</td>
+                            </tr>
+                          ))
+                        )}
                       </tbody>
                     </table>
-                  )}
                 </div>
                 {!isLoading && logs.length === 0 && (
                   <p className="text-center text-gray-500 py-4">

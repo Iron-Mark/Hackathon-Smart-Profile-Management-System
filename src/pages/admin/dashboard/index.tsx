@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import { useState, useEffect } from "react";
 import getFromDatabase from "@/tools/database/getFromDatabase";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A288FE', '#00F49F', '#F0BB28', '#F08042'];
 
@@ -18,10 +19,12 @@ export default function AdminDashboard() {
   const [uploadData, setUploadData] = useState<any[]>([]);
   const [categoryData, setCategoryData] = useState<any[]>([]);
   const [recentSubmissions, setRecentSubmissions] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const accounts = await getFromDatabase({ table: 'account_details', getAll: true, match: {} });
         setUsersCount(accounts.length);
 
@@ -78,6 +81,8 @@ export default function AdminDashboard() {
 
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();
@@ -100,7 +105,7 @@ export default function AdminDashboard() {
                   <CardTitle className="text-sm">Total Users</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold">{usersCount}</p>
+                  <p className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : usersCount}</p>
                 </CardContent>
               </Card>
 
@@ -109,7 +114,7 @@ export default function AdminDashboard() {
                   <CardTitle className="text-sm">Active Sessions (24h)</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold">{activeSessions}</p>
+                  <p className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : activeSessions}</p>
                 </CardContent>
               </Card>
 
@@ -118,7 +123,7 @@ export default function AdminDashboard() {
                   <CardTitle className="text-sm">Pending Approvals</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold">{pendingApprovals}</p>
+                  <p className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : pendingApprovals}</p>
                 </CardContent>
               </Card>
             </div>
@@ -129,15 +134,17 @@ export default function AdminDashboard() {
                   <CardTitle>Documents Uploaded (Last 7 Days)</CardTitle>
                 </CardHeader>
                 <CardContent className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={uploadData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <RechartsTooltip />
-                      <Bar dataKey="uploads" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  {isLoading ? <Skeleton className="w-full h-full" /> : (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={uploadData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <RechartsTooltip />
+                        <Bar dataKey="uploads" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  )}
                 </CardContent>
               </Card>
 
@@ -146,27 +153,29 @@ export default function AdminDashboard() {
                   <CardTitle>Document Categories</CardTitle>
                 </CardHeader>
                 <CardContent className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={categoryData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        paddingAngle={5}
-                        dataKey="value"
-                        label
-                      >
-                        {categoryData.map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <RechartsTooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  {isLoading ? <Skeleton className="w-full h-full" /> : (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={categoryData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          paddingAngle={5}
+                          dataKey="value"
+                          label
+                        >
+                          {categoryData.map((_, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <RechartsTooltip />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -177,7 +186,14 @@ export default function AdminDashboard() {
               </h2>
               <div className="bg-white shadow-md rounded-md p-4">
                 <ul className="space-y-3">
-                  {recentSubmissions.length > 0 ? (
+                  {isLoading ? (
+                    Array.from({ length: 3 }).map((_, i) => (
+                      <li key={i} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
+                        <Skeleton className="h-4 w-64" />
+                        <Skeleton className="h-8 w-20" />
+                      </li>
+                    ))
+                  ) : recentSubmissions.length > 0 ? (
                     recentSubmissions.map((sub) => (
                       <li key={sub.id} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
                         <span className="text-sm text-gray-600">

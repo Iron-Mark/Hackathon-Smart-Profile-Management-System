@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import getFromDatabase from "@/tools/database/getFromDatabase";
 import updateDatabase from "@/tools/database/updateDatabase";
 import getFileFromFolder from "@/tools/buckets/getFileFromFolder";
@@ -56,7 +57,7 @@ export default function AdminApprovalsPage() {
         facultyName: userMap[s.user_id],
       }));
 
-      setSubmissions(enrichedSubmissions);
+      setSubmissions(enrichedSubmissions.sort((a: any, b: any) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime()));
     } catch (error) {
       console.error("Error fetching submissions:", error);
       toast.error("Failed to load submissions");
@@ -100,9 +101,6 @@ export default function AdminApprovalsPage() {
                 <CardTitle>Faculty Submissions</CardTitle>
               </CardHeader>
               <CardContent>
-                {isLoading ? (
-                  <p className="text-center py-4">Loading submissions...</p>
-                ) : (
                   <table className="w-full text-left table-auto">
                     <thead>
                       <tr className="border-b">
@@ -115,73 +113,85 @@ export default function AdminApprovalsPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {submissions.map((submission) => (
-                        <tr
-                          key={submission.id}
-                          className="border-b hover:bg-gray-100"
-                        >
-                          <td className="px-4 py-2">{submission.facultyName}</td>
-                          <td className="px-4 py-2">{submission.document_type}</td>
-                          <td className="px-4 py-2">{submission.file_name}</td>
-                          <td className="px-4 py-2">
-                            {new Date(submission.submitted_at).toLocaleDateString()}
-                          </td>
-                          <td className="px-4 py-2">
-                            <Badge
-                              variant={
-                                submission.status === "Pending"
-                                  ? "secondary"
-                                  : submission.status === "Approved"
-                                  ? "default"
-                                  : "destructive"
-                              }
-                            >
-                              {submission.status}
-                            </Badge>
-                          </td>
-                          <td className="px-4 py-2 text-right">
-                            {submission.status === "Pending" && (
-                              <>
-                                <Button
-                                  variant="default"
-                                  size="sm"
-                                  className="mr-2 bg-green-500 hover:bg-green-600 text-white"
-                                  onClick={() => handleAction(submission.id, "Approved")}
-                                >
-                                  Approve
-                                </Button>
-                                <Button
-                                  variant="destructive"
-                                  size="sm"
-                                  onClick={() => handleAction(submission.id, "Returned")}
-                                >
-                                  Return
-                                </Button>
-                              </>
-                            )}
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="ml-2"
-                              onClick={async () => {
-                                const url = await getFileFromFolder({
-                                  bucketName: 'pictures-and-documents',
-                                  fileName: submission.file_name,
-                                  type: submission.document_type,
-                                  userId: submission.user_id,
-                                });
-                                if (url) window.open(url, '_blank');
-                                else toast.error('Could not retrieve file URL');
-                              }}
-                            >
-                              View
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
+                      {isLoading ? (
+                         Array.from({ length: 5 }).map((_, i) => (
+                          <tr key={i} className="border-b">
+                            <td className="px-4 py-4"><Skeleton className="h-4 w-32" /></td>
+                            <td className="px-4 py-4"><Skeleton className="h-4 w-40" /></td>
+                            <td className="px-4 py-4"><Skeleton className="h-4 w-40" /></td>
+                            <td className="px-4 py-4"><Skeleton className="h-4 w-24" /></td>
+                            <td className="px-4 py-4"><Skeleton className="h-4 w-20" /></td>
+                            <td className="px-4 py-4 text-right"><Skeleton className="h-8 w-24 ml-auto" /></td>
+                          </tr>
+                        ))
+                      ) : (
+                        submissions.map((submission) => (
+                          <tr
+                            key={submission.id}
+                            className="border-b hover:bg-gray-100"
+                          >
+                            <td className="px-4 py-2">{submission.facultyName}</td>
+                            <td className="px-4 py-2">{submission.document_type}</td>
+                            <td className="px-4 py-2">{submission.file_name}</td>
+                            <td className="px-4 py-2">
+                              {new Date(submission.submitted_at).toLocaleDateString()}
+                            </td>
+                            <td className="px-4 py-2">
+                              <Badge
+                                variant={
+                                  submission.status === "Pending"
+                                    ? "secondary"
+                                    : submission.status === "Approved"
+                                    ? "default"
+                                    : "destructive"
+                                }
+                              >
+                                {submission.status}
+                              </Badge>
+                            </td>
+                            <td className="px-4 py-2 text-right">
+                              {submission.status === "Pending" && (
+                                <>
+                                  <Button
+                                    variant="default"
+                                    size="sm"
+                                    className="mr-2 bg-green-500 hover:bg-green-600 text-white"
+                                    onClick={() => handleAction(submission.id, "Approved")}
+                                  >
+                                    Approve
+                                  </Button>
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={() => handleAction(submission.id, "Returned")}
+                                  >
+                                    Return
+                                  </Button>
+                                </>
+                              )}
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="ml-2"
+                                onClick={async () => {
+                                  const url = await getFileFromFolder({
+                                    bucketName: 'pictures-and-documents',
+                                    fileName: submission.file_name,
+                                    type: submission.document_type,
+                                    userId: submission.user_id,
+                                  });
+                                  if (url) window.open(url, '_blank');
+                                  else toast.error('Could not retrieve file URL');
+                                }}
+                              >
+                                View
+                              </Button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
-                )}
                 {!isLoading && submissions.length === 0 && (
                   <p className="text-center text-gray-500 py-4">
                     No submissions found.
