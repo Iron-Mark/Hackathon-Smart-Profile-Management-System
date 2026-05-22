@@ -17,8 +17,8 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { Filter as FilterIcon } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Filter as FilterIcon, UploadCloud } from "lucide-react";
 import {
   Dialog,
   DialogTrigger,
@@ -35,12 +35,11 @@ import {
 import { cn } from '@/lib/utils'
 import { categoryIcons, statusVariants, type Category } from '@/lib/icons'
 import fetchUploadedFiles from '@/tools/buckets/fetchUploadedFiles'
-import { useEffect } from 'react'
 import removeItemFromBucket from '@/tools/buckets/removeItemFromBucket'
-import { useUserId } from '@/hooks/use-userId'
+import { useFetchUserId } from '@/hooks/use-userId'
 import { toast } from 'sonner'
 import moveFile from '@/tools/buckets/moveFile'
-import getFromDatabase from '@/tools/database/getFromDatabase'
+import extractTextFromImage from '@/tools/ocr/extractTextFromImage'
 
 type UploadedFile = {
   id: number;
@@ -56,7 +55,24 @@ export default function UploadedFilesPage() {
   const [editableFiles, setEditableFiles] = useState<UploadedFile[] | null>([]);
   const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [extractedText, setExtractedText] = useState<string | null>(null);
   const { userId, error } = useFetchUserId();
+
+  const handleFileUpload = async (file: File) => {
+    setIsUploading(true);
+    setExtractedText(null);
+    try {
+      const text = await extractTextFromImage(file);
+      setExtractedText(text);
+      toast.success("Text extracted successfully.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to extract text from image.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleInputChange = (
     id: number,
@@ -88,10 +104,8 @@ export default function UploadedFilesPage() {
     prepareFiles();
   }, []);
 
-
-
   if (!editableFiles) {
-    return;
+    return null;
   }
 
   const filteredFiles = editableFiles.filter(
@@ -194,6 +208,57 @@ export default function UploadedFilesPage() {
                   </Badge>
                 ))}
             </div>
+
+            {/* Drag and Drop Zone */}
+            <div
+              className="border-2 border-dashed border-gray-300 rounded-lg p-8 mb-6 flex flex-col items-center justify-center bg-white hover:bg-gray-50 transition-colors"
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={async (e) => {
+                e.preventDefault();
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                  await handleFileUpload(file);
+                }
+              }}
+            >
+              <UploadCloud className="w-12 h-12 text-gray-400 mb-4" />
+              <p className="text-gray-600 mb-2">Drag and drop an image here</p>
+              <p className="text-sm text-gray-400">or click to select a file</p>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                id="file-upload"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    await handleFileUpload(file);
+                  }
+                }}
+              />
+              <label
+                htmlFor="file-upload"
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md cursor-pointer hover:bg-blue-700 transition-colors"
+              >
+                Select File
+              </label>
+            </div>
+
+            {isUploading && (
+              <div className="mb-6 p-4 bg-blue-50 text-blue-700 rounded-lg animate-pulse">
+                Extracting text from image... Please wait.
+              </div>
+            )}
+
+            {extractedText && (
+              <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                <h3 className="font-semibold text-green-800 mb-2 flex justify-between items-center">
+                  Extracted Text:
+                  <Button variant="outline" size="sm" onClick={() => setExtractedText(null)}>Clear</Button>
+                </h3>
+                <p className="whitespace-pre-wrap text-sm text-green-700 max-h-60 overflow-y-auto">{extractedText}</p>
+              </div>
+            )}
 
             <Separator className="mb-6" />
             {isLoading ? (

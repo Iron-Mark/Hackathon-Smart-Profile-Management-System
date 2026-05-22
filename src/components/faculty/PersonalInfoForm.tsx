@@ -3,6 +3,8 @@ import { useState, type FormEvent, type ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import type { PersonalInfo } from "@/hooks/use-personalInfo";
+import updateDatabase from "@/tools/database/updateDatabase";
+import { useUserId } from "@/hooks/use-userId";
 
 export interface PersonalInfoFormProps {
   initialValues?: PersonalInfo | null;
@@ -35,12 +37,28 @@ export default function PersonalInfoForm({
     setError("");
 
     try {
-      const res = await fetch("/api/faculty/profile", {
-        method: initialValues ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+      const { userId, success } = await useUserId();
+      if (!success || !userId) {
+        throw new Error("User not authenticated");
+      }
+
+      // Update account_details (name)
+      await updateDatabase({
+        table: "account_details",
+        data: { name: form.name },
+        match: { id: userId },
       });
-      if (!res.ok) throw new Error(`Server returned ${res.status}`);
+
+      // Update profile_details (profession, description)
+      await updateDatabase({
+        table: "profile_details",
+        data: { 
+          profession: form.profession,
+          description: form.description
+        },
+        match: { id: userId },
+      });
+
       onSuccess();
     } catch (err: unknown) {
       if (err instanceof Error) setError(err.message);
@@ -57,22 +75,34 @@ export default function PersonalInfoForm({
       )}
 
       <div className="grid gap-4">
-        {(["name", "email", "profession"] as (keyof PersonalInfo)[]).map(
-          (field) => (
-            <div key={field}>
-              <label className="block text-sm font-medium text-gray-700 capitalize">
-                {field.replace("-", " ")}
-              </label>
-              <input
-                type={field === "email" ? "email" : "text"}
-                value={form[field]}
-                onChange={handleChange(field)}
-                required={field !== "profession"}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              />
-            </div>
-          )
-        )}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Name</label>
+          <input
+            type="text"
+            value={form.name}
+            onChange={handleChange("name")}
+            required
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Email (Read-only)</label>
+          <input
+            type="email"
+            value={form.email}
+            disabled
+            className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm cursor-not-allowed"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Profession</label>
+          <input
+            type="text"
+            value={form.profession}
+            onChange={handleChange("profession")}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          />
+        </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700">

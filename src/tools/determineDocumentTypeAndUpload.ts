@@ -1,6 +1,7 @@
 import uploadToUserFolder from './buckets/uploadToUserFolder'
 import determineDocumentType from './ocr/determineDocumentType'
 import { useUserId } from '@/hooks/use-userId'
+import insertToDatabase from './database/insertToDatabase'
 
 const determineDocumentTypeAndUpload = async (file: File) => {
   try {
@@ -19,6 +20,17 @@ const determineDocumentTypeAndUpload = async (file: File) => {
       userId: userId
     })
     if (response.success) {
+      // Record submission in database for admin approval
+      await insertToDatabase({
+        table: 'submissions',
+        data: {
+          user_id: userId,
+          document_type: documentType,
+          file_name: fileName,
+          status: 'Pending',
+          submitted_at: new Date().toISOString()
+        }
+      })
       return { success: true, documentType: documentType, fileName: fileName }
     }
   } catch (error: any) {

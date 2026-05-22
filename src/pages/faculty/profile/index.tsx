@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 import { Accordion } from '@/components/ui/accordion'
-import { Edit3Icon } from 'lucide-react'
+import { Edit3Icon, SparklesIcon, PlusIcon, Trash2Icon } from 'lucide-react'
+import { analyzeDocument } from '@/tools/ai/analyzeDocument'
 import ProfileHeader from './ProfileHeader'
 import ProfileSection from './ProfileSection'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,12 +17,13 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { DatePickerWithRange } from '@/components/ui/date-picker'
 import uploadToUserFolder from '@/tools/buckets/uploadToUserFolder'
-import getFileFromFolder from '@/tools/buckets/getFileFromFolder'
 import { useUserId } from '@/hooks/use-userId'
 import insertToDatabase from '@/tools/database/insertToDatabase'
 import updateDatabase from '@/tools/database/updateDatabase'
+import getFromDatabase from '@/tools/database/getFromDatabase'
+import removeFromDatabase from '@/tools/database/removeFromDatabase'
+import { toast, Toaster } from 'sonner'
 
 // Define the EducationalBackground and Experience types
 
@@ -54,115 +56,16 @@ interface ProfessionalDevelopment {
 
 export default function ProfilePage () {
   const [userId, setUserId] = useState<string>('')
-  useEffect(() => {
-    async function getUserId () {
-      const { userId, success } = await useUserId()
-      if (userId && success) {
-        setUserId(userId)
-      } else {
-        setUserId('')
-      }
-    }
-    getUserId()
-  })
-  const [developmentData, setDevelopmentData] = useState<
-    ProfessionalDevelopment[]
-  >([
-    {
-      id: 'pd-1',
-      role: 'Speaker – DevOps Workshop',
-      organization: 'PH Tech Summit',
-      period: 'Mar 2028',
-      details: 'Presented CI/CD best practices for web apps.'
-    },
-    {
-      id: '',
-      role: '',
-      organization: '',
-      period: '',
-      details: ''
-    },
-    {
-      id: '',
-      role: '',
-      organization: '',
-      period: '',
-      details: ''
-    },
-    {
-      id: '',
-      role: '',
-      organization: '',
-      period: '',
-      details: ''
-    }
-  ])
-
-  const [workData, setWorkData] = useState<WorkExperiences[]>([
-    {
-      id: 'we-2',
-      role: 'Software Engineer Intern',
-      organization: 'TechFront Inc.',
-      period: 'Jun 2026 – Aug 2026',
-      details: 'Built an internal analytics dashboard with React & TailwindCSS.'
-    },
-    {
-      id: '',
-      role: '',
-      organization: '',
-      period: '',
-      details: ''
-    },
-    {
-      id: '',
-      role: '',
-      organization: '',
-      period: '',
-      details: ''
-    },
-    {
-      id: '',
-      role: '',
-      organization: '',
-      period: '',
-      details: ''
-    }
-  ])
-
-  const [educationData, setEducationData] = useState<EducationalBackground[]>([
-    {
-      id: 'edu-2',
-      degree: 'M.Sc. in Information Technology',
-      institution: 'Polytechnic University',
-      startDate: '2027-08-01',
-      endDate: '2029-05-01'
-    },
-    {
-      id: '',
-      degree: '',
-      institution: '',
-      startDate: '',
-      endDate: ''
-    },
-    {
-      id: '',
-      degree: '',
-      institution: '',
-      startDate: '',
-      endDate: ''
-    },
-    {
-      id: '',
-      degree: '',
-      institution: '',
-      startDate: '',
-      endDate: ''
-    }
-  ])
+  const [educationData, setEducationData] = useState<EducationalBackground[]>([])
+  const [workData, setWorkData] = useState<WorkExperiences[]>([])
+  const [developmentData, setDevelopmentData] = useState<ProfessionalDevelopment[]>([])
   const [description, setDescription] = useState({
-    description: ``,
+    description: '',
     status: 'accepted'
   })
+  const [tempDescription, setTempDescription] = useState('')
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   const [openSections, setOpenSections] = useState<string[]>([
     'education',
@@ -170,12 +73,62 @@ export default function ProfilePage () {
     'development'
   ])
 
-  const [tempDescription, setTempDescription] = useState(
-    description.description
-  )
-  const [editingEducation, setEditingEducation] =
-    useState<EducationalBackground | null>(null)
-  const [editingWork, setEditingWork] = useState<WorkExperiences | null>(null)
+  useEffect(() => {
+    async function init () {
+      const { userId, success } = await useUserId()
+      if (userId && success) {
+        setUserId(userId)
+        fetchProfileData(userId)
+      } else {
+        setIsLoading(false)
+      }
+    }
+    init()
+  }, [])
+
+  const fetchProfileData = async (uid: string) => {
+    try {
+      setIsLoading(true)
+      const [prof, edu, work, dev] = await Promise.all([
+        getFromDatabase({ table: 'profile_details', getAll: true, match: { id: uid } }),
+        getFromDatabase({ table: 'educational_background', getAll: true, match: { user_id: uid } }),
+        getFromDatabase({ table: 'work_experiences', getAll: true, match: { user_id: uid } }),
+        getFromDatabase({ table: 'professional_development', getAll: true, match: { user_id: uid } })
+      ])
+
+      if (prof?.[0]) {
+        setDescription({
+          description: prof[0].description || '',
+          status: prof[0].status || 'accepted'
+        })
+        setTempDescription(prof[0].description || '')
+      }
+
+      setEducationData(edu || [])
+      setWorkData(work || [])
+      setDevelopmentData(dev || [])
+    } catch (error) {
+      console.error('Error fetching profile data:', error)
+      toast.error('Failed to load profile data')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleGenerateSummary = async () => {
+    setIsGenerating(true)
+    const profileText = `
+      Education: ${educationData.map(e => `${e.degree} at ${e.institution}`).join(', ')}.
+      Work Experience: ${workData.map(w => `${w.role} at ${w.organization}`).join(', ')}.
+      Professional Development: ${developmentData.map(d => `${d.role} at ${d.organization}`).join(', ')}.
+    `
+    const generatedSummary = await analyzeDocument(
+      profileText, 
+      'Generate a professional profile summary in 2-3 sentences based on the following data.'
+    )
+    setTempDescription(generatedSummary)
+    setIsGenerating(false)
+  }
 
   const handleSaveDescription = async () => {
     try {
@@ -184,58 +137,119 @@ export default function ProfilePage () {
         status: 'pending'
       }
 
-      setDescription(updatedDescription)
-
       const success = await updateDatabase({
         table: 'profile_details',
         data: updatedDescription,
         match: { id: userId }
       })
 
-      if (!success) {
-        throw new Error('Failed to update the description in the database.')
+      if (success) {
+        setDescription(updatedDescription)
+        toast.success('Description updated and pending approval')
       }
-
-      console.log('Description updated successfully.')
     } catch (error) {
       console.error('Error updating description:', error)
+      toast.error('Failed to update description')
     }
   }
 
-  const handleSaveEducation = () => {
-    if (editingEducation) {
-      setEducationData(prev =>
-        prev.map(edu =>
-          edu.id === editingEducation.id ? editingEducation : edu
-        )
-      )
+  const [editingEducation, setEditingEducation] = useState<EducationalBackground | null>(null)
+  const [isAddingEdu, setIsAddingEdu] = useState(false)
+
+  const handleSaveEducation = async () => {
+    if (!editingEducation) return
+    try {
+      if (isAddingEdu) {
+        const { id, ...data } = editingEducation
+        await insertToDatabase({
+          table: 'educational_background',
+          data: { ...data, user_id: userId }
+        })
+        toast.success('Education added')
+      } else {
+        await updateDatabase({
+          table: 'educational_background',
+          data: editingEducation,
+          match: { id: editingEducation.id }
+        })
+        toast.success('Education updated')
+      }
+      fetchProfileData(userId)
       setEditingEducation(null)
+      setIsAddingEdu(false)
+    } catch (error) {
+      toast.error('Failed to save education')
     }
   }
 
-  const handleSaveWork = () => {
-    if (editingWork) {
-      setWorkData(prev =>
-        prev.map(work => (work.id === editingWork.id ? editingWork : work))
-      )
+  const [editingWork, setEditingWork] = useState<WorkExperiences | null>(null)
+  const [isAddingWork, setIsAddingWork] = useState(false)
+
+  const handleSaveWork = async () => {
+    if (!editingWork) return
+    try {
+      if (isAddingWork) {
+        const { id, ...data } = editingWork
+        await insertToDatabase({
+          table: 'work_experiences',
+          data: { ...data, user_id: userId }
+        })
+        toast.success('Work experience added')
+      } else {
+        await updateDatabase({
+          table: 'work_experiences',
+          data: editingWork,
+          match: { id: editingWork.id }
+        })
+        toast.success('Work experience updated')
+      }
+      fetchProfileData(userId)
       setEditingWork(null)
+      setIsAddingWork(false)
+    } catch (error) {
+      toast.error('Failed to save work experience')
     }
   }
 
-  const [editingDevelopment, setEditingDevelopment] =
-    useState<ProfessionalDevelopment | null>(null)
-  const handleSaveDevelopment = () => {
-    if (editingDevelopment) {
-      setDevelopmentData(prev =>
-        prev.map(dev =>
-          dev.id === editingDevelopment.id ? editingDevelopment : dev
-        )
-      )
+  const [editingDevelopment, setEditingDevelopment] = useState<ProfessionalDevelopment | null>(null)
+  const [isAddingDev, setIsAddingDev] = useState(false)
+
+  const handleSaveDevelopment = async () => {
+    if (!editingDevelopment) return
+    try {
+      if (isAddingDev) {
+        const { id, ...data } = editingDevelopment
+        await insertToDatabase({
+          table: 'professional_development',
+          data: { ...data, user_id: userId }
+        })
+        toast.success('Professional development added')
+      } else {
+        await updateDatabase({
+          table: 'professional_development',
+          data: editingDevelopment,
+          match: { id: editingDevelopment.id }
+        })
+        toast.success('Professional development updated')
+      }
+      fetchProfileData(userId)
       setEditingDevelopment(null)
+      setIsAddingDev(false)
+    } catch (error) {
+      toast.error('Failed to save professional development')
     }
   }
 
-  // User data - replace with actual data fetching logic
+  const handleDelete = async (table: string, id: string) => {
+    if (!confirm('Are you sure you want to delete this entry?')) return
+    try {
+      await removeFromDatabase({ table, match: { id } })
+      toast.success('Entry deleted')
+      fetchProfileData(userId)
+    } catch (error) {
+      toast.error('Failed to delete entry')
+    }
+  }
 
   const handleProfileImageUpload = async (file: File) => {
     try {
@@ -246,8 +260,9 @@ export default function ProfilePage () {
         type: 'Profile Picture',
         userId: userId
       })
+      toast.success('Profile picture updated')
     } catch (error) {
-      throw error
+      toast.error('Failed to upload profile picture')
     }
   }
 
@@ -260,13 +275,19 @@ export default function ProfilePage () {
         type: 'Banner Picture',
         userId: userId
       })
+      toast.success('Banner picture updated')
     } catch (error) {
-      throw error
+      toast.error('Failed to upload banner picture')
     }
+  }
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-screen">Loading Profile...</div>
   }
 
   return (
     <SidebarProvider>
+      <Toaster position="top-right" />
       <div className='flex w-screen min-h-screen flex-col md:flex-row'>
         <AppSidebar className='hidden md:block' />
         <div className='flex-1 flex flex-col overflow-auto'>
@@ -282,7 +303,7 @@ export default function ProfilePage () {
             />
 
             <div className='mt-6 max-w-4xl mx-auto space-y-3'>
-              {/* Row 1: Profile Description Card */}
+              {/* Profile Description Card */}
               <Card className="bg-white rounded-md shadow-sm overflow-hidden">
                 <CardHeader className="flex justify-between items-center">
                   <CardTitle className="font-semibold text-md sm:text-lg text-green-600">
@@ -299,500 +320,251 @@ export default function ProfilePage () {
                         <DialogTitle>Edit Description</DialogTitle>
                       </DialogHeader>
                       <div className='space-y-4'>
-                        <Input
-                          className=''
+                        <textarea
+                          className='flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
                           value={tempDescription}
                           onChange={e => setTempDescription(e.target.value)}
-                          placeholder='Edit your description here'
+                          placeholder='Edit your professional description here'
                         />
-                        <Button onClick={handleSaveDescription}>Save</Button>
+                        <div className='flex justify-between items-center'>
+                          <Button 
+                            variant="outline" 
+                            onClick={handleGenerateSummary} 
+                            disabled={isGenerating}
+                            className="text-indigo-600 border-indigo-200 hover:bg-indigo-50"
+                          >
+                            <SparklesIcon className="w-4 h-4 mr-2" />
+                            {isGenerating ? 'Generating...' : 'AI Generate Summary'}
+                          </Button>
+                          <Button onClick={handleSaveDescription}>Save</Button>
+                        </div>
                       </div>
                     </DialogContent>
                   </Dialog>
                 </CardHeader>
                 <CardContent className='text-gray-700 leading-relaxed text-sm sm:text-base'>
-                  {description.description}
+                  {description.description || <span className="text-gray-400 italic">No description provided. Click edit to add one.</span>}
                 </CardContent>
               </Card>
 
-              {/* Row 2: Educational Background Accordion */}
+              {/* Educational Background */}
               <Accordion
                 type='multiple'
                 value={openSections.filter(s => s === 'education')}
                 onValueChange={value => {
-                  const newOpenSections = openSections.filter(
-                    s => s !== 'education'
-                  )
-                  if (value.includes('education')) {
-                    newOpenSections.push('education')
-                  }
+                  const newOpenSections = openSections.filter(s => s !== 'education')
+                  if (value.includes('education')) newOpenSections.push('education')
                   setOpenSections(newOpenSections)
                 }}
               >
-                <ProfileSection
-                  value='education'
-                  title='Educational Background'
-                >
-                  {educationData.map(ed => (
-                    <div
-                      key={ed.id}
-                      className='mb-3 pb-3 border-b last:border-b-0 last:mb-0 last:pb-0 flex flex-row gap-x-4'
-                    >
-                      <div>
-                        <p className='font-medium text-gray-800 text-sm sm:text-md'>
-                          {ed.degree}
-                        </p>
-                        <p className='text-xs sm:text-sm text-gray-600'>
-                          {ed.institution} • {ed.startDate} - {ed.endDate}
-                        </p>
-                      </div>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <button className='text-gray-500 hover:text-gray-700 h-fit'>
-                            <Edit3Icon className='w-5 h-5' />
+                <ProfileSection value='education' title='Educational Background'>
+                  <div className="space-y-4">
+                    {educationData.map(ed => (
+                      <div key={ed.id} className='pb-3 border-b last:border-b-0 flex justify-between items-start'>
+                        <div>
+                          <p className='font-medium text-gray-800 text-sm sm:text-md'>{ed.degree}</p>
+                          <p className='text-xs sm:text-sm text-gray-600'>{ed.institution} • {ed.startDate} - {ed.endDate}</p>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <button className='text-gray-400 hover:text-green-600' onClick={() => { setEditingEducation(ed); setIsAddingEdu(false); }}>
+                                <Edit3Icon className='w-4 h-4' />
+                              </button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader><DialogTitle>Edit Education</DialogTitle></DialogHeader>
+                              <EducationForm data={editingEducation} onChange={setEditingEducation} onSave={handleSaveEducation} onCancel={() => setEditingEducation(null)} />
+                            </DialogContent>
+                          </Dialog>
+                          <button className='text-gray-400 hover:text-red-600' onClick={() => handleDelete('educational_background', ed.id)}>
+                            <Trash2Icon className='w-4 h-4' />
                           </button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>
-                              Edit EducationalBackground
-                            </DialogTitle>
-                          </DialogHeader>
-                          <div className='space-y-4'>
-                            <div className='flex flex-col space-y-2'>
-                              <label className='text-sm font-medium text-gray-700'>
-                                Degree
-                              </label>
-                              <Input
-                                value={editingEducation?.degree || ''}
-                                onChange={e =>
-                                  setEditingEducation(prev =>
-                                    prev
-                                      ? { ...prev, degree: e.target.value }
-                                      : {
-                                          id: ed.id,
-                                          degree: e.target.value,
-                                          institution: ed.institution,
-                                          startDate: ed.startDate,
-                                          endDate: ed.endDate
-                                        }
-                                  )
-                                }
-                                placeholder='Degree'
-                              />
-                            </div>
-                            <div className='flex flex-col space-y-2'>
-                              <label className='text-sm font-medium text-gray-700'>
-                                Institution
-                              </label>
-                              <Input
-                                value={editingEducation?.institution || ''}
-                                onChange={e =>
-                                  setEditingEducation(prev =>
-                                    prev
-                                      ? { ...prev, institution: e.target.value }
-                                      : {
-                                          id: ed.id,
-                                          degree: ed.degree,
-                                          institution: e.target.value,
-                                          startDate: ed.startDate,
-                                          endDate: ed.endDate
-                                        }
-                                  )
-                                }
-                                placeholder='Institution'
-                              />
-                            </div>
-                            <div className='flex flex-col space-y-2'>
-                              <label className='text-sm font-medium text-gray-700'>
-                                Date Range
-                              </label>
-                              <DatePickerWithRange
-                                className='w-full'
-                                onDateChange={range => {
-                                  setEditingEducation(prev => {
-                                    if (!prev) {
-                                      return {
-                                        id: ed.id,
-                                        degree: ed.degree,
-                                        institution: ed.institution,
-                                        startDate:
-                                          range?.from
-                                            ?.toISOString()
-                                            .split('T')[0] || '',
-                                        endDate:
-                                          range?.to
-                                            ?.toISOString()
-                                            .split('T')[0] || ''
-                                      }
-                                    }
-                                    return {
-                                      ...prev,
-                                      startDate:
-                                        range?.from
-                                          ?.toISOString()
-                                          .split('T')[0] || prev.startDate,
-                                      endDate:
-                                        range?.to
-                                          ?.toISOString()
-                                          .split('T')[0] || prev.endDate
-                                    }
-                                  })
-                                }}
-                              />
-                              <div className='text-sm text-gray-600'>
-                                {editingEducation?.startDate &&
-                                  `Start Date: ${editingEducation.startDate}`}
-                                {editingEducation?.endDate &&
-                                  `, End Date: ${editingEducation.endDate}`}
-                              </div>
-                            </div>
-                            <div className='flex justify-end space-x-2'>
-                              <Button
-                                variant='secondary'
-                                onClick={() => setEditingEducation(null)}
-                              >
-                                Cancel
-                              </Button>
-                              <Button
-                                onClick={() => {
-                                  handleSaveEducation()
-                                  setEditingEducation(null) // Close the dialog
-                                  document.body.click() // Trigger a click outside to close the dialog
-                                }}
-                              >
-                                Save
-                              </Button>
-                            </div>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                  ))}
+                        </div>
+                      </div>
+                    ))}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="w-full border-dashed" onClick={() => { setEditingEducation({ id: '', degree: '', institution: '', startDate: '', endDate: '' }); setIsAddingEdu(true); }}>
+                          <PlusIcon className="w-4 h-4 mr-2" /> Add Education
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader><DialogTitle>Add Education</DialogTitle></DialogHeader>
+                        <EducationForm data={editingEducation} onChange={setEditingEducation} onSave={handleSaveEducation} onCancel={() => setEditingEducation(null)} />
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 </ProfileSection>
               </Accordion>
 
-              {/* Row 3: Work Experience and Professional Development */}
+              {/* Work Experience */}
               <Accordion
                 type='multiple'
-                value={openSections.filter(
-                  s => s === 'work' || s === 'development'
-                )}
+                value={openSections.filter(s => s === 'work')}
                 onValueChange={value => {
-                  const newOpenSections = openSections.filter(
-                    s => s !== 'work' && s !== 'development'
-                  )
-                  value.forEach(val => newOpenSections.push(val))
+                  const newOpenSections = openSections.filter(s => s !== 'work')
+                  if (value.includes('work')) newOpenSections.push('work')
                   setOpenSections(newOpenSections)
                 }}
-                className='space-y-3'
               >
-                <div className='flex flex-col md:flex-row md:space-x-3 space-y-3 md:space-y-0'>
-                  <div className='flex-1'>
-                    <ProfileSection value='work' title='Work Experiences'>
-                      {workData.map(we => (
-                        <div
-                          key={we.id}
-                          className='mb-4 pb-4 border-b last:border-b-0 last:mb-0 last:pb-0 flex flex-row gap-x-4'
-                        >
-                          <div>
-                            <p className='font-medium text-gray-800 text-sm sm:text-md'>
-                              {we.role}
-                            </p>
-                            <p className='text-xs sm:text-sm text-gray-600'>
-                              {we.organization} • {we.period}
-                            </p>
-                            {we.details && (
-                              <p className='mt-1 text-xs sm:text-sm text-gray-700'>
-                                {we.details}
-                              </p>
-                            )}
-                          </div>
+                <ProfileSection value='work' title='Work Experiences'>
+                  <div className="space-y-4">
+                    {workData.map(we => (
+                      <div key={we.id} className='pb-4 border-b last:border-b-0 flex justify-between items-start'>
+                        <div>
+                          <p className='font-medium text-gray-800 text-sm sm:text-md'>{we.role}</p>
+                          <p className='text-xs sm:text-sm text-gray-600'>{we.organization} • {we.period}</p>
+                          {we.details && <p className='mt-1 text-xs sm:text-sm text-gray-700'>{we.details}</p>}
+                        </div>
+                        <div className="flex space-x-2">
                           <Dialog>
                             <DialogTrigger asChild>
-                              <button className='text-gray-500 hover:text-gray-700 h-fit'>
-                                <Edit3Icon className='w-5 h-5' />
+                              <button className='text-gray-400 hover:text-green-600' onClick={() => { setEditingWork(we); setIsAddingWork(false); }}>
+                                <Edit3Icon className='w-4 h-4' />
                               </button>
                             </DialogTrigger>
                             <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Edit Work Experience</DialogTitle>
-                              </DialogHeader>
-                              <div className='space-y-4'>
-                                <div className='flex flex-col space-y-2'>
-                                  <label className='text-sm font-medium text-gray-700'>
-                                    Role
-                                  </label>
-                                  <Input
-                                    value={editingWork?.role || ''}
-                                    onChange={e =>
-                                      setEditingWork(prev =>
-                                        prev
-                                          ? { ...prev, role: e.target.value }
-                                          : null
-                                      )
-                                    }
-                                    placeholder='Role'
-                                  />
-                                </div>
-                                <div className='flex flex-col space-y-2'>
-                                  <label className='text-sm font-medium text-gray-700'>
-                                    Organization
-                                  </label>
-                                  <Input
-                                    value={editingWork?.organization || ''}
-                                    onChange={e =>
-                                      setEditingWork(prev =>
-                                        prev
-                                          ? {
-                                              ...prev,
-                                              organization: e.target.value
-                                            }
-                                          : null
-                                      )
-                                    }
-                                    placeholder='Organization'
-                                  />
-                                </div>
-                                <div className='flex flex-col space-y-2'>
-                                  <label className='text-sm font-medium text-gray-700'>
-                                    Date Range
-                                  </label>
-                                  <DatePickerWithRange
-                                    className='w-full'
-                                    onDateChange={range => {
-                                      setEditingWork(prev => {
-                                        if (!prev) {
-                                          return {
-                                            id: we.id,
-                                            role: we.role,
-                                            organization: we.organization,
-                                            period: `${
-                                              range?.from
-                                                ?.toISOString()
-                                                .split('T')[0] || ''
-                                            } - ${
-                                              range?.to
-                                                ?.toISOString()
-                                                .split('T')[0] || ''
-                                            }`,
-                                            details: we.details
-                                          }
-                                        }
-                                        return {
-                                          ...prev,
-                                          period: `${
-                                            range?.from
-                                              ?.toISOString()
-                                              .split('T')[0] || prev.period
-                                          } - ${
-                                            range?.to
-                                              ?.toISOString()
-                                              .split('T')[0] || prev.period
-                                          }`
-                                        }
-                                      })
-                                    }}
-                                  />
-                                </div>
-                                <div className='flex flex-col space-y-2'>
-                                  <label className='text-sm font-medium text-gray-700'>
-                                    Details
-                                  </label>
-                                  <Input
-                                    value={editingWork?.details || ''}
-                                    onChange={e =>
-                                      setEditingWork(prev =>
-                                        prev
-                                          ? { ...prev, details: e.target.value }
-                                          : null
-                                      )
-                                    }
-                                    placeholder='Details'
-                                  />
-                                </div>
-                                <div className='flex justify-end space-x-2'>
-                                  <Button
-                                    variant='secondary'
-                                    onClick={() => setEditingWork(null)}
-                                  >
-                                    Cancel
-                                  </Button>
-                                  <Button
-                                    onClick={() => {
-                                      handleSaveWork()
-                                      setEditingWork(null)
-                                    }}
-                                  >
-                                    Save
-                                  </Button>
-                                </div>
-                              </div>
+                              <DialogHeader><DialogTitle>Edit Work Experience</DialogTitle></DialogHeader>
+                              <WorkForm data={editingWork} onChange={setEditingWork} onSave={handleSaveWork} onCancel={() => setEditingWork(null)} />
                             </DialogContent>
                           </Dialog>
+                          <button className='text-gray-400 hover:text-red-600' onClick={() => handleDelete('work_experiences', we.id)}>
+                            <Trash2Icon className='w-4 h-4' />
+                          </button>
                         </div>
-                      ))}
-                    </ProfileSection>
+                      </div>
+                    ))}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="w-full border-dashed" onClick={() => { setEditingWork({ id: '', role: '', organization: '', period: '', details: '' }); setIsAddingWork(true); }}>
+                          <PlusIcon className="w-4 h-4 mr-2" /> Add Work Experience
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader><DialogTitle>Add Work Experience</DialogTitle></DialogHeader>
+                        <WorkForm data={editingWork} onChange={setEditingWork} onSave={handleSaveWork} onCancel={() => setEditingWork(null)} />
+                      </DialogContent>
+                    </Dialog>
                   </div>
-                  <div className='flex-1'>
-                    <ProfileSection
-                      value='development'
-                      title='Professional Development'
-                    >
-                      {developmentData.map(item => (
-                        <div
-                          key={item.id}
-                          className='mb-4 pb-4 border-b last:border-b-0 last:mb-0 last:pb-0 flex flex-row gap-x-4'
-                        >
-                          <div>
-                            <p className='font-medium text-gray-800 text-sm sm:text-md'>
-                              {item.role}
-                            </p>
-                            <p className='text-xs sm:text-sm text-gray-600'>
-                              {item.organization} • {item.period}
-                            </p>
-                            {item.details && (
-                              <p className='mt-1 text-xs sm:text-sm text-gray-700'>
-                                {item.details}
-                              </p>
-                            )}
-                          </div>
+                </ProfileSection>
+              </Accordion>
+
+              {/* Professional Development */}
+              <Accordion
+                type='multiple'
+                value={openSections.filter(s => s === 'development')}
+                onValueChange={value => {
+                  const newOpenSections = openSections.filter(s => s !== 'development')
+                  if (value.includes('development')) newOpenSections.push('development')
+                  setOpenSections(newOpenSections)
+                }}
+              >
+                <ProfileSection value='development' title='Professional Development'>
+                  <div className="space-y-4">
+                    {developmentData.map(item => (
+                      <div key={item.id} className='pb-4 border-b last:border-b-0 flex justify-between items-start'>
+                        <div>
+                          <p className='font-medium text-gray-800 text-sm sm:text-md'>{item.role}</p>
+                          <p className='text-xs sm:text-sm text-gray-600'>{item.organization} • {item.period}</p>
+                          {item.details && <p className='mt-1 text-xs sm:text-sm text-gray-700'>{item.details}</p>}
+                        </div>
+                        <div className="flex space-x-2">
                           <Dialog>
                             <DialogTrigger asChild>
-                              <button className='text-gray-500 hover:text-gray-700 h-fit'>
-                                <Edit3Icon className='w-5 h-5' />
+                              <button className='text-gray-400 hover:text-green-600' onClick={() => { setEditingDevelopment(item); setIsAddingDev(false); }}>
+                                <Edit3Icon className='w-4 h-4' />
                               </button>
                             </DialogTrigger>
                             <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>
-                                  Edit Professional Development
-                                </DialogTitle>
-                              </DialogHeader>
-                              <div className='space-y-4'>
-                                <div className='flex flex-col space-y-2'>
-                                  <label className='text-sm font-medium text-gray-700'>
-                                    Role
-                                  </label>
-                                  <Input
-                                    value={editingDevelopment?.role || ''}
-                                    onChange={e =>
-                                      setEditingDevelopment(prev =>
-                                        prev
-                                          ? { ...prev, role: e.target.value }
-                                          : null
-                                      )
-                                    }
-                                    placeholder='Role'
-                                  />
-                                </div>
-                                <div className='flex flex-col space-y-2'>
-                                  <label className='text-sm font-medium text-gray-700'>
-                                    Organization
-                                  </label>
-                                  <Input
-                                    value={
-                                      editingDevelopment?.organization || ''
-                                    }
-                                    onChange={e =>
-                                      setEditingDevelopment(prev =>
-                                        prev
-                                          ? {
-                                              ...prev,
-                                              organization: e.target.value
-                                            }
-                                          : null
-                                      )
-                                    }
-                                    placeholder='Organization'
-                                  />
-                                </div>
-                                <div className='flex flex-col space-y-2'>
-                                  <label className='text-sm font-medium text-gray-700'>
-                                    Date Range
-                                  </label>
-                                  <DatePickerWithRange
-                                    className='w-full'
-                                    onDateChange={range => {
-                                      setEditingDevelopment(prev => {
-                                        if (!prev) {
-                                          return {
-                                            id: item.id,
-                                            role: item.role,
-                                            organization: item.organization,
-                                            period: `${
-                                              range?.from
-                                                ?.toISOString()
-                                                .split('T')[0] || ''
-                                            } - ${
-                                              range?.to
-                                                ?.toISOString()
-                                                .split('T')[0] || ''
-                                            }`,
-                                            details: item.details
-                                          }
-                                        }
-                                        return {
-                                          ...prev,
-                                          period: `${
-                                            range?.from
-                                              ?.toISOString()
-                                              .split('T')[0] || prev.period
-                                          } - ${
-                                            range?.to
-                                              ?.toISOString()
-                                              .split('T')[0] || prev.period
-                                          }`
-                                        }
-                                      })
-                                    }}
-                                  />
-                                </div>
-                                <div className='flex flex-col space-y-2'>
-                                  <label className='text-sm font-medium text-gray-700'>
-                                    Details
-                                  </label>
-                                  <Input
-                                    value={editingDevelopment?.details || ''}
-                                    onChange={e =>
-                                      setEditingDevelopment(prev =>
-                                        prev
-                                          ? { ...prev, details: e.target.value }
-                                          : null
-                                      )
-                                    }
-                                    placeholder='Details'
-                                  />
-                                </div>
-                                <div className='flex justify-end space-x-2'>
-                                  <Button
-                                    variant='secondary'
-                                    onClick={() => setEditingDevelopment(null)}
-                                  >
-                                    Cancel
-                                  </Button>
-                                  <Button
-                                    onClick={() => {
-                                      handleSaveDevelopment()
-                                      setEditingDevelopment(null)
-                                    }}
-                                  >
-                                    Save
-                                  </Button>
-                                </div>
-                              </div>
+                              <DialogHeader><DialogTitle>Edit Development</DialogTitle></DialogHeader>
+                              <DevForm data={editingDevelopment} onChange={setEditingDevelopment} onSave={handleSaveDevelopment} onCancel={() => setEditingDevelopment(null)} />
                             </DialogContent>
                           </Dialog>
+                          <button className='text-gray-400 hover:text-red-600' onClick={() => handleDelete('professional_development', item.id)}>
+                            <Trash2Icon className='w-4 h-4' />
+                          </button>
                         </div>
-                      ))}
-                    </ProfileSection>
+                      </div>
+                    ))}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="w-full border-dashed" onClick={() => { setEditingDevelopment({ id: '', role: '', organization: '', period: '', details: '' }); setIsAddingDev(true); }}>
+                          <PlusIcon className="w-4 h-4 mr-2" /> Add Professional Development
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader><DialogTitle>Add Professional Development</DialogTitle></DialogHeader>
+                        <DevForm data={editingDevelopment} onChange={setEditingDevelopment} onSave={handleSaveDevelopment} onCancel={() => setEditingDevelopment(null)} />
+                      </DialogContent>
+                    </Dialog>
                   </div>
-                </div>
+                </ProfileSection>
               </Accordion>
             </div>
           </main>
         </div>
       </div>
     </SidebarProvider>
+  )
+}
+
+function EducationForm ({ data, onChange, onSave, onCancel }: { data: EducationalBackground | null, onChange: (d: any) => void, onSave: () => void, onCancel: () => void }) {
+  if (!data) return null
+  return (
+    <div className='space-y-4'>
+      <Input value={data.degree} onChange={e => onChange({ ...data, degree: e.target.value })} placeholder='Degree (e.g. B.S. Computer Science)' />
+      <Input value={data.institution} onChange={e => onChange({ ...data, institution: e.target.value })} placeholder='Institution' />
+      <div className="grid grid-cols-2 gap-2">
+        <Input type="date" value={data.startDate} onChange={e => onChange({ ...data, startDate: e.target.value })} placeholder="Start Date" />
+        <Input type="date" value={data.endDate} onChange={e => onChange({ ...data, endDate: e.target.value })} placeholder="End Date" />
+      </div>
+      <div className='flex justify-end space-x-2'>
+        <Button variant='secondary' onClick={onCancel}>Cancel</Button>
+        <Button onClick={onSave}>Save</Button>
+      </div>
+    </div>
+  )
+}
+
+function WorkForm ({ data, onChange, onSave, onCancel }: { data: WorkExperiences | null, onChange: (d: any) => void, onSave: () => void, onCancel: () => void }) {
+  if (!data) return null
+  return (
+    <div className='space-y-4'>
+      <Input value={data.role} onChange={e => onChange({ ...data, role: e.target.value })} placeholder='Role' />
+      <Input value={data.organization} onChange={e => onChange({ ...data, organization: e.target.value })} placeholder='Organization' />
+      <Input value={data.period} onChange={e => onChange({ ...data, period: e.target.value })} placeholder='Period (e.g. Jan 2020 - Dec 2022)' />
+      <textarea
+        className='flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+        value={data.details}
+        onChange={e => onChange({ ...data, details: e.target.value })}
+        placeholder='Details'
+      />
+      <div className='flex justify-end space-x-2'>
+        <Button variant='secondary' onClick={onCancel}>Cancel</Button>
+        <Button onClick={onSave}>Save</Button>
+      </div>
+    </div>
+  )
+}
+
+function DevForm ({ data, onChange, onSave, onCancel }: { data: ProfessionalDevelopment | null, onChange: (d: any) => void, onSave: () => void, onCancel: () => void }) {
+  if (!data) return null
+  return (
+    <div className='space-y-4'>
+      <Input value={data.role} onChange={e => onChange({ ...data, role: e.target.value })} placeholder='Role/Activity' />
+      <Input value={data.organization} onChange={e => onChange({ ...data, organization: e.target.value })} placeholder='Organization' />
+      <Input value={data.period} onChange={e => onChange({ ...data, period: e.target.value })} placeholder='Period' />
+      <textarea
+        className='flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+        value={data.details}
+        onChange={e => onChange({ ...data, details: e.target.value })}
+        placeholder='Details'
+      />
+      <div className='flex justify-end space-x-2'>
+        <Button variant='secondary' onClick={onCancel}>Cancel</Button>
+        <Button onClick={onSave}>Save</Button>
+      </div>
+    </div>
   )
 }

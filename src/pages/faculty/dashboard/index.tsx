@@ -10,6 +10,7 @@ import determineDocumentTypeAndUpload from '@/tools/determineDocumentTypeAndUplo
 import getFromDatabase from '@/tools/database/getFromDatabase'
 import { useEffect } from 'react'
 import { useUserId } from '@/hooks/use-userId'
+
 interface FacultyDashboardProps {
   children?: ReactNode
 }
@@ -21,6 +22,8 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
   >([])
   const [name, setName] = useState<string>('')
   const [userId, setUserId] = useState<string>('')
+  const [pendingCount, setPendingCount] = useState<number>(0)
+  const [completion, setCompletion] = useState<number>(0)
 
   const handleFileUpload = (files: File[]) => {
     const newUniqueFiles = files.filter(
@@ -37,30 +40,45 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
   }
 
   useEffect(() => {
-    async function getUserId () {
+    async function init () {
       const { userId } = await useUserId()
-      setUserId(userId ? userId : '')
+      if (userId) {
+        setUserId(userId)
+        fetchDashboardData(userId)
+      }
     }
-    getUserId()
+    init()
   }, [])
 
-  useEffect(() => {
-    async function getName () {
-      if (!userId) return
+  const fetchDashboardData = async (uid: string) => {
+    try {
+      const [account, subs, prof, edu, work, dev] = await Promise.all([
+        getFromDatabase({ table: 'account_details', getAll: true, match: { id: uid } }),
+        getFromDatabase({ table: 'submissions', getAll: true, match: { user_id: uid, status: 'Pending' } }),
+        getFromDatabase({ table: 'profile_details', getAll: true, match: { id: uid } }),
+        getFromDatabase({ table: 'educational_background', getAll: true, match: { user_id: uid } }),
+        getFromDatabase({ table: 'work_experiences', getAll: true, match: { user_id: uid } }),
+        getFromDatabase({ table: 'professional_development', getAll: true, match: { user_id: uid } })
+      ])
 
-      const response = await getFromDatabase({
-        table: 'accounts_table',
-        getAll: true,
-        match: { id: userId }
-      })
-      console.log(response)
-      setName(response[0]?.name || '')
+      setName(account[0]?.name || '')
+      setPendingCount(subs.length)
+
+      // Calculate completion (arbitrary weights)
+      let score = 0
+      if (account[0]?.name) score += 20
+      if (prof[0]?.description) score += 20
+      if (edu.length > 0) score += 20
+      if (work.length > 0) score += 20
+      if (dev.length > 0) score += 20
+      setCompletion(score)
+      
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error)
     }
-    getName()
-  }, [userId])
+  }
 
   const handleSubmit = async () => {
-    console.log(uploadedFiles, uploadedFiles.length)
     if (!uploadedFiles || uploadedFiles.length === 0) {
       toast.error('Please upload at least one file to submit.')
       return
@@ -96,6 +114,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
 
     toast.success('Files uploaded successfully!')
     setUploadedFiles([])
+    fetchDashboardData(userId) // Refresh pending count
   }
 
   return (
@@ -131,7 +150,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                         </CardHeader>
                         <CardContent>
                           <p className='text-2xl font-bold text-green-400'>
-                            85%
+                            {completion}%
                           </p>
                         </CardContent>
                       </Card>
@@ -143,7 +162,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                         </CardHeader>
                         <CardContent>
                           <p className='text-2xl font-bold text-amber-400'>
-                            5
+                            {pendingCount}
                           </p>
                         </CardContent>
                       </Card>

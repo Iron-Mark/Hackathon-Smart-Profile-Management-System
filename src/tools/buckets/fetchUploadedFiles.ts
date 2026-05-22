@@ -1,5 +1,6 @@
 import supabase from "@/client/supabase";
 import { useUserId } from "@/hooks/use-userId";
+import getFromDatabase from "../database/getFromDatabase";
 
 type UploadedFile = {
   id: number;
@@ -22,10 +23,17 @@ const formatDate = (isoString: string): string => {
 };
 
 async function fetchUploadedFiles(): Promise<UploadedFile[] | null> {
-  const { userId, success } = await useUserId(); // Your dynamic userId logic
+  const { userId, success } = await useUserId(); 
   if (!userId || !success) {
     return null;
   }
+
+  // Fetch submissions to get statuses
+  const submissions = await getFromDatabase({
+    table: "submissions",
+    getAll: true,
+    match: { user_id: userId }
+  });
 
   const categories = [
     "Certificates",
@@ -50,13 +58,20 @@ async function fetchUploadedFiles(): Promise<UploadedFile[] | null> {
       continue;
     }
 
-    const files = data.map((file) => ({
-      id: currentId++,
-      name: file.name,
-      uploadedAt: formatDate(file.updated_at) || new Date().toISOString(),
-      status: "Unverified", // Default since storage has no status
-      category,
-    }));
+    const files = data.map((file) => {
+      // Find matching submission to get status
+      const submission = submissions.find(
+        (s: any) => s.file_name === file.name && s.document_type === category
+      );
+      
+      return {
+        id: currentId++,
+        name: file.name,
+        uploadedAt: formatDate(file.updated_at) || new Date().toISOString(),
+        status: submission?.status || "Unverified",
+        category,
+      };
+    });
 
     allFiles = allFiles.concat(files);
   }

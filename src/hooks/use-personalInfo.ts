@@ -1,5 +1,7 @@
 // src/hooks/usePersonalInfo.ts
 import { useState, useEffect } from "react";
+import getFromDatabase from "@/tools/database/getFromDatabase";
+import { useUserId } from "@/hooks/use-userId";
 
 export interface PersonalInfo {
   name: string;
@@ -15,20 +17,42 @@ export function usePersonalInfo() {
 
   useEffect(() => {
     let mounted = true;
-    fetch("/api/faculty/profile")
-      .then((res) => {
-        if (!res.ok) throw new Error(res.statusText);
-        return res.json() as Promise<PersonalInfo>;
-      })
-      .then((profile) => {
-        if (mounted) setData(profile);
-      })
-      .catch((err: Error) => {
+
+    async function fetchProfile() {
+      try {
+        const { userId, success } = await useUserId();
+        if (!success || !userId) {
+          throw new Error("User not authenticated");
+        }
+
+        const accountData = await getFromDatabase({
+          table: "account_details",
+          getAll: true,
+          match: { id: userId },
+        });
+
+        const profileData = await getFromDatabase({
+          table: "profile_details",
+          getAll: true,
+          match: { id: userId },
+        });
+
+        if (mounted) {
+          setData({
+            name: accountData[0]?.name || "",
+            email: accountData[0]?.email || "",
+            profession: profileData[0]?.profession || "",
+            description: profileData[0]?.description || "",
+          });
+        }
+      } catch (err: any) {
         if (mounted) setError(err.message);
-      })
-      .finally(() => {
+      } finally {
         if (mounted) setIsLoading(false);
-      });
+      }
+    }
+
+    fetchProfile();
 
     return () => {
       mounted = false;
