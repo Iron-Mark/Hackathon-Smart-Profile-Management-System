@@ -6,27 +6,83 @@ import { Button } from "@/components/ui/button";
 
 import { Link } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+import { useState, useEffect } from "react";
+import getFromDatabase from "@/tools/database/getFromDatabase";
 
-const uploadData = [
-  { name: 'Mon', uploads: 12 },
-  { name: 'Tue', uploads: 19 },
-  { name: 'Wed', uploads: 15 },
-  { name: 'Thu', uploads: 22 },
-  { name: 'Fri', uploads: 30 },
-  { name: 'Sat', uploads: 10 },
-  { name: 'Sun', uploads: 8 },
-];
-
-const categoryData = [
-  { name: 'Certificates', value: 400 },
-  { name: 'Publications', value: 300 },
-  { name: 'Resumes', value: 300 },
-  { name: 'Other', value: 200 },
-];
-
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A288FE', '#00F49F', '#F0BB28', '#F08042'];
 
 export default function AdminDashboard() {
+  const [usersCount, setUsersCount] = useState(0);
+  const [activeSessions, setActiveSessions] = useState(0);
+  const [pendingApprovals, setPendingApprovals] = useState(0);
+  const [uploadData, setUploadData] = useState<any[]>([]);
+  const [categoryData, setCategoryData] = useState<any[]>([]);
+  const [recentSubmissions, setRecentSubmissions] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const accounts = await getFromDatabase({ table: 'account_details', getAll: true, match: {} });
+        setUsersCount(accounts.length);
+
+        const submissions = await getFromDatabase({ table: 'submissions', getAll: true, match: {} });
+        
+        const pending = submissions.filter((sub: any) => sub.status === "Pending");
+        setPendingApprovals(pending.length);
+        setRecentSubmissions(pending.slice(0, 5));
+
+        const logs = await getFromDatabase({ table: 'audit_logs', getAll: true, match: { action: 'LOGIN' } });
+        const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const activeUsers = new Set(
+          logs
+            .filter((log: any) => new Date(log.timestamp) > oneDayAgo)
+            .map((log: any) => log.user_id)
+        );
+        setActiveSessions(activeUsers.size);
+
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const today = new Date();
+        const last7Days: any[] = [];
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(today.getDate() - i);
+          last7Days.push({
+            name: days[d.getDay()],
+            date: d.toISOString().split('T')[0],
+            uploads: 0
+          });
+        }
+
+        submissions.forEach((sub: any) => {
+          if (sub.submitted_at) {
+            const subDate = new Date(sub.submitted_at);
+            const diffTime = today.getTime() - subDate.getTime();
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays >= 0 && diffDays < 7) {
+              const dayName = days[subDate.getDay()];
+              const dayEntry = last7Days.find(d => d.name === dayName);
+              if (dayEntry) {
+                dayEntry.uploads += 1;
+              }
+            }
+          }
+        });
+        setUploadData(last7Days.map(d => ({ name: d.name, uploads: d.uploads })));
+
+        const categories: Record<string, number> = {};
+        submissions.forEach((sub: any) => {
+          const type = sub.document_type || 'Other';
+          categories[type] = (categories[type] || 0) + 1;
+        });
+        setCategoryData(Object.entries(categories).map(([name, value]) => ({ name, value })));
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <SidebarProvider>
       <div className="flex w-screen min-h-screen">
@@ -44,16 +100,16 @@ export default function AdminDashboard() {
                   <CardTitle className="text-sm">Total Users</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold">150</p>
+                  <p className="text-3xl font-bold">{usersCount}</p>
                 </CardContent>
               </Card>
 
               <Card className="shadow-lg transition-shadow bg-gradient-to-r from-green-400 to-green-200 text-stone-800">
                 <CardHeader>
-                  <CardTitle className="text-sm">Active Sessions</CardTitle>
+                  <CardTitle className="text-sm">Active Sessions (24h)</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold">45</p>
+                  <p className="text-3xl font-bold">{activeSessions}</p>
                 </CardContent>
               </Card>
 
@@ -62,7 +118,7 @@ export default function AdminDashboard() {
                   <CardTitle className="text-sm">Pending Approvals</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold">12</p>
+                  <p className="text-3xl font-bold">{pendingApprovals}</p>
                 </CardContent>
               </Card>
             </div>
@@ -117,28 +173,26 @@ export default function AdminDashboard() {
 
             <div className="mt-8">
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                Approval Management
+                Recent Submissions for Approval
               </h2>
               <div className="bg-white shadow-md rounded-md p-4">
                 <ul className="space-y-3">
-                  <li className="flex items-center justify-between border-b-2">
-                    <span className="text-sm text-gray-600 ">
-                      John Doe submitted a new document.
-                    </span>
-                    <div className="space-x-2">
-                      <Button variant="default">Approve</Button>
-                      <Button variant="destructive">Reject</Button>
-                    </div>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">
-                      Jane Smith updated her profile.
-                    </span>
-                    <div className="space-x-2">
-                      <Button variant="default">Approve</Button>
-                      <Button variant="destructive">Reject</Button>
-                    </div>
-                  </li>
+                  {recentSubmissions.length > 0 ? (
+                    recentSubmissions.map((sub) => (
+                      <li key={sub.id} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
+                        <span className="text-sm text-gray-600">
+                          {sub.document_type} upload: <span className="font-medium text-gray-900">{sub.file_name}</span>
+                        </span>
+                        <div className="space-x-2">
+                          <Button asChild size="sm" variant="outline">
+                            <Link to="/admin/approvals">Manage</Link>
+                          </Button>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-center text-sm text-gray-500 py-2">No pending submissions.</li>
+                  )}
                 </ul>
               </div>
             </div>

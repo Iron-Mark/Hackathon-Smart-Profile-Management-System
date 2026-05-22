@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import getFromDatabase from "@/tools/database/getFromDatabase";
 import updateDatabase from "@/tools/database/updateDatabase";
 import getFileFromFolder from "@/tools/buckets/getFileFromFolder";
+import { logAudit } from "@/tools/database/logAudit";
 import { toast, Toaster } from "sonner";
 
 interface Submission {
@@ -75,6 +76,7 @@ export default function AdminApprovalsPage() {
         data: { status: newStatus },
         match: { id },
       });
+      await logAudit('APPROVAL_ACTION', `Admin ${newStatus.toLowerCase()} submission ${id}`);
       toast.success(`Submission ${newStatus.toLowerCase()} successfully`);
       fetchSubmissions();
     } catch (error) {

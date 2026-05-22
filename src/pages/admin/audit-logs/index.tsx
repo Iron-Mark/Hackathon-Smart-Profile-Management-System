@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -10,40 +11,64 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import getFromDatabase from "@/tools/database/getFromDatabase";
 
-// Mock data for audit logs - replace with actual data fetching and pagination
-const mockAuditLogs = [
-  {
-    id: "log1",
-    timestamp: "2025-05-07 10:15:30",
-    user: "admin@ccis.edu",
-    action: "User Login",
-    details: "Admin user logged in from IP 192.168.1.100",
-  },
-  {
-    id: "log2",
-    timestamp: "2025-05-07 09:30:00",
-    user: "alice@ccis.edu",
-    action: "Profile Update",
-    details: "Updated 'Publications' section",
-  },
-  {
-    id: "log3",
-    timestamp: "2025-05-06 14:22:10",
-    user: "admin@ccis.edu",
-    action: "Approval Action",
-    details: "Approved submission 'sub1' for Dr. Alice Wonderland",
-  },
-  {
-    id: "log4",
-    timestamp: "2025-05-05 11:05:00",
-    user: "bob@ccis.edu",
-    action: "Document Upload",
-    details: "Uploaded file 'research_paper_final.pdf'",
-  },
-];
+interface AuditLog {
+  id: string;
+  timestamp: string;
+  user_email: string;
+  action: string;
+  details: string;
+}
 
 export default function AdminAuditLogsPage() {
+  const [logs, setLogs] = useState<AuditLog[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchLogs = async () => {
+    try {
+      setIsLoading(true);
+      const data = await getFromDatabase({
+        table: "audit_logs",
+        getAll: true,
+        match: {},
+      });
+
+      // Join with account_details to get emails
+      const userIds = Array.from(new Set(data.map((l: any) => l.user_id)));
+      const userData = await Promise.all(
+        userIds.map((uid) =>
+          getFromDatabase({
+            table: "account_details",
+            column: "email",
+            getAll: false,
+            match: { id: uid },
+          })
+        )
+      );
+
+      const userMap = userIds.reduce((acc: any, uid, index) => {
+        acc[uid as string] = userData[index][0]?.email || "Unknown";
+        return acc;
+      }, {});
+
+      const enrichedLogs = data.map((l: any) => ({
+        ...l,
+        user_email: userMap[l.user_id],
+      }));
+
+      setLogs(enrichedLogs.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
+    } catch (error) {
+      console.error("Error fetching logs:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLogs();
+  }, []);
+
   return (
     <SidebarProvider>
       <div className="flex w-screen min-h-screen">
@@ -68,19 +93,19 @@ export default function AdminAuditLogsPage() {
                     <SelectValue placeholder="Filter by Action..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="User Login">User Login</SelectItem>
-                    <SelectItem value="Profile Update">
-                      Profile Update
+                    <SelectItem value="LOGIN">LOGIN</SelectItem>
+                    <SelectItem value="PROFILE_UPDATE">
+                      PROFILE_UPDATE
                     </SelectItem>
-                    <SelectItem value="Document Upload">
-                      Document Upload
+                    <SelectItem value="DOCUMENT_UPLOAD">
+                      DOCUMENT_UPLOAD
                     </SelectItem>
-                    <SelectItem value="Approval Action">
-                      Approval Action
+                    <SelectItem value="APPROVAL_ACTION">
+                      APPROVAL_ACTION
                     </SelectItem>
                   </SelectContent>
                 </Select>
-                <Button>Apply Filters</Button>
+                <Button onClick={fetchLogs}>Refresh</Button>
               </CardContent>
             </Card>
 
@@ -90,30 +115,34 @@ export default function AdminAuditLogsPage() {
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left table-auto">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="px-4 py-2">Timestamp</th>
-                        <th className="px-4 py-2">User</th>
-                        <th className="px-4 py-2">Action</th>
-                        <th className="px-4 py-2">Details</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {mockAuditLogs.map((log) => (
-                        <tr key={log.id} className="border-b hover:bg-gray-100">
-                          <td className="px-4 py-2 whitespace-nowrap">
-                            {log.timestamp}
-                          </td>
-                          <td className="px-4 py-2">{log.user}</td>
-                          <td className="px-4 py-2">{log.action}</td>
-                          <td className="px-4 py-2">{log.details}</td>
+                  {isLoading ? (
+                    <p className="text-center py-4">Loading logs...</p>
+                  ) : (
+                    <table className="w-full text-left table-auto">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="px-4 py-2">Timestamp</th>
+                          <th className="px-4 py-2">User</th>
+                          <th className="px-4 py-2">Action</th>
+                          <th className="px-4 py-2">Details</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {logs.map((log) => (
+                          <tr key={log.id} className="border-b hover:bg-gray-100">
+                            <td className="px-4 py-2 whitespace-nowrap">
+                              {new Date(log.timestamp).toLocaleString()}
+                            </td>
+                            <td className="px-4 py-2">{log.user_email}</td>
+                            <td className="px-4 py-2 font-mono text-xs">{log.action}</td>
+                            <td className="px-4 py-2">{log.details}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
-                {mockAuditLogs.length === 0 && (
+                {!isLoading && logs.length === 0 && (
                   <p className="text-center text-gray-500 py-4">
                     No audit logs found.
                   </p>

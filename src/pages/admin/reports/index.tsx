@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,31 +10,69 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DatePickerWithRange } from "@/components/ui/date-picker"; // Corrected import
+import { DatePickerWithRange } from "@/components/ui/date-picker";
+import getFromDatabase from "@/tools/database/getFromDatabase";
+import Papa from 'papaparse';
+import { toast, Toaster } from "sonner";
 
-// Mock data for report types - replace or augment with dynamic data
+// Report types
 const reportTypes = [
-  { value: "ched_compliance", label: "CHED Compliance Report" },
-  { value: "faculty_activity", label: "Faculty Activity Summary" },
-  { value: "publication_list", label: "Faculty Publication List" },
-  { value: "research_overview", label: "Research Overview" },
-  { value: "training_seminars", label: "Training & Seminars Attended" },
+  { value: "faculty_list", label: "Faculty List & Roles", table: "account_details" },
+  { value: "submissions_report", label: "Submissions Summary", table: "submissions" },
+  { value: "audit_report", label: "System Audit Trail", table: "audit_logs" },
+  { value: "profile_data", label: "Faculty Professional Details", table: "profile_details" },
 ];
 
 export default function AdminReportsPage() {
-  // State for selected report type and date range (optional)
-  // const [selectedReport, setSelectedReport] = React.useState<string | undefined>();
-  // const [dateFrom, setDateFrom] = React.useState<Date | undefined>();
-  // const [dateTo, setDateTo] = React.useState<Date | undefined>();
+  const [selectedReport, setSelectedReport] = useState<string>("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const handleGenerateReport = () => {
-    // Logic to generate report based on selectedReport, dateFrom, dateTo
-    // This would typically involve API calls and data processing
-    alert("Generating report... (placeholder)");
+  const handleGenerateReport = async () => {
+    if (!selectedReport) {
+      toast.error("Please select a report type");
+      return;
+    }
+
+    const reportConfig = reportTypes.find(r => r.value === selectedReport);
+    if (!reportConfig) return;
+
+    try {
+      setIsGenerating(true);
+      const data = await getFromDatabase({
+        table: reportConfig.table,
+        getAll: true,
+        match: {},
+      });
+
+      if (!data || data.length === 0) {
+        toast.info("No data found for this report");
+        return;
+      }
+
+      const csv = Papa.unparse(data);
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `${selectedReport}_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success("Report generated and downloaded successfully");
+    } catch (error) {
+      console.error("Error generating report:", error);
+      toast.error("Failed to generate report");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
     <SidebarProvider>
+      <Toaster position="top-right" />
       <div className="flex w-screen min-h-screen">
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">
@@ -44,7 +83,7 @@ export default function AdminReportsPage() {
 
             <Card className="mb-6">
               <CardHeader>
-                <CardTitle>Generate New Report</CardTitle>
+                <CardTitle>Generate New Report (CSV)</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
@@ -54,8 +93,7 @@ export default function AdminReportsPage() {
                   >
                     Select Report Type
                   </label>
-                  <Select /* onValueChange={setSelectedReport} value={selectedReport} */
-                  >
+                  <Select onValueChange={setSelectedReport} value={selectedReport}>
                     <SelectTrigger id="reportType">
                       <SelectValue placeholder="Choose a report..." />
                     </SelectTrigger>
@@ -88,37 +126,23 @@ export default function AdminReportsPage() {
                 <Button
                   onClick={handleGenerateReport}
                   className="w-full md:w-auto"
+                  disabled={isGenerating}
                 >
-                  Generate Report
+                  {isGenerating ? "Generating..." : "Generate & Download CSV"}
                 </Button>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle>Recently Generated Reports</CardTitle>
+                <CardTitle>Analytics Insights</CardTitle>
               </CardHeader>
               <CardContent>
-                {/* Placeholder for a list of previously generated reports */}
                 <p className="text-center text-gray-500 py-4">
-                  No reports generated yet.
+                  Data visualization modules are integrated with Recharts in the Dashboard.
                 </p>
-                {/* Example of a report list item:
-                <div className="border-b py-2 flex justify-between items-center">
-                  <span>CHED Compliance Report - 2025-04-30</span>
-                  <Button variant="outline" size="sm">Download</Button>
-                </div>
-                */}
               </CardContent>
             </Card>
-
-            {/* Placeholder for Analytics Section */}
-            {/* <Card className="mt-6">
-              <CardHeader><CardTitle>Faculty Data Analytics</CardTitle></CardHeader>
-              <CardContent>
-                <p className="text-center text-gray-500 py-4">Analytics dashboard coming soon.</p>
-              </CardContent>
-            </Card> */}
           </main>
         </div>
       </div>

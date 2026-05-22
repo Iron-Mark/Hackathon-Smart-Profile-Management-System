@@ -1,9 +1,9 @@
 // src/pages/faculty/profile/index.tsx
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 import { Accordion } from '@/components/ui/accordion'
-import { Edit3Icon, SparklesIcon, PlusIcon, Trash2Icon } from 'lucide-react'
+import { Edit3Icon, SparklesIcon, PlusIcon, Trash2Icon, FileTextIcon } from 'lucide-react'
 import { analyzeDocument } from '@/tools/ai/analyzeDocument'
 import ProfileHeader from './ProfileHeader'
 import ProfileSection from './ProfileSection'
@@ -23,6 +23,7 @@ import insertToDatabase from '@/tools/database/insertToDatabase'
 import updateDatabase from '@/tools/database/updateDatabase'
 import getFromDatabase from '@/tools/database/getFromDatabase'
 import removeFromDatabase from '@/tools/database/removeFromDatabase'
+import extractTextFromImage from '@/tools/ocr/extractTextFromImage'
 import { toast, Toaster } from 'sonner'
 
 // Define the EducationalBackground and Experience types
@@ -65,7 +66,9 @@ export default function ProfilePage () {
   })
   const [tempDescription, setTempDescription] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
+  const [isAutoFilling, setIsAutoFilling] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const autoFillInputRef = useRef<HTMLInputElement>(null)
 
   const [openSections, setOpenSections] = useState<string[]>([
     'education',
@@ -112,6 +115,76 @@ export default function ProfilePage () {
       toast.error('Failed to load profile data')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleAutoFill = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setIsAutoFilling(true)
+    toast.info('Extracting data from document...')
+    
+    try {
+      const text = await extractTextFromImage(file)
+      const prompt = `Extract profile data from this OCR text. Return ONLY a raw JSON object with no markdown formatting. The JSON should have the following structure:
+      {
+        "type": "Education" | "Work" | "Development",
+        "title": "Degree or Role Name",
+        "organization": "Institution or Company Name",
+        "start_date": "YYYY-MM-DD or empty",
+        "end_date": "YYYY-MM-DD or empty",
+        "details": "Brief summary or empty"
+      }`
+
+      const response = await analyzeDocument(text, prompt)
+      // Clean up potential markdown formatting from AI response
+      const jsonStr = response.replace(/```json/g, '').replace(/```/g, '').trim()
+      const data = JSON.parse(jsonStr)
+
+      if (data.type === 'Education') {
+        await insertToDatabase({
+          table: 'educational_background',
+          data: {
+            user_id: userId,
+            degree: data.title,
+            institution: data.organization,
+            startDate: data.start_date,
+            endDate: data.end_date
+          }
+        })
+      } else if (data.type === 'Work') {
+        await insertToDatabase({
+          table: 'work_experiences',
+          data: {
+            user_id: userId,
+            role: data.title,
+            organization: data.organization,
+            period: `${data.start_date} - ${data.end_date}`,
+            details: data.details
+          }
+        })
+      } else {
+        await insertToDatabase({
+          table: 'professional_development',
+          data: {
+            user_id: userId,
+            role: data.title,
+            organization: data.organization,
+            period: `${data.start_date} - ${data.end_date}`,
+            details: data.details
+          }
+        })
+      }
+
+      toast.success(`Successfully auto-filled ${data.type} entry!`)
+      fetchProfileData(userId)
+    } catch (error) {
+      console.error('Auto-fill error:', error)
+      toast.error('Failed to auto-fill data. Please ensure the document is clear.')
+    } finally {
+      setIsAutoFilling(false)
+      if (autoFillInputRef.current) autoFillInputRef.current.value = ''
     }
   }
 
@@ -303,6 +376,36 @@ export default function ProfilePage () {
             />
 
             <div className='mt-6 max-w-4xl mx-auto space-y-3'>
+              {/* Auto-Fill Action Banner */}
+              <Card className="bg-indigo-50 border-indigo-100 shadow-sm overflow-hidden mb-4">
+                <CardContent className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div>
+                    <h3 className="font-semibold text-indigo-800 flex items-center">
+                      <SparklesIcon className="w-5 h-5 mr-2" />
+                      Smart Profile Builder
+                    </h3>
+                    <p className="text-sm text-indigo-600">
+                      Upload your CV, Certificate, or Diploma and let AI extract the details for you.
+                    </p>
+                  </div>
+                  <Button 
+                    onClick={() => autoFillInputRef.current?.click()}
+                    disabled={isAutoFilling}
+                    className="bg-indigo-600 hover:bg-indigo-700 whitespace-nowrap"
+                  >
+                    <FileTextIcon className="w-4 h-4 mr-2" />
+                    {isAutoFilling ? 'Extracting...' : 'Upload & Auto-fill'}
+                  </Button>
+                  <input
+                    type="file"
+                    ref={autoFillInputRef}
+                    onChange={handleAutoFill}
+                    accept="image/*,.pdf"
+                    className="hidden"
+                  />
+                </CardContent>
+              </Card>
+
               {/* Profile Description Card */}
               <Card className="bg-white rounded-md shadow-sm overflow-hidden">
                 <CardHeader className="flex justify-between items-center">

@@ -41,6 +41,9 @@ import { toast } from 'sonner'
 import moveFile from '@/tools/buckets/moveFile'
 import extractTextFromImage from '@/tools/ocr/extractTextFromImage'
 import getFileFromFolder from '@/tools/buckets/getFileFromFolder'
+import { analyzeDocument } from '@/tools/ai/analyzeDocument'
+import uploadToUserFolder from '@/tools/buckets/uploadToUserFolder'
+import insertToDatabase from '@/tools/database/insertToDatabase'
 
 type UploadedFile = {
   id: number;
@@ -60,6 +63,13 @@ export default function UploadedFilesPage() {
   const [extractedText, setExtractedText] = useState<string | null>(null);
   const { userId, error } = useFetchUserId();
 
+  const prepareFiles = async () => {
+    setIsLoading(true);
+    const uploadedFiles = await fetchUploadedFiles();
+    setEditableFiles(uploadedFiles);
+    setIsLoading(false);
+  };
+
   const handleFileUpload = async (file: File) => {
     setIsUploading(true);
     setExtractedText(null);
@@ -67,9 +77,17 @@ export default function UploadedFilesPage() {
       const text = await extractTextFromImage(file);
       setExtractedText(text);
       toast.success("Text extracted successfully.");
+
+      toast.info("Analyzing document with AI...");
+      const category = await analyzeDocument(text, "Categorize this document into exactly one of: Certificates, PRC License, Valid ID, Resume, Transcript of records, Research Publications, Diplomas, Curriculum Vitae. Return ONLY the exact category string.");
+      
+      await uploadToUserFolder({ bucketName: 'pictures-and-documents', file, type: category, filename: file.name, userId: userId || '' });
+      await insertToDatabase({ table: "submissions", data: { user_id: userId, document_type: category, file_name: file.name, status: "Pending" } });
+      
+      await prepareFiles();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to extract text from image.");
+      toast.error("Failed to process the document.");
     } finally {
       setIsUploading(false);
     }
@@ -96,12 +114,6 @@ export default function UploadedFilesPage() {
   }, [error]);
 
   useEffect(() => {
-    async function prepareFiles() {
-      setIsLoading(true);
-      const uploadedFiles = await fetchUploadedFiles();
-      setEditableFiles(uploadedFiles);
-      setIsLoading(false);
-    }
     prepareFiles();
   }, []);
 

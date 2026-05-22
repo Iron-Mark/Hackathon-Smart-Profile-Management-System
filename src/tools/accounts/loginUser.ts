@@ -2,6 +2,7 @@
 import supabase from '@/client/supabase'
 import type { User, Session } from '@supabase/supabase-js'
 import getFromDatabase from '../database/getFromDatabase'
+import { logAudit } from '../database/logAudit'
 
 interface LoginResponse {
   success: boolean
@@ -42,6 +43,7 @@ const loginUser = async (
     }
 
     console.log('User logged in successfully:', data.user)
+    await logAudit('LOGIN', `User logged in from ${email}`);
     navigate(`/${account[0].type}/dashboard/`)
 
     return { success: true, user: data.user, session: data.session }

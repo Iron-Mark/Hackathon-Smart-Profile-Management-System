@@ -3,9 +3,9 @@ import { useState, type FormEvent, type ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import type { PersonalInfo } from "@/hooks/use-personalInfo";
-import updateDatabase from "@/tools/database/updateDatabase";
+import updateDatabase from "@/tools/database/updateDatabase";      
+import { logAudit } from "@/tools/database/logAudit";
 import { useUserId } from "@/hooks/use-userId";
-
 export interface PersonalInfoFormProps {
   initialValues?: PersonalInfo | null;
   onSuccess: () => void;
@@ -58,6 +58,8 @@ export default function PersonalInfoForm({
         },
         match: { id: userId },
       });
+
+      await logAudit('PROFILE_UPDATE', `User updated personal information`);
 
       onSuccess();
     } catch (err: unknown) {

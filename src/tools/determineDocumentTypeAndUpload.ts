@@ -2,6 +2,7 @@ import uploadToUserFolder from './buckets/uploadToUserFolder'
 import determineDocumentType from './ocr/determineDocumentType'
 import { useUserId } from '@/hooks/use-userId'
 import insertToDatabase from './database/insertToDatabase'
+import { logAudit } from './database/logAudit'
 
 const determineDocumentTypeAndUpload = async (file: File) => {
   try {
@@ -31,6 +32,7 @@ const determineDocumentTypeAndUpload = async (file: File) => {
           submitted_at: new Date().toISOString()
         }
       })
+      await logAudit('DOCUMENT_UPLOAD', `User uploaded ${documentType}: ${fileName}`);
       return { success: true, documentType: documentType, fileName: fileName }
     }
   } catch (error: any) {
