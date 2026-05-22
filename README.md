@@ -1,54 +1,80 @@
-# React + TypeScript + Vite
+# CCIS Smart Faculty Profile Management System (FPMS)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A comprehensive profile management system designed for academic faculty, featuring AI-powered document extraction and streamlined administrative approvals.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Smart Profile Management**: Manage educational background, work experience, and professional development.
+- **AI-Powered OCR**: Automatically extract text and information from uploaded documents (Certificates, Licenses, etc.) using Tesseract.js and OpenAI.
+- **Admin Dashboard**: Centralized hub for administrators to review, approve, or return faculty submissions.
+- **Automated Reporting**: Track compliance and document status in real-time.
+- **Role-Based Access**: Specialized interfaces for Faculty and Administrators.
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend**: React (TypeScript), Vite, TailwindCSS, Lucide React, Sonner (Toasts).
+- **Backend/Database**: Supabase (Auth, PostgreSQL, Storage).
+- **AI/ML**: Tesseract.js (OCR), OpenAI GPT-3.5 (Information Analysis).
+- **Charts**: Recharts for administrative analytics.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 📦 Getting Started
+
+### Prerequisites
+
+- Node.js (v18+)
+- NPM or PNPM
+- A Supabase account and project.
+- An OpenAI API Key (optional, for AI summary features).
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd CCIS-Smart-FPMS
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install --legacy-peer-deps
+   ```
+
+3. Configure Environment Variables:
+   Create a `.env` file in the root directory and add your credentials:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   VITE_OPENAI_API_KEY=your_openai_api_key
+   VITE_COHERE_KEY=your_cohere_api_key
+   ```
+
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+## 🗄️ Database Schema
+
+The system relies on the following Supabase tables:
+
+- **`account_details`**: Stores core user identity (Name, Email, Role).
+- **`profile_details`**: Stores faculty-specific metadata (Profession, Bio/Description).
+- **`submissions`**: Tracks uploaded documents, their categories, and approval status.
+- **`educational_background`**: Stores degree information and institutions.
+- **`work_experiences`**: Stores professional history.
+- **`professional_development`**: Stores certifications, seminars, and workshops.
+
+## 📂 Storage Buckets
+
+- **`pictures-and-documents`**: Stores profile pictures, banners, and all uploaded verification documents. Structure: `{userId}/{category}/{filename}`.
+
+## 🧪 Testing
+
+The project uses Vitest for unit testing. To run tests:
+```bash
+npm test
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📄 License
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+This project is licensed under the MIT License.

@@ -24,6 +24,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
   const [userId, setUserId] = useState<string>('')
   const [pendingCount, setPendingCount] = useState<number>(0)
   const [completion, setCompletion] = useState<number>(0)
+  const [notificationsCount, setNotificationsCount] = useState<number>(0)
 
   const handleFileUpload = (files: File[]) => {
     const newUniqueFiles = files.filter(
@@ -52,17 +53,18 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
 
   const fetchDashboardData = async (uid: string) => {
     try {
-      const [account, subs, prof, edu, work, dev] = await Promise.all([
+      const [account, pendingSubs, prof, edu, work, dev, allSubs] = await Promise.all([
         getFromDatabase({ table: 'account_details', getAll: true, match: { id: uid } }),
         getFromDatabase({ table: 'submissions', getAll: true, match: { user_id: uid, status: 'Pending' } }),
         getFromDatabase({ table: 'profile_details', getAll: true, match: { id: uid } }),
         getFromDatabase({ table: 'educational_background', getAll: true, match: { user_id: uid } }),
         getFromDatabase({ table: 'work_experiences', getAll: true, match: { user_id: uid } }),
-        getFromDatabase({ table: 'professional_development', getAll: true, match: { user_id: uid } })
+        getFromDatabase({ table: 'professional_development', getAll: true, match: { user_id: uid } }),
+        getFromDatabase({ table: 'submissions', getAll: true, match: { user_id: uid } })
       ])
 
       setName(account[0]?.name || '')
-      setPendingCount(subs.length)
+      setPendingCount(pendingSubs.length)
 
       // Calculate completion (arbitrary weights)
       let score = 0
@@ -72,6 +74,17 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
       if (work.length > 0) score += 20
       if (dev.length > 0) score += 20
       setCompletion(score)
+
+      // Calculate notifications
+      const reviewedSubs = allSubs.filter((sub: any) => sub.status === 'Approved' || sub.status === 'Returned');
+      setNotificationsCount(reviewedSubs.length);
+
+      if (reviewedSubs.length > 0) {
+        const returnedCount = reviewedSubs.filter((sub: any) => sub.status === 'Returned').length;
+        const approvedCount = reviewedSubs.filter((sub: any) => sub.status === 'Approved').length;
+        if (returnedCount > 0) toast.error(`You have ${returnedCount} returned document(s) requiring attention.`);
+        if (approvedCount > 0) toast.success(`You have ${approvedCount} approved document(s).`);
+      }
       
     } catch (error) {
       console.error('Error fetching dashboard data:', error)
@@ -174,7 +187,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                         </CardHeader>
                         <CardContent>
                           <p className='text-2xl font-bold text-stone-800'>
-                            12
+                            {notificationsCount}
                           </p>
                         </CardContent>
                       </Card>

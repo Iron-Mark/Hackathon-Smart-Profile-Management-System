@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
-import { Filter as FilterIcon, UploadCloud } from "lucide-react";
+import { Filter as FilterIcon, UploadCloud, EyeIcon } from "lucide-react";
 import {
   Dialog,
   DialogTrigger,
@@ -40,6 +40,7 @@ import { useFetchUserId } from '@/hooks/use-userId'
 import { toast } from 'sonner'
 import moveFile from '@/tools/buckets/moveFile'
 import extractTextFromImage from '@/tools/ocr/extractTextFromImage'
+import getFileFromFolder from '@/tools/buckets/getFileFromFolder'
 
 type UploadedFile = {
   id: number;
@@ -314,6 +315,24 @@ export default function UploadedFilesPage() {
                       </p>
                     </CardContent>
                     <CardFooter className="flex justify-end gap-2">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="cursor-pointer"
+                        onClick={async () => {
+                          const url = await getFileFromFolder({
+                            bucketName: 'pictures-and-documents',
+                            fileName: file.name,
+                            type: file.category,
+                            userId: userId || "",
+                          });
+                          if (url) window.open(url, '_blank');
+                          else toast.error('Could not retrieve file URL');
+                        }}
+                      >
+                        <EyeIcon className="w-4 h-4 mr-1" />
+                        View
+                      </Button>
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
