@@ -38,6 +38,9 @@ jobs:
       - name: Build project
         env:
           VITE_BASE_PATH: /Hackathon-Smart-Profile-Management-System/
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_OPENAI_API_KEY: ${{ secrets.VITE_OPENAI_API_KEY }}
         run: npm run build
 
       - name: Setup Pages
