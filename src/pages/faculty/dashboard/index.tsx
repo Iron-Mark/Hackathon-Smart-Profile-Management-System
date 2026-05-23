@@ -108,7 +108,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
     setUploadResults(results)
 
     for (const [index, file] of uploadedFiles.entries()) {
-      const result = await determineDocumentTypeAndUpload(file)
+      const result = await determineDocumentTypeAndUpload(file, userId)
 
       if (!result) {
         toast.error(`Failed to upload: ${file.name}`)

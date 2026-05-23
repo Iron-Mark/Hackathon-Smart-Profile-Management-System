@@ -9,7 +9,7 @@ export type AuditAction =
   | 'APPROVAL_ACTION' 
   | 'SETTINGS_CHANGE';
 
-export const logAudit = async (action: AuditAction, details: string, userId: string) => {
+export const logAudit = async (action: AuditAction, details: string, userId: string = 'SYSTEM') => {
   try {
     if (!userId) {
       console.warn('Could not log audit: User not authenticated');
