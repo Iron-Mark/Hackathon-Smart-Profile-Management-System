@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+Allow: /auth/login
+Disallow: /admin/
+Disallow: /faculty/
+
+# AI Crawlers - Explicitly Welcomed
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://marksiazon.dev/sitemap.xml

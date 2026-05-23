@@ -1,7 +1,7 @@
 // src/hooks/usePersonalInfo.ts
 import { useState, useEffect } from "react";
 import getFromDatabase from "@/tools/database/getFromDatabase";
-import { useUserId } from "@/hooks/use-userId";
+import { useFetchUserId } from "@/hooks/use-userId";
 
 export interface PersonalInfo {
   name: string;
@@ -14,16 +14,18 @@ export function usePersonalInfo() {
   const [data, setData] = useState<PersonalInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { userId, error: userIdError } = useFetchUserId();
 
   useEffect(() => {
     let mounted = true;
 
     async function fetchProfile() {
+      if (!userId) {
+        if (userIdError) setError(userIdError);
+        return;
+      }
+
       try {
-        const { userId, success } = await useUserId();
-        if (!success || !userId) {
-          throw new Error("User not authenticated");
-        }
 
         const accountData = await getFromDatabase({
           table: "account_details",
@@ -45,8 +47,8 @@ export function usePersonalInfo() {
             description: profileData[0]?.description || "",
           });
         }
-      } catch (err: any) {
-        if (mounted) setError(err.message);
+      } catch (err: unknown) {
+        if (mounted) setError(err instanceof Error ? err.message : String(err));
       } finally {
         if (mounted) setIsLoading(false);
       }
@@ -57,7 +59,7 @@ export function usePersonalInfo() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [userId, userIdError]);
 
   return { data, isLoading, error };
 }

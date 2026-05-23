@@ -10,12 +10,14 @@ import { Toaster, toast } from 'sonner'
 import determineDocumentTypeAndUpload from '@/tools/determineDocumentTypeAndUpload'
 import getFromDatabase from '@/tools/database/getFromDatabase'
 import { useUserId } from '@/hooks/use-userId'
+import { useDocumentTitle } from '@/hooks/use-document-title'
 
 interface FacultyDashboardProps {
   children?: ReactNode
 }
 
 export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
+  useDocumentTitle('Faculty Dashboard')
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
   const [uploadResults, setUploadResults] = useState<
     { fileName: string; progress: number; documentType?: string }[]

@@ -1,5 +1,5 @@
 import supabase from "@/client/supabase";
-import { useUserId } from "@/hooks/use-userId";
+
 import getFromDatabase from "../database/getFromDatabase";
 
 type UploadedFile = {
@@ -22,9 +22,8 @@ const formatDate = (isoString: string): string => {
   });
 };
 
-async function fetchUploadedFiles(): Promise<UploadedFile[] | null> {
-  const { userId, success } = await useUserId(); 
-  if (!userId || !success) {
+async function fetchUploadedFiles(userId: string): Promise<UploadedFile[] | null> {
+  if (!userId) {
     return null;
   }
 
@@ -61,7 +60,7 @@ async function fetchUploadedFiles(): Promise<UploadedFile[] | null> {
     const files = data.map((file) => {
       // Find matching submission to get status
       const submission = submissions.find(
-        (s: any) => s.file_name === file.name && s.document_type === category
+        (s: { file_name: string; document_type: string; status: string }) => s.file_name === file.name && s.document_type === category
       );
       
       return {

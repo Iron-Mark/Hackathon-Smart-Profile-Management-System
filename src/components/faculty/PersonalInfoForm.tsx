@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import type { PersonalInfo } from "@/hooks/use-personalInfo";
 import updateDatabase from "@/tools/database/updateDatabase";      
 import { logAudit } from "@/tools/database/logAudit";
-import { useUserId } from "@/hooks/use-userId";
+import { useFetchUserId } from "@/hooks/use-userId";
 export interface PersonalInfoFormProps {
   initialValues?: PersonalInfo | null;
   onSuccess: () => void;
@@ -25,6 +25,7 @@ export default function PersonalInfoForm({
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const { userId, error: userIdError } = useFetchUserId();
 
   const handleChange =
     (field: keyof PersonalInfo) =>
@@ -37,9 +38,8 @@ export default function PersonalInfoForm({
     setError("");
 
     try {
-      const { userId, success } = await useUserId();
-      if (!success || !userId) {
-        throw new Error("User not authenticated");
+      if (!userId) {
+        throw new Error(userIdError || "User not authenticated");
       }
 
       // Update account_details (name)
@@ -59,7 +59,7 @@ export default function PersonalInfoForm({
         match: { id: userId },
       });
 
-      await logAudit('PROFILE_UPDATE', `User updated personal information`);
+      await logAudit('PROFILE_UPDATE', `User updated personal information`, userId);
 
       onSuccess();
     } catch (err: unknown) {

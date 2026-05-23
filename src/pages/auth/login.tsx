@@ -5,7 +5,10 @@ import { Label } from '@/components/ui/label'
 import { Eye, EyeOff } from 'lucide-react'
 import supabaseAccountActions from '@/tools/accounts/supabaseAccountActions'
 import { useNavigate } from 'react-router-dom'
+import { useDocumentTitle } from '@/hooks/use-document-title'
+
 export default function LoginPage () {
+  useDocumentTitle('Login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)

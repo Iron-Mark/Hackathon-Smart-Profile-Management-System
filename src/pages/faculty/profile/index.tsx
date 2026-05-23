@@ -203,6 +203,39 @@ export default function ProfilePage () {
     setIsGenerating(false)
   }
 
+  const handleGenerateAIBio = async () => {
+    setIsGenerating(true)
+    try {
+      const submissions = await getFromDatabase({
+        table: 'submissions',
+        getAll: true,
+        match: { user_id: userId, status: 'Approved' }
+      })
+      const documentTypes = submissions.map((s: any) => s.document_type).join(', ')
+      
+      const generatedBio = await analyzeDocument(
+        documentTypes || 'No verified credentials yet.',
+        'Write a short, professional faculty biography based on these verified credentials.'
+      )
+      
+      // Update both temp and main description so it shows up instantly on the profile
+      setTempDescription(generatedBio)
+      setDescription({ description: generatedBio, status: 'pending' })
+      
+      await updateDatabase({
+        table: 'profile_details',
+        data: { description: generatedBio, status: 'pending' },
+        match: { id: userId }
+      })
+      toast.success('AI Bio generated from credentials!')
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to generate AI Bio')
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
   const handleSaveDescription = async () => {
     try {
       const updatedDescription = {
@@ -418,42 +451,54 @@ export default function ProfilePage () {
 
               {/* Profile Description Card */}
               <Card className="bg-white rounded-md shadow-sm overflow-hidden print:shadow-none print:border-none">
-                <CardHeader className="flex justify-between items-center print:p-2">
+                <CardHeader className="flex justify-between items-center flex-row print:p-2">
                   <CardTitle className="font-semibold text-md sm:text-lg text-green-600">
                     Profile Description
                   </CardTitle>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <button className='text-gray-500 hover:text-gray-700 print:hidden'>
-                        <Edit3Icon className='w-5 h-5' />
-                      </button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Edit Description</DialogTitle>
-                      </DialogHeader>
-                      <div className='space-y-4'>
-                        <textarea
-                          className='flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
-                          value={tempDescription}
-                          onChange={e => setTempDescription(e.target.value)}
-                          placeholder='Edit your professional description here'
-                        />
-                        <div className='flex justify-between items-center'>
-                          <Button 
-                            variant="outline" 
-                            onClick={handleGenerateSummary} 
-                            disabled={isGenerating}
-                            className="text-indigo-600 border-indigo-200 hover:bg-indigo-50"
-                          >
-                            <SparklesIcon className="w-4 h-4 mr-2" />
-                            {isGenerating ? 'Generating...' : 'AI Generate Summary'}
-                          </Button>
-                          <Button onClick={handleSaveDescription}>Save</Button>
+                  <div className="flex gap-2 print:hidden">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleGenerateAIBio} 
+                      disabled={isGenerating}
+                      className="text-indigo-600 border-indigo-200 hover:bg-indigo-50 text-xs sm:text-sm"
+                    >
+                      <SparklesIcon className="w-4 h-4 mr-1 sm:mr-2" />
+                      {isGenerating ? 'Generating Bio...' : 'Generate AI Bio'}
+                    </Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button className='text-gray-500 hover:text-gray-700 p-2'>
+                          <Edit3Icon className='w-5 h-5' />
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Edit Description</DialogTitle>
+                        </DialogHeader>
+                        <div className='space-y-4'>
+                          <textarea
+                            className='flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
+                            value={tempDescription}
+                            onChange={e => setTempDescription(e.target.value)}
+                            placeholder='Edit your professional description here'
+                          />
+                          <div className='flex justify-between items-center'>
+                            <Button 
+                              variant="outline" 
+                              onClick={handleGenerateSummary} 
+                              disabled={isGenerating}
+                              className="text-indigo-600 border-indigo-200 hover:bg-indigo-50"
+                            >
+                              <SparklesIcon className="w-4 h-4 mr-2" />
+                              {isGenerating ? 'Generating...' : 'AI Generate Summary'}
+                            </Button>
+                            <Button onClick={handleSaveDescription}>Save</Button>
+                          </div>
                         </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 </CardHeader>
                 <CardContent className='text-gray-700 leading-relaxed text-sm sm:text-base'>
                   {description.description || <span className="text-gray-400 italic">No description provided. Click edit to add one.</span>}

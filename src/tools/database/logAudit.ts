@@ -1,5 +1,5 @@
 import insertToDatabase from './insertToDatabase';
-import { useUserId } from '@/hooks/use-userId';
+
 
 export type AuditAction = 
   | 'LOGIN' 
@@ -9,10 +9,9 @@ export type AuditAction =
   | 'APPROVAL_ACTION' 
   | 'SETTINGS_CHANGE';
 
-export const logAudit = async (action: AuditAction, details: string) => {
+export const logAudit = async (action: AuditAction, details: string, userId: string) => {
   try {
-    const { userId, success } = await useUserId();
-    if (!success || !userId) {
+    if (!userId) {
       console.warn('Could not log audit: User not authenticated');
       return;
     }

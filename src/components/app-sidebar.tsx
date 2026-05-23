@@ -17,6 +17,8 @@ interface AppSidebarProps {
   className?: string
 }
 
+import { ThemeToggle } from '@/components/ThemeToggle'
+
 export function AppSidebar ({ className }: AppSidebarProps) {
   const navigate = useNavigate()
   const facultyItems = [
@@ -58,8 +60,8 @@ export function AppSidebar ({ className }: AppSidebarProps) {
   return (
     <div className={className}>
       <Sidebar>
-        <SidebarContent>
-          <SidebarGroup>
+        <SidebarContent className="flex flex-col h-full">
+          <SidebarGroup className="flex-1">
             <SidebarGroupLabel>
               {' '}
               <img
@@ -100,6 +102,9 @@ export function AppSidebar ({ className }: AppSidebarProps) {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
+          <div className="mt-auto p-4 flex justify-start">
+            <ThemeToggle />
+          </div>
         </SidebarContent>
       </Sidebar>
     </div>

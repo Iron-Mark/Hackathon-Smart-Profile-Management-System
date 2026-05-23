@@ -43,15 +43,16 @@ const loginUser = async (
     }
 
     console.log('User logged in successfully:', data.user)
-    await logAudit('LOGIN', `User logged in from ${email}`);
+    await logAudit('LOGIN', `User logged in from ${email}`, userId);
     navigate(`/${account[0].type}/dashboard/`)
 
     return { success: true, user: data.user, session: data.session }
-  } catch (err: any) {
-    console.error('Login failed:', err.message)
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'An unexpected error occurred';
+    console.error('Login failed:', message)
     return {
       success: false,
-      message: err.message || 'An unexpected error occurred',
+      message,
       user: null,
       session: null
     }

@@ -34,7 +34,6 @@ import {
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { categoryIcons, statusVariants, type Category } from '@/lib/icons'
-import fetchUploadedFiles from '@/tools/buckets/fetchUploadedFiles'
 import removeItemFromBucket from '@/tools/buckets/removeItemFromBucket'
 import { useFetchUserId } from '@/hooks/use-userId'
 import { toast } from 'sonner'
@@ -44,6 +43,8 @@ import getFileFromFolder from '@/tools/buckets/getFileFromFolder'
 import { analyzeDocument } from '@/tools/ai/analyzeDocument'
 import uploadToUserFolder from '@/tools/buckets/uploadToUserFolder'
 import insertToDatabase from '@/tools/database/insertToDatabase'
+import getFromDatabase from '@/tools/database/getFromDatabase'
+import supabase from '@/client/supabase'
 
 type UploadedFile = {
   id: number;
@@ -65,9 +66,33 @@ export default function UploadedFilesPage() {
 
   const prepareFiles = async () => {
     setIsLoading(true);
-    const uploadedFiles = await fetchUploadedFiles();
-    setEditableFiles(uploadedFiles);
-    setIsLoading(false);
+    if (!userId) {
+      setIsLoading(false);
+      return;
+    }
+    
+    try {
+      const submissions = await getFromDatabase({
+        table: "submissions",
+        getAll: true,
+        match: { user_id: userId }
+      });
+
+      const files = submissions.map((s: { file_name: string; created_at: string; status: string; document_type: string; id: number }, index: number) => ({
+        id: index + 1,
+        name: s.file_name,
+        uploadedAt: s.created_at ? new Date(s.created_at).toLocaleString() : 'N/A',
+        status: s.status,
+        category: s.document_type,
+        submissionId: s.id // Optional if needed
+      }));
+      setEditableFiles(files);
+    } catch (err) {
+      console.error("Failed to fetch files", err);
+      toast.error("Failed to fetch uploaded files");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleFileUpload = async (file: File) => {
@@ -114,8 +139,39 @@ export default function UploadedFilesPage() {
   }, [error]);
 
   useEffect(() => {
-    prepareFiles();
-  }, []);
+    if (userId) {
+      prepareFiles();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const channel = supabase
+      .channel('public:submissions')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'submissions',
+          filter: `user_id=eq.${userId}`
+        },
+        (payload: { new: { user_id: string; file_name: string; status: string } }) => {
+          if (payload.new && payload.new.user_id === userId) {
+            toast.info(`Document ${payload.new.file_name} status updated to ${payload.new.status}`);
+            prepareFiles();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
   if (!editableFiles) {
     return null;

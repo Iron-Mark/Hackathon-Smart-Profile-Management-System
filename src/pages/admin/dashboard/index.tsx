@@ -9,17 +9,44 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
 import { useState, useEffect } from "react";
 import getFromDatabase from "@/tools/database/getFromDatabase";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { useDocumentTitle } from "@/hooks/use-document-title";
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A288FE', '#00F49F', '#F0BB28', '#F08042'];
 
 export default function AdminDashboard() {
+  useDocumentTitle('Admin Dashboard');
   const [usersCount, setUsersCount] = useState(0);
   const [activeSessions, setActiveSessions] = useState(0);
   const [pendingApprovals, setPendingApprovals] = useState(0);
   const [uploadData, setUploadData] = useState<any[]>([]);
   const [categoryData, setCategoryData] = useState<any[]>([]);
   const [recentSubmissions, setRecentSubmissions] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+
+  const handleExportCSV = async () => {
+    try {
+      const submissions = await getFromDatabase({ table: 'submissions', getAll: true, match: {} });
+      if (!submissions || submissions.length === 0) return;
+      
+      const keys = Object.keys(submissions[0]);
+      const csv = [
+        keys.join(','),
+        ...submissions.map((row: any) => keys.map(k => `"${String(row[k] || '').replace(/"/g, '""')}"`).join(','))
+      ].join('\n');
+      
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'submissions_export.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Export CSV failed", error);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -94,9 +121,12 @@ export default function AdminDashboard() {
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">
           <main className="flex-1 w-full bg-gradient-to-br from-gray-100 to-gray-200 p-6">
-            <h1 className="text-4xl font-extrabold text-gray-800 mb-6">
-              Admin Dashboard
-            </h1>
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-4xl font-extrabold text-gray-800">
+                Admin Dashboard
+              </h1>
+              <Button onClick={handleExportCSV}>Export CSV</Button>
+            </div>
             <Separator className="mb-6" />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -181,9 +211,18 @@ export default function AdminDashboard() {
             </div>
 
             <div className="mt-8">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                Recent Submissions for Approval
-              </h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  Recent Submissions for Approval
+                </h2>
+                <input
+                  type="text"
+                  placeholder="Search faculty or docs..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
+                />
+              </div>
               <div className="bg-white shadow-md rounded-md p-4">
                 <ul className="space-y-3">
                   {isLoading ? (
@@ -193,8 +232,10 @@ export default function AdminDashboard() {
                         <Skeleton className="h-8 w-20" />
                       </li>
                     ))
-                  ) : recentSubmissions.length > 0 ? (
-                    recentSubmissions.map((sub) => (
+                  ) : recentSubmissions.filter(s => (s.file_name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) || (s.document_type?.toLowerCase() || '').includes(searchQuery.toLowerCase())).length > 0 ? (
+                    recentSubmissions
+                      .filter(s => (s.file_name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) || (s.document_type?.toLowerCase() || '').includes(searchQuery.toLowerCase()))
+                      .map((sub) => (
                       <li key={sub.id} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
                         <span className="text-sm text-gray-600">
                           {sub.document_type} upload: <span className="font-medium text-gray-900">{sub.file_name}</span>

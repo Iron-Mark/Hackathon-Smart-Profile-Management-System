@@ -1,13 +1,12 @@
 import uploadToUserFolder from './buckets/uploadToUserFolder'
 import determineDocumentType from './ocr/determineDocumentType'
-import { useUserId } from '@/hooks/use-userId'
+
 import insertToDatabase from './database/insertToDatabase'
 import { logAudit } from './database/logAudit'
 
-const determineDocumentTypeAndUpload = async (file: File) => {
+const determineDocumentTypeAndUpload = async (file: File, userId: string) => {
   try {
-    const { userId, success } = await useUserId()
-    if (!userId || !success) {
+    if (!userId) {
       return { error: `user ID does not exist`, success: true }
     }
     const documentType = await determineDocumentType(file)
@@ -32,13 +31,13 @@ const determineDocumentTypeAndUpload = async (file: File) => {
           submitted_at: new Date().toISOString()
         }
       })
-      await logAudit('DOCUMENT_UPLOAD', `User uploaded ${documentType}: ${fileName}`);
+      await logAudit('DOCUMENT_UPLOAD', `User uploaded ${documentType}: ${fileName}`, userId);
       return { success: true, documentType: documentType, fileName: fileName }
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.log(error)
 
-    return { error: error.message, success: false }
+    return { error: error instanceof Error ? error.message : 'Unknown error', success: false }
   }
 }
 
