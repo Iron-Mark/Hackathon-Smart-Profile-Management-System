@@ -27,7 +27,12 @@ const signUpUser = async ({
     })
 
     if (error) {
-      console.error('Error signing up:', error.message)
+      const expectedDuplicateEmail =
+        error.message.toLowerCase().includes('already registered') ||
+        error.message.includes('unique_email')
+      if (!expectedDuplicateEmail) {
+        console.error('Error signing up:', error.message)
+      }
       return { success: false, message: error.message }
     }
 

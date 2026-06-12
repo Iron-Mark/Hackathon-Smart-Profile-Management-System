@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { UploadCloud } from 'lucide-react'
 import { toast } from 'sonner'
+import { validateUploadFiles } from '@/lib/uploadValidation'
 
 interface DropZoneProps {
   setData: (files: File[]) => void
@@ -18,15 +19,6 @@ const DropZone: React.FC<DropZoneProps> = ({
   const [isDragging, setIsDragging] = useState(false)
   const [files, setFiles] = useState<File[]>([])
 
-  const allowedFileTypes = [
-    'image/jpeg',
-    'image/png',
-    'image/gif',
-    'application/pdf',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-  ]
-
   const handleDragEnter = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
     setIsDragging(true)
@@ -42,18 +34,12 @@ const DropZone: React.FC<DropZoneProps> = ({
       e.preventDefault()
       setIsDragging(false)
       const droppedFiles = Array.from(e.dataTransfer.files)
-      const invalidFiles = droppedFiles.filter(
-        file => !allowedFileTypes.includes(file.type)
-      )
+      const { validFiles, errors } = validateUploadFiles(droppedFiles)
 
-      if (invalidFiles.length > 0) {
-        toast.error(
-          'Some files are not supported. Please upload documents or photos only.'
-        )
-        return
-      }
+      errors.forEach(error => toast.error(error))
+      if (validFiles.length === 0) return
 
-      const uniqueFiles = droppedFiles.filter(
+      const uniqueFiles = validFiles.filter(
         file => !files.some(existing => existing.name === file.name)
       )
 
@@ -72,18 +58,12 @@ const DropZone: React.FC<DropZoneProps> = ({
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || [])
-    const invalidFiles = selectedFiles.filter(
-      file => !allowedFileTypes.includes(file.type)
-    )
+    const { validFiles, errors } = validateUploadFiles(selectedFiles)
 
-    if (invalidFiles.length > 0) {
-      toast.error(
-        'Some files are not supported. Please upload documents or photos only.'
-      )
-      return
-    }
+    errors.forEach(error => toast.error(error))
+    if (validFiles.length === 0) return
 
-    const uniqueFiles = selectedFiles.filter(
+    const uniqueFiles = validFiles.filter(
       file => !files.some(existing => existing.name === file.name)
     )
 
@@ -152,6 +132,9 @@ const DropZone: React.FC<DropZoneProps> = ({
               .
             </>
           )}
+        </p>
+        <p className="max-w-sm text-center text-xs text-gray-500">
+          Supported: JPG, PNG, GIF, SVG, PDF, DOC, or DOCX sample files up to 2 MB.
         </p>
       </div>
       <input

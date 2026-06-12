@@ -394,7 +394,7 @@ export default function UploadedFilesPage() {
                             type: file.category,
                             userId: userId || "",
                           });
-                          if (url) window.open(url, '_blank');
+                          if (url) window.open(url, '_blank', 'noopener,noreferrer');
                           else toast.error('Could not retrieve file URL');
                         }}
                       >
@@ -510,7 +510,6 @@ export default function UploadedFilesPage() {
                         size="sm"
                         className="cursor-pointer"
                         onClick={async () => {
-                          console.log(file.name, file.category, userId);
                           await removeItemFromBucket({
                             bucketName: "pictures-and-documents",
                             filename: file.name,

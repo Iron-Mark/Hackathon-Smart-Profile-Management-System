@@ -1,11 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { createDemoSupabaseClient, isDemoSupabaseEnabled } from './demoSupabase';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://dummy-project.supabase.co";
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "dummy-key";
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-const supabase = createClient(
-  supabaseUrl,
-  supabaseKey
-);
+export const isUsingDemoSupabase = isDemoSupabaseEnabled();
+
+const supabase = isUsingDemoSupabase
+  ? createDemoSupabaseClient()
+  : createClient(supabaseUrl, supabaseKey);
   
-export default supabase;
+export default supabase as SupabaseClient;

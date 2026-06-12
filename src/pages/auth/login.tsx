@@ -1,17 +1,19 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Eye, EyeOff } from 'lucide-react'
 import supabaseAccountActions from '@/tools/accounts/supabaseAccountActions'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useDocumentTitle } from '@/hooks/use-document-title'
+import { DemoAccessPanel } from '@/components/DemoAccessPanel'
 
 export default function LoginPage () {
   useDocumentTitle('Login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [demoMessage, setDemoMessage] = useState('')
   const [errors, setErrors] = useState<{
     email?: string
     password?: string
@@ -20,11 +22,32 @@ export default function LoginPage () {
   const [loginError, setLoginError] = useState<string>('')
 
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  useEffect(() => {
+    const resetMessage = window.sessionStorage.getItem('smart-profile-demo-reset-message')
+    if (resetMessage) {
+      window.sessionStorage.removeItem('smart-profile-demo-reset-message')
+      setDemoMessage(resetMessage)
+    }
+
+    if (searchParams.get('demo') === 'faculty') {
+      setEmail('faculty@umak.edu.ph')
+      setPassword('Faculty123')
+      setLoginError('')
+      setDemoMessage('faculty@umak.edu.ph is ready to sign in.')
+    }
+  }, [searchParams])
+
   const validate = () => {
     const newErrors: typeof errors = {}
 
-    if (!email.endsWith('@umak.edu.ph')) {
-      newErrors.email = 'Email must end with @umak.edu.ph'
+    if (!email || !email.includes('@')) {
+      newErrors.email = 'Enter a valid email address.'
+    }
+
+    if (!password) {
+      newErrors.password = 'Password is required.'
     }
 
     setErrors(newErrors)
@@ -61,13 +84,34 @@ export default function LoginPage () {
           Welcome Back
         </h2>
 
+        <DemoAccessPanel
+          onUseAccount={account => {
+            setEmail(account.email)
+            setPassword(account.password)
+            setLoginError('')
+            setDemoMessage(`${account.email} is ready to sign in.`)
+          }}
+          onReset={() => {
+            setEmail('')
+            setPassword('')
+            setErrors({})
+            setLoginError('')
+            setDemoMessage('Demo data reset to the seeded showcase state.')
+          }}
+        />
+        {demoMessage && (
+          <p className='text-sm text-yellow-100' role='status'>
+            {demoMessage}
+          </p>
+        )}
+
         <form onSubmit={handleSubmit} className='space-y-5'>
           <div>
-            <Label htmlFor='email'>UMak Email</Label>
+            <Label htmlFor='email'>Email</Label>
             <Input
               id='email'
               type='email'
-              placeholder='you@umak.edu.ph'
+              placeholder='name@example.com'
               value={email}
               onChange={e => setEmail(e.target.value)}
               aria-describedby='email-error'

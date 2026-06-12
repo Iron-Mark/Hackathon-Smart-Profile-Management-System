@@ -135,7 +135,7 @@ export default function AdminDashboard() {
                   <CardTitle className="text-sm">Total Users</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : usersCount}</p>
+                  <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : usersCount}</div>
                 </CardContent>
               </Card>
 
@@ -144,7 +144,7 @@ export default function AdminDashboard() {
                   <CardTitle className="text-sm">Active Sessions (24h)</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : activeSessions}</p>
+                  <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : activeSessions}</div>
                 </CardContent>
               </Card>
 
@@ -153,7 +153,7 @@ export default function AdminDashboard() {
                   <CardTitle className="text-sm">Pending Approvals</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : pendingApprovals}</p>
+                  <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : pendingApprovals}</div>
                 </CardContent>
               </Card>
             </div>
@@ -165,7 +165,7 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent className="h-[300px]">
                   {isLoading ? <Skeleton className="w-full h-full" /> : (
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 500, height: 300 }}>
                       <BarChart data={uploadData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" />
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent className="h-[300px]">
                   {isLoading ? <Skeleton className="w-full h-full" /> : (
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 500, height: 300 }}>
                       <PieChart>
                         <Pie
                           data={categoryData}

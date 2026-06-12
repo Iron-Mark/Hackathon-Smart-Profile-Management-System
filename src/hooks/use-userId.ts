@@ -24,7 +24,6 @@ export function useFetchUserId() {
   useEffect(() => {
     async function fetchUserId() {
       try {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
         const userIdData = await useUserId();
         setUserId(userIdData?.userId || null);
       } catch {

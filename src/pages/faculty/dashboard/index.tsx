@@ -150,9 +150,9 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                 <h1 className='text-3xl font-extrabold text-gray-800 mb-2'>
                   {isLoading ? <Skeleton className="h-9 w-64" /> : `Welcome, ${name}`}
                 </h1>
-                <p className='text-gray-600 mb-6'>
+                <div className='text-gray-600 mb-6'>
                   {isLoading ? <Skeleton className="h-4 w-80" /> : 'Track your records and compliance status here.'}
-                </p>
+                </div>
                 <Separator className='mb-6' />
 
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 relative'>
@@ -171,9 +171,9 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                             </CardTitle>
                           </CardHeader>
                           <CardContent>
-                            <p className={`text-2xl font-bold ${item.color}`}>
+                            <div className={`text-2xl font-bold ${item.color}`}>
                               {isLoading ? <Skeleton className="h-8 w-12" /> : item.val}
-                            </p>
+                            </div>
                           </CardContent>
                         </Card>
                       ))}
@@ -184,6 +184,9 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                     <p className='text-gray-600 mb-3'>
                       Use our AI-powered smart upload to automatically organize
                       and process your documents effortlessly.
+                    </p>
+                    <p className='mb-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800'>
+                      Use sample files only. Public demo uploads stay in this browser and are meant for showcase testing.
                     </p>
 
                     <DropZone

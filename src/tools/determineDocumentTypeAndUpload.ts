@@ -11,7 +11,6 @@ const determineDocumentTypeAndUpload = async (file: File, userId: string) => {
     }
     const documentType = await determineDocumentType(file)
     const fileName = file.name
-    console.log(documentType, fileName)
     const response = await uploadToUserFolder({
       bucketName: 'pictures-and-documents',
       file: file,
@@ -35,7 +34,10 @@ const determineDocumentTypeAndUpload = async (file: File, userId: string) => {
       return { success: true, documentType: documentType, fileName: fileName }
     }
   } catch (error: unknown) {
-    console.log(error)
+    console.error(
+      'Document upload workflow failed:',
+      error instanceof Error ? error.message : error
+    )
 
     return { error: error instanceof Error ? error.message : 'Unknown error', success: false }
   }

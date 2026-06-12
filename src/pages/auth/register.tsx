@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label'
 import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import supabaseAccountActions from '@/tools/accounts/supabaseAccountActions'
+import { DemoAccessPanel } from '@/components/DemoAccessPanel'
 
 export default function RegisterPage () {
   const [email, setEmail] = useState('')
@@ -12,6 +13,7 @@ export default function RegisterPage () {
   const [name, setName] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [errors, setErrors] = useState<{
+    name?: string
     email?: string
     password?: string
     confirm?: string
@@ -21,13 +23,18 @@ export default function RegisterPage () {
   >('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
+  const [demoMessage, setDemoMessage] = useState('')
   const navigate = useNavigate()
 
   const validate = () => {
     const newErrors: typeof errors = {}
 
-    if (!email.endsWith('@umak.edu.ph')) {
-      newErrors.email = 'Email must end with @umak.edu.ph'
+    if (!name.trim()) {
+      newErrors.name = 'Full name is required.'
+    }
+
+    if (!email || !email.includes('@')) {
+      newErrors.email = 'Enter a valid email address.'
     }
 
     if (
@@ -51,6 +58,8 @@ export default function RegisterPage () {
     e.preventDefault()
     if (validate()) {
       try {
+        setRegistrationError('')
+        setDemoMessage('')
         const response = await supabaseAccountActions.signUpUser({
           email: email,
           password: password,
@@ -60,15 +69,15 @@ export default function RegisterPage () {
         if (response.success) {
           navigate('/auth/login')
         } else if (!response.success) {
-          switch (response.message) {
-            case `duplicate key value violates unique constraint "unique_email"`:
-              setRegistrationError('Email already registered')
-              break
-          }
+          const message = response.message || 'Registration failed. Please try again.'
+          const isDuplicateEmail =
+            message.toLowerCase().includes('already registered') ||
+            message.includes('unique_email')
+          setRegistrationError(isDuplicateEmail ? 'Email already registered' : message)
         }
-      } catch (error: any) {
-        setRegistrationError(error)
-        console.log(error)
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error)
+        setRegistrationError(message || 'Registration failed. Please try again.')
       }
     }
   }
@@ -84,6 +93,25 @@ export default function RegisterPage () {
           Create Your Account
         </h2>
 
+        <DemoAccessPanel
+          showSeedAccounts={false}
+          message='Public demo registration accepts any valid email address. The account is saved only in this browser.'
+          onReset={() => {
+            setEmail('')
+            setPassword('')
+            setName('')
+            setConfirmPassword('')
+            setErrors({})
+            setRegistrationError('')
+            setDemoMessage('Demo data reset to the seeded showcase state.')
+          }}
+        />
+        {demoMessage && (
+          <p className='text-sm text-yellow-100' role='status'>
+            {demoMessage}
+          </p>
+        )}
+
         <form className='space-y-4 text-white' onSubmit={handleSubmit}>
           <div>
             <Label htmlFor='name' className='mb-2'>
@@ -92,18 +120,25 @@ export default function RegisterPage () {
             <Input
               id='name'
               placeholder='Juan Dela Cruz'
+              value={name}
               onChange={e => setName(e.target.value)}
+              aria-describedby='name-error'
             />
+            {errors.name && (
+              <p id='name-error' className='text-sm text-red-400 mt-1'>
+                {errors.name}
+              </p>
+            )}
           </div>
 
           <div>
             <Label htmlFor='email' className='mb-2'>
-              UMak Email
+              Email
             </Label>
             <Input
               id='email'
               type='email'
-              placeholder='you@umak.edu.ph'
+              placeholder='name@example.com'
               value={email}
               onChange={e => setEmail(e.target.value)}
               aria-describedby='email-error'
