@@ -11,6 +11,6 @@ test('renders Landing page with title', () => {
   )
   
   expect(screen.getByText(/CCIS Smart Faculty Profile Management System/i)).toBeInTheDocument()
-  expect(screen.getByText(/Login/i)).toBeInTheDocument()
-  expect(screen.getByText(/Register/i)).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Login' })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Register' })).toBeInTheDocument()
 })

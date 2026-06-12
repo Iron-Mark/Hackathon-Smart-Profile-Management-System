@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { appRoute } from './helpers';
 
 test.describe('Smart System Advanced Features', () => {
   // We use the landing page or a common page where the sidebar/theme toggle might exist.
@@ -8,7 +9,7 @@ test.describe('Smart System Advanced Features', () => {
   
   test('App mounts successfully with ThemeProvider', async ({ page }) => {
     // Navigate to a public route
-    await page.goto('/auth/login');
+    await page.goto(appRoute('/auth/login'));
     
     // Ensure the app didn't crash and the global provider is wrapping correctly
     await expect(page.locator('body')).toBeVisible();
