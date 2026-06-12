@@ -1,8 +1,44 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { FileWarning, FileCheck2, Ban, Sparkles } from "lucide-react";
+import { FileWarning, FileCheck2, Ban, Sparkles, PlayCircle } from "lucide-react";
+
+const publicDemoFacts = [
+  {
+    question: 'What is Smart Profile Management System?',
+    answer:
+      'A restored UMak CCIS hackathon showcase for faculty credential uploads, admin review, and approval tracking.',
+  },
+  {
+    question: 'Can anyone try the public demo?',
+    answer:
+      'Yes. Visitors can use seeded reviewer accounts or register a browser-local faculty account with any valid email.',
+  },
+  {
+    question: 'Where is public demo data stored?',
+    answer:
+      'Demo data stays in your browser. Accounts, submissions, audit logs, and uploaded file metadata are stored locally.',
+  },
+  {
+    question: 'Should visitors upload real faculty records?',
+    answer:
+      'No. The public showcase is for generated sample files only, not real IDs, transcripts, licenses, or private records.',
+  },
+  {
+    question: 'Does the GitHub Pages demo need Supabase or OpenAI secrets?',
+    answer:
+      'No. The public build runs in demo mode with deterministic browser-local data and fallback AI/OCR behavior.',
+  },
+  {
+    question: 'Who built the original hackathon project?',
+    answer:
+      'Team 2nd Choice: Mark Siazon, Charles Nathaniel Togle, and Alexa San Jose.',
+  },
+];
 
 export default function Landing() {
+  const assetPath = (fileName: string) => `${import.meta.env.BASE_URL}${fileName}`;
+  const samplePath = (fileName: string) => `${import.meta.env.BASE_URL}demo-samples/${fileName}`;
+
   return (
     <main className="overflow-x-hidden text-white bg-gradient-to-br from-green-900 via-black to-yellow-900">
       {/* HERO SECTION */}
@@ -15,22 +51,32 @@ export default function Landing() {
         <img
           className="w-50 h-25 mb-6 drop-shadow-lg"
           alt="FPMS Logo"
-          src="/fav-icon.png"
+          src={assetPath('fav-icon.png')}
         />
 
         {/* Title */}
+        <div className="mb-4 rounded-full border border-yellow-300/40 bg-yellow-300/10 px-4 py-2 text-sm font-medium text-yellow-100">
+          Browser-local demo mode
+        </div>
         <h1 className="text-5xl font-extrabold mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
           CCIS Smart Faculty Profile Management System
         </h1>
         <p className="text-gray-300 mb-8 max-w-xl">
           Manage faculty data, streamline reports, and support academic
-          compliance with AI-powered automation.
+          compliance with AI-powered automation. The restored public demo lets
+          visitors register with any valid email or use seeded reviewer accounts.
         </p>
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 z-10">
+          <Link to="/auth/login?demo=faculty">
+            <Button size="lg" className="w-full sm:w-36 hover:cursor-pointer hover:shadow-[0_0_15px_#22c55e] transition duration-300 ease-in-out">
+              <PlayCircle className="mr-2 h-4 w-4" />
+              Start demo
+            </Button>
+          </Link>
           <Link to="/auth/login">
-            <Button size="lg" className="w-full sm:w-32 hover:cursor-pointer hover:shadow-[0_0_15px_#22c55e] transition duration-300 ease-in-out">
+            <Button size="lg" variant="secondary" className="w-full sm:w-32 hover:cursor-pointer hover:shadow-[0_0_15px_#22c55e] transition duration-300 ease-in-out">
               Login
             </Button>
           </Link>
@@ -43,6 +89,14 @@ export default function Landing() {
               Register
             </Button>
           </Link>
+        </div>
+        <div className="mt-5 flex flex-col items-center gap-2 text-sm text-yellow-50/80">
+          <a href={samplePath('sample-certificate.svg')} className="underline hover:text-yellow-200">
+            Download sample certificate
+          </a>
+          <a href={samplePath('sample-transcript.svg')} className="underline hover:text-yellow-200">
+            Download sample transcript
+          </a>
         </div>
       </section>
 
@@ -105,17 +159,36 @@ export default function Landing() {
         </div>
       </section>
 
+      <section className="bg-zinc-950 px-6 py-20 text-white md:px-16">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="mb-4 text-center text-3xl font-bold text-green-300">
+            Public Demo Facts
+          </h2>
+          <p className="mx-auto mb-10 max-w-2xl text-center text-sm text-zinc-300">
+            Concise project facts for reviewers, search snippets, and AI answer engines.
+          </p>
+          <dl className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            {publicDemoFacts.map((fact) => (
+              <div key={fact.question} className="rounded-lg border border-green-400/20 bg-black/35 p-5">
+                <dt className="mb-2 text-base font-semibold text-yellow-100">{fact.question}</dt>
+                <dd className="text-sm leading-6 text-zinc-300">{fact.answer}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
       {/* FOOTER */}
       <footer className="py-12 bg-black border-t border-white/10 text-center text-gray-500 text-sm">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col items-center gap-4 mb-6">
-            <img src="/fav-icon.png" alt="Logo" className="w-10 opacity-50 grayscale" />
+            <img src={assetPath('fav-icon.png')} alt="Logo" className="w-10 opacity-50 grayscale" />
             <p className="max-w-md">The Smart Faculty Profile Management System is a project developed for academic excellence and compliance.</p>
           </div>
           <div className="flex justify-center gap-6 mb-6">
              <Link to="/auth/login" className="hover:text-green-400 transition-colors">Faculty Portal</Link>
-             <Link to="/admin/dashboard" className="hover:text-green-400 transition-colors">Admin Access</Link>
-             <a href="#" className="hover:text-green-400 transition-colors">Support</a>
+             <Link to="/auth/login" className="hover:text-green-400 transition-colors">Admin Login</Link>
+             <a href="https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System" className="hover:text-green-400 transition-colors">Repository</a>
           </div>
           <p>&copy; 2026 Team 2nd Choice (San Jose, Siazon, Togle). Developed for the 7th UMak CCIS 2-Day Hackathon.</p>
         </div>

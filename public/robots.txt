@@ -1,19 +1,30 @@
 User-agent: *
-Allow: /
-Allow: /auth/login
-Disallow: /admin/
-Disallow: /faculty/
+Allow: /Hackathon-Smart-Profile-Management-System/
+Disallow: /Hackathon-Smart-Profile-Management-System/auth/
+Disallow: /Hackathon-Smart-Profile-Management-System/admin/
+Disallow: /Hackathon-Smart-Profile-Management-System/faculty/
+Disallow: /Hackathon-Smart-Profile-Management-System/demo-storage/
 
-# AI Crawlers - Explicitly Welcomed
+# Public demo assets and docs are intentionally crawlable.
+Allow: /Hackathon-Smart-Profile-Management-System/demo-samples/
+Allow: /Hackathon-Smart-Profile-Management-System/og-image.png
+Allow: /Hackathon-Smart-Profile-Management-System/llms.txt
+Allow: /Hackathon-Smart-Profile-Management-System/answers.md
+
+# AI crawlers may index the public showcase page and factual project notes.
+User-agent: OAI-SearchBot
+Allow: /Hackathon-Smart-Profile-Management-System/
 User-agent: GPTBot
-Allow: /
+Allow: /Hackathon-Smart-Profile-Management-System/
 User-agent: ChatGPT-User
-Allow: /
+Allow: /Hackathon-Smart-Profile-Management-System/
 User-agent: ClaudeBot
-Allow: /
+Allow: /Hackathon-Smart-Profile-Management-System/
 User-agent: PerplexityBot
-Allow: /
+Allow: /Hackathon-Smart-Profile-Management-System/
 User-agent: CCBot
-Allow: /
+Allow: /Hackathon-Smart-Profile-Management-System/
+User-agent: Google-Extended
+Allow: /Hackathon-Smart-Profile-Management-System/
 
-Sitemap: https://marksiazon.dev/sitemap.xml
+Sitemap: https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/sitemap.xml
