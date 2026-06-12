@@ -14,7 +14,6 @@ const logOutUser = async (): Promise<LogoutResponse> => {
       return { success: false, message: error.message }
     }
 
-    console.log('User logged out successfully')
     return { success: true }
   } catch (error: unknown) {
     const err = error as Error

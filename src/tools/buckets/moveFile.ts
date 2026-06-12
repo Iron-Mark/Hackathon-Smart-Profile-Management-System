@@ -35,7 +35,6 @@ const moveFile = async ({
 
     if (deleteError) throw deleteError
 
-    console.log('File moved successfully.')
     return true
   } catch (error) {
     console.error('Error moving file:', error)

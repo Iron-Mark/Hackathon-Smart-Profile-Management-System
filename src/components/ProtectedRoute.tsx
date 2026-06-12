@@ -28,11 +28,11 @@ export default function ProtectedRoute({ children, requiredRole }: ProtectedRout
         if (requiredRole) {
           const { data, error } = await supabase
             .from("account_details")
-            .select("role")
-            .eq("account_id", user.id)
+            .select("type")
+            .eq("id", user.id)
             .single();
 
-          if (error || !data || data.role !== requiredRole) {
+          if (error || !data || data.type !== requiredRole) {
             setRedirect(requiredRole === "admin" ? "/faculty/dashboard" : "/admin/dashboard");
             setLoading(false);
             return;

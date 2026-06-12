@@ -11,7 +11,7 @@ export default async function updateDatabase ({
   data,
   match
 }: UpdateParams): Promise<{ success: boolean }> {
-  const { data: result, error } = await supabase
+  const { error } = await supabase
     .from(table)
     .update(data)
     .match(match)
@@ -21,6 +21,5 @@ export default async function updateDatabase ({
     throw new Error(error.message)
   }
 
-  console.log(`Successfully updated ${table}:`, result)
   return { success: true }
 }

@@ -1,4 +1,5 @@
 import insertToDatabase from './insertToDatabase';
+import supabase from '@/client/supabase';
 
 
 export type AuditAction = 
@@ -9,9 +10,11 @@ export type AuditAction =
   | 'APPROVAL_ACTION' 
   | 'SETTINGS_CHANGE';
 
-export const logAudit = async (action: AuditAction, details: string, userId: string = 'SYSTEM') => {
+export const logAudit = async (action: AuditAction, details: string, userId?: string) => {
   try {
-    if (!userId) {
+    const resolvedUserId = userId ?? (await supabase.auth.getUser()).data.user?.id;
+
+    if (!resolvedUserId) {
       console.warn('Could not log audit: User not authenticated');
       return;
     }
@@ -19,7 +22,7 @@ export const logAudit = async (action: AuditAction, details: string, userId: str
     await insertToDatabase({
       table: 'audit_logs',
       data: {
-        user_id: userId,
+        user_id: resolvedUserId,
         action,
         details,
         timestamp: new Date().toISOString()

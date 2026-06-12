@@ -19,16 +19,22 @@ const getFileFromFolder = async ({
   userId: string
 }): Promise<string | null> => {
   const filePath = `${userId}/${type}/${fileName}`
+  const bucket = supabase.storage.from(bucketName)
 
-  const { data } = supabase.storage.from(`${bucketName}`).getPublicUrl(filePath)
+  const { data, error } = await bucket.createSignedUrl(
+    filePath,
+    60 * 60
+  )
 
-  if (!data?.publicUrl) {
-    console.error('Error retrieving image')
-    return null
+  if (data?.signedUrl) {
+    return data.signedUrl
   }
 
-  console.log(`Image retrieved successfully: ${data.publicUrl}`)
-  return data.publicUrl
+  console.error(
+    `Error retrieving signed file URL for ${filePath}:`,
+    error?.message || 'No signed URL returned'
+  )
+  return null
 }
 
 export default getFileFromFolder

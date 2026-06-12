@@ -11,7 +11,7 @@ const changePassword = async (newPassword: string) => {
       return { success: false, message: 'User not authenticated' }
     }
 
-    const { data, error } = await supabase.auth.updateUser({
+    const { error } = await supabase.auth.updateUser({
       password: newPassword
     })
 
@@ -20,7 +20,6 @@ const changePassword = async (newPassword: string) => {
       return { success: false, message: error.message }
     }
 
-    console.log('Password updated successfully', data)
     return { success: true }
   } catch (error: any) {
     console.error('Unexpected error:', error.message || error)

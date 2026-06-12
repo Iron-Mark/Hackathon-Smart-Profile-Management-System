@@ -11,8 +11,6 @@ export default async function getFromDatabase ({
   getAll: boolean
   match: object
 }): Promise<any[]> {
-  const { log } = console
-
   const query = getAll
     ? supabase.from(table).select().match(match)
     : supabase.from(table).select(column).match(match)
@@ -20,10 +18,9 @@ export default async function getFromDatabase ({
   const { data, error } = await query
 
   if (error) {
-    log('Error:', error)
+    console.error(`Error fetching from ${table}:`, error.message)
     throw new Error(error.message)
   }
 
-  log('Data:', data)
   return data || []
 }

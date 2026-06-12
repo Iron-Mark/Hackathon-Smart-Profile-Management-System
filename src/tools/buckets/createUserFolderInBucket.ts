@@ -25,12 +25,11 @@ const createUserFolderInBucket = async (
     if (error) throw error
 
     await removeItemFromBucket({
-      bucketName: 'pictures-and-documents',
-      filename: fileName,
+      bucketName,
+      filename: '.placeholder',
       type: type,
       userId: userId
     })
-    console.log(`Folder created for user ${userId} in ${bucketName}.`)
     return { data }
   } catch (error) {
     console.error('Error creating user folder:', error)

@@ -66,7 +66,7 @@ async function fetchUploadedFiles(userId: string): Promise<UploadedFile[] | null
       return {
         id: currentId++,
         name: file.name,
-        uploadedAt: formatDate(file.updated_at) || new Date().toISOString(),
+        uploadedAt: formatDate(file.updated_at ?? new Date().toISOString()),
         status: submission?.status || "Unverified",
         category,
       };

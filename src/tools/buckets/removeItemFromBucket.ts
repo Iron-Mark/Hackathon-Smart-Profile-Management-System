@@ -13,12 +13,10 @@ const removeItemFromBucket = async ({
 }): Promise<boolean> => {
   try {
     const path = `${userId}/${type}/${filename}`
-    console.log(path)
     const { error } = await supabase.storage.from(bucketName).remove([path])
 
     if (error) throw error
 
-    console.log('File removed successfully.')
     return true
   } catch (error) {
     console.error('Error removing file:', error)

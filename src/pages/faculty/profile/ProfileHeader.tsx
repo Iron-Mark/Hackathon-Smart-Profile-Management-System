@@ -98,7 +98,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         try {
           // Call the upload callback to handle the file upload
           await uploadCallback(file)
-          console.log('Image uploaded successfully.')
 
           // Remove the overlay by setting the preview state
           setImagePreview(reader.result as string)

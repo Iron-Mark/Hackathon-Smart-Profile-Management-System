@@ -30,13 +30,3 @@ export default async function handlePassword (
 
   throw new Error("Invalid mode. Use 'hash' or 'verify'.")
 }
-
-// (async () => {
-//     const password = 'SuperSecret123!';
-
-//     const hashed = await handlePassword('hash', password) as string;
-//     console.log('Hashed:', hashed);
-
-//     const isValid = await handlePassword('verify', password, hashed) as boolean;
-//     console.log('Password correct?', isValid);
-//   })();

@@ -180,7 +180,7 @@ export default function AdminApprovalsPage() {
                                     type: submission.document_type,
                                     userId: submission.user_id,
                                   });
-                                  if (url) window.open(url, '_blank');
+                                  if (url) window.open(url, '_blank', 'noopener,noreferrer');
                                   else toast.error('Could not retrieve file URL');
                                 }}
                               >

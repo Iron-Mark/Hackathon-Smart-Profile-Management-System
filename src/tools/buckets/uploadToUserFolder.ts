@@ -28,7 +28,6 @@ const uploadToUserFolder = async ({
   if (!folderExists) {
     const { error } = await createUserFolderInBucket(bucketName, userId, type)
     if (error) throw error
-    console.log(`User folder created for ${userId}.`)
   }
 
   const filePath = `${userId}/${type}/${filename}`
@@ -42,7 +41,6 @@ const uploadToUserFolder = async ({
     throw error
   }
 
-  console.log(`Image uploaded successfully: ${filePath}`)
   return { data, success: true }
 }
 
