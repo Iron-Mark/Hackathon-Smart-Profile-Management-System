@@ -116,9 +116,7 @@ export default function AdminReportsPage() {
                       Date Range (Optional)
                     </label>
                     <DatePickerWithRange
-                      onDateChange={(range) => {
-                        console.log("Selected date range:", range);
-                      }}
+                      onDateChange={() => undefined}
                     />
                   </div>
                 </div>
