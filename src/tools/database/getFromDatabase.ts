@@ -1,4 +1,4 @@
-import supabase from '@/client/supabase.ts'
+import backend from '@/client/backend'
 
 export default async function getFromDatabase ({
   table,
@@ -12,8 +12,8 @@ export default async function getFromDatabase ({
   match: object
 }): Promise<any[]> {
   const query = getAll
-    ? supabase.from(table).select().match(match)
-    : supabase.from(table).select(column).match(match)
+    ? backend.from(table).select().match(match)
+    : backend.from(table).select(column).match(match)
 
   const { data, error } = await query
 

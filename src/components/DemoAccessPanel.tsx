@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button'
 import {
-  isDemoSupabaseEnabled,
-  resetDemoSupabaseState
-} from '@/client/demoSupabase'
+  isDemoBackendEnabled,
+  resetDemoBackendState
+} from '@/client/demoBackend'
 import { RotateCcw, ShieldCheck, UserRound } from 'lucide-react'
 
 const demoAccounts = [
@@ -35,12 +35,12 @@ export function DemoAccessPanel ({
   onUseAccount,
   onReset
 }: DemoAccessPanelProps) {
-  if (!isDemoSupabaseEnabled()) {
+  if (!isDemoBackendEnabled()) {
     return null
   }
 
   const handleReset = () => {
-    resetDemoSupabaseState()
+    resetDemoBackendState()
     onReset?.()
   }
 

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Activity, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { isDemoSupabaseEnabled } from '@/client/demoSupabase';
+import { isDemoBackendEnabled } from '@/client/demoBackend';
 import { startWebVitalsReporting, type VitalName, type VitalSnapshot } from '@/lib/webVitals';
 
 const metricOrder: VitalName[] = ['LCP', 'INP', 'CLS', 'FCP', 'TTFB'];
@@ -18,7 +18,7 @@ export function WebVitalsPanel() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!isDemoSupabaseEnabled()) return;
+    if (!isDemoBackendEnabled()) return;
 
     startWebVitalsReporting((metric) => {
       setMetrics((current) => ({ ...current, [metric.name]: metric }));
@@ -32,7 +32,7 @@ export function WebVitalsPanel() {
     [metrics]
   );
 
-  if (!isDemoSupabaseEnabled()) return null;
+  if (!isDemoBackendEnabled()) return null;
 
   return (
     <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">

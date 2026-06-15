@@ -1,4 +1,4 @@
-import supabase from '@/client/supabase'
+import backend from '@/client/backend'
 import isUserFolderExisting from '@/tools/buckets/isUserFolderExisting'
 import createUserFolderInBucket from './createUserFolderInBucket'
 
@@ -32,7 +32,7 @@ const uploadToUserFolder = async ({
 
   const filePath = `${userId}/${type}/${filename}`
 
-  const { data, error } = await supabase.storage
+  const { data, error } = await backend.storage
     .from(bucketName)
     .upload(filePath, file, { cacheControl: '3600', upsert: true })
 

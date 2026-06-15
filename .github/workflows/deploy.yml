@@ -40,6 +40,7 @@ jobs:
           VITE_BASE_PATH: /Hackathon-Smart-Profile-Management-System/
           VITE_DEMO_MODE: true
           VITE_SITE_URL: https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
+          VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.VITE_CLERK_PUBLISHABLE_KEY }}
         run: npm run build
 
       - name: Check public links

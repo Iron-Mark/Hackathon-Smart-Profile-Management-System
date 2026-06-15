@@ -3,11 +3,11 @@ import loginUser from '@/tools/accounts/loginUser'
 import logOutUser from '@/tools/accounts/logOutUser'
 import signUpUser from '@/tools/accounts/signUpUser'
 
-const supabaseAccountActions = {
+const demoAccountActions = {
   changePassword,
   loginUser,
   logOutUser,
   signUpUser
 }
 
-export default supabaseAccountActions
+export default demoAccountActions

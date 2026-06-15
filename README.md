@@ -1,12 +1,11 @@
 <div align="center">
 
 # 🎓 Hackathon Smart Profile Management System
-**The Intelligent End-to-End Credential Management Platform for Academia**
+**Restored public demo for faculty credential uploads, admin review, and profile building**
 
 [![React Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Supabase](https://img.shields.io/badge/Supabase-181818?style=for-the-badge&logo=supabase&logoColor=3ECF8E)](https://supabase.com/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com/)
 [![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev/)
 
@@ -15,59 +14,58 @@
 ---
 
 ## 🌟 Restoration Status
-This repository contains the source code for the original UMak CCIS Hackathon entry. It has been restored so a developer can install it from a clean clone, run it locally, build it, and demonstrate the main faculty/admin credential workflow without needing private Supabase or OpenAI credentials.
+This repository contains the source code for the original UMak CCIS Hackathon entry. It has been restored so a developer can install it from a clean clone, run it locally, build it, and demonstrate the main faculty/admin credential workflow without needing private backend or OpenAI credentials.
 
 Public showcase URL: https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
 
-By combining Optical Character Recognition (OCR), Generative AI (OpenAI), and Real-time Databases (Supabase), we created an ecosystem that categorizes, tracks, and audits faculty credentials entirely autonomously.
+The public build is intentionally demo-only. It uses seeded reviewer accounts, browser-local demo storage, generated sample files, and deterministic AI/OCR fallbacks when private API keys are not configured. There is no supported hosted persistence path in this showcase branch.
 
 <div align="center">
   <img src="docs/images/login.png" alt="Login Page" width="80%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
   <br>
-  <em>The beautifully crafted, glassmorphic Landing & Auth portal.</em>
+  <em>Current GitHub Pages login screen with seeded reviewer shortcuts.</em>
 </div>
 
 ---
 
 ## 🚀 Key Features
 
-### 🧠 Intelligent AI Upload Pipeline
-Upload a raw image of a diploma, CV, or certificate. The platform extracts the text via `Tesseract.js` (OCR) and feeds it to a custom `OpenAI` pipeline that automatically classifies the exact document type and inserts it into the database.
+### 🧠 Smart Upload Demo Pipeline
+Faculty users can upload sample credential files from the dashboard. The restored demo validates file type and size, classifies the document, stores the submission, and keeps the flow usable even when private OCR or OpenAI services are unavailable.
 
-### 🛡️ Iron-Clad Role-Based Security (RBAC)
-Administrators and Faculty operate in strictly segregated environments. Our `ProtectedRoute` routing layer constantly validates incoming navigation against real-time Supabase Auth credentials to ensure flawless access control.
+### 🛡️ Role-Based Demo Routing
+Administrators and faculty users are routed into separate app areas. The React `ProtectedRoute` layer checks the signed-in account role from browser-local demo state.
 
-### 📊 Real-Time Admin Dashboards
-Admins are equipped with a live Recharts analytics dashboard detailing the inflow of documents. Approving or Rejecting a document instantly pushes that status update back to the specific Faculty member's view.
+### 📊 Admin Review Dashboard
+Admins can review pending credential submissions, open the demo file preview, and approve or reject uploads. Faculty users can then see the updated status in their uploaded files view.
 
-### ✍️ AI-Powered Biography Generation
-The crown jewel of the Smart System. With a single click, the platform gathers all of a Faculty member's verified, *Approved* credentials and commands the AI to ghostwrite a stellar, professional biography directly into their profile.
+### ✍️ Profile Builder And Bio Drafting
+The faculty profile screen supports editable professional details, document-assisted autofill, and a biography draft action based on approved credentials. In public demo mode, the feature uses safe fallback behavior unless an API key is configured locally.
 
 <div align="center">
   <img src="docs/images/profile.png" alt="Faculty Profile & AI Bio" width="80%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-top: 20px;" />
   <br>
-  <em>Faculty Profile demonstrating the AI-generated bio and approved credentials.</em>
+  <em>Current faculty profile screen from the restored public demo.</em>
 </div>
 
 ---
 
 ## 🏗️ Architecture & Engineering
 
-The platform is designed to be fully containerized and production-ready from day one.
+The restored project keeps the original React, Vite, OCR, and OpenAI-assisted product direction while making the public showcase reliable without private services. The demo backend stores seeded accounts, submissions, audit logs, and file metadata in browser-local storage. Uploaded files are demo-local and are not sent to a hosted document store.
 
 ### The AI End-to-End Flow
 
 ```mermaid
 graph TD
-    A[Faculty Uploads Image] --> B[Tesseract.js OCR Extracts Text]
-    B --> C[OpenAI GPT-4 Analyzes & Categorizes]
-    C --> D[Uploaded to Supabase Bucket]
-    D --> E[Row inserted in `submissions` Table as 'Pending']
-    E --> F[Admin Reviews Dashboard]
-    F -->|Approves| G[Document Status = 'Approved']
-    G --> H[Faculty Clicks 'Generate Bio']
-    H --> I[OpenAI Summarizes Approved Docs]
-    I --> J[Professional Profile Bio Saved!]
+    A[Faculty signs in with seeded or browser-local demo auth] --> B[Faculty uploads a sample credential]
+    B --> C[Validation plus OCR and AI classification or demo fallback]
+    C --> D[Store file metadata in browser-local demo storage]
+    D --> E[Submission status starts as Pending]
+    E --> F[Admin reviews the file preview]
+    F -->|Approve or reject| G[Status updates on the submission]
+    G --> H[Faculty sees the updated file status]
+    H --> I[Optional profile bio draft uses approved credentials]
 ```
 
 <br>
@@ -75,7 +73,7 @@ graph TD
 <div align="center">
   <img src="docs/images/dashboard.png" alt="Admin Dashboard" width="80%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-bottom: 20px;" />
   <br>
-  <em>The sophisticated Admin Analytics & Approval Dashboard.</em>
+  <em>Current admin dashboard with seeded public demo data.</em>
 </div>
 
 ---
@@ -89,7 +87,7 @@ graph TD
 
 ### Demo Mode Quick Start
 
-Demo mode is the default when Supabase credentials are missing. It uses local browser storage with seeded accounts, profile data, submissions, audit logs, and storage metadata.
+Demo mode is the only supported runtime path. It uses local browser storage with seeded accounts, profile data, submissions, audit logs, and storage metadata.
 
 ```bash
 npm ci
@@ -121,29 +119,35 @@ Public visitors can also register with any valid email address in demo mode. Reg
 
 For a concise showcase script, see `docs/demo-checklist.md`.
 For public reviewer notes, see `PUBLIC_DEMO.md`.
+For demo backend limitations, see `docs/demo-backend.md`.
+For optional Clerk identity and Organization controls, see `docs/clerk-showcase-auth.md`.
 
 ### Performance And Web Vitals
 
 Route screens are lazy-loaded so the landing/auth experience does not load every admin and faculty page up front. Demo mode also shows a local Web Vitals panel for LCP, INP, CLS, FCP, and TTFB. The panel uses the official `web-vitals` package and does not send metrics to a backend.
 
-### Real Supabase Backend Mode
+### Demo-Only Backend
 
-Set `VITE_DEMO_MODE=false` in `.env.local`, then provide:
-
-```bash
-VITE_SUPABASE_URL=...
-VITE_SUPABASE_ANON_KEY=...
-VITE_OPENAI_API_KEY=...
-```
-
-Supabase setup expectations:
-
-- Apply the table bootstrap from `supabase_schema.sql`, then the storage/RLS guidance from `supabase_rls_policies.sql`.
-- See `docs/supabase-setup.md` for the expected apply order and production caveats.
-- Create a private `pictures-and-documents` storage bucket.
-- Ensure the expected tables exist: `account_details`, `profile_details`, `educational_background`, `work_experiences`, `professional_development`, `submissions`, and `audit_logs`.
+The app no longer supports a hosted backend setup path. `VITE_DEMO_MODE=true` remains in `.env.example` to make the public intent explicit, but the browser-local demo backend is always used.
 
 `VITE_OPENAI_API_KEY` is optional for local restoration. If it is missing, AI classification and biography generation use mock/demo fallbacks. Do not use a browser-exposed OpenAI key for production without a server-side proxy.
+
+### Optional Clerk Showcase Auth
+
+Clerk can be enabled for sign-in, sign-up, profile menu, and Organization switching by adding a publishable key to `.env.local`:
+
+```env
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_or_pk_live_value_here
+```
+
+This does not add a production backend. Clerk-authenticated visitors are mapped to a browser-local faculty demo account, and all profile, upload, submission, and approval data still stays in that browser. Admin access remains the seeded admin demo account because browser-side Organization state is not a trusted authorization source.
+
+Helpful Clerk resources:
+
+- React quickstart: https://clerk.com/docs/react/getting-started/quickstart
+- Organizations: https://clerk.com/docs/guides/organizations/overview
+- Components: https://clerk.com/docs/reference/components/overview
+- Dashboard: https://dashboard.clerk.com/
 
 ### Verification Commands
 
@@ -162,7 +166,7 @@ To verify the built output with the same base path used by GitHub Pages, use the
 The `npm run preview:pages` helper serves `dist` under the repository base path so local QA matches GitHub Pages asset URLs.
 
 ### 🐋 Docker Optimization
-The application is pre-configured with a multi-stage Dockerfile that builds the React project and serves it through an ultra-lightweight NGINX container.
+The repository includes a multi-stage Dockerfile that builds the React project and serves the static output through NGINX.
 ```bash
 docker build -t smart-profile-system .
 docker run -p 80:80 smart-profile-system
@@ -189,8 +193,7 @@ npx playwright test
 - Route-level code splitting keeps the public demo entry lighter than the full dashboard bundle.
 - `npm run security:scan` checks source files for common private key and token patterns.
 - Local and GitHub Pages demo mode preserve the hackathon workflow without requiring private accounts.
-- Real Supabase mode is still supported when valid environment variables are provided.
-- The demo backend is local-only and is not a production authentication or persistence layer.
+- The demo backend is local-only and is not production authentication, production authorization, or production document storage.
 
 ---
 

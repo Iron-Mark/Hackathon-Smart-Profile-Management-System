@@ -1,4 +1,4 @@
-import supabase from '@/client/supabase'
+import backend from '@/client/backend'
 
 /**
  * Retrieves an image URL from the specified folder and bucket.
@@ -19,7 +19,7 @@ const getFileFromFolder = async ({
   userId: string
 }): Promise<string | null> => {
   const filePath = `${userId}/${type}/${fileName}`
-  const bucket = supabase.storage.from(bucketName)
+  const bucket = backend.storage.from(bucketName)
 
   const { data, error } = await bucket.createSignedUrl(
     filePath,

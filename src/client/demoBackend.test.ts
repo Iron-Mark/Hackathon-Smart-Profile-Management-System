@@ -1,14 +1,14 @@
 import { beforeEach, expect, test, vi } from 'vitest';
-import { createDemoSupabaseClient, resetDemoSupabaseState } from './demoSupabase';
+import { createDemoBackendClient, resetDemoBackendState, syncClerkDemoUser } from './demoBackend';
 
 beforeEach(() => {
-  resetDemoSupabaseState();
+  resetDemoBackendState();
 });
 
 test('signs in seeded demo faculty users and exposes their account type', async () => {
-  const supabase = createDemoSupabaseClient();
+  const backend = createDemoBackendClient();
 
-  const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+  const { data: authData, error: authError } = await backend.auth.signInWithPassword({
     email: 'faculty@umak.edu.ph',
     password: 'Faculty123',
   });
@@ -16,7 +16,7 @@ test('signs in seeded demo faculty users and exposes their account type', async 
   expect(authError).toBeNull();
   expect(authData.user?.id).toBe('demo-faculty-1');
 
-  const { data: account, error: accountError } = await supabase
+  const { data: account, error: accountError } = await backend
     .from('account_details')
     .select('type')
     .eq('id', 'demo-faculty-1')
@@ -27,9 +27,9 @@ test('signs in seeded demo faculty users and exposes their account type', async 
 });
 
 test('persists demo submissions and allows admin-style approval updates', async () => {
-  const supabase = createDemoSupabaseClient();
+  const backend = createDemoBackendClient();
 
-  const { error: insertError } = await supabase.from('submissions').insert({
+  const { error: insertError } = await backend.from('submissions').insert({
     user_id: 'demo-faculty-1',
     document_type: 'Diplomas',
     file_name: 'demo-diploma.png',
@@ -38,7 +38,7 @@ test('persists demo submissions and allows admin-style approval updates', async 
 
   expect(insertError).toBeNull();
 
-  const { data: pending } = await supabase
+  const { data: pending } = await backend
     .from('submissions')
     .select()
     .match({ user_id: 'demo-faculty-1', status: 'Pending' });
@@ -47,14 +47,14 @@ test('persists demo submissions and allows admin-style approval updates', async 
   expect(inserted).toBeDefined();
   expect(inserted!.status).toBe('Pending');
 
-  const { error: updateError } = await supabase
+  const { error: updateError } = await backend
     .from('submissions')
     .update({ status: 'Approved' })
     .match({ id: inserted!.id });
 
   expect(updateError).toBeNull();
 
-  const { data: approved } = await supabase
+  const { data: approved } = await backend
     .from('submissions')
     .select()
     .match({ id: inserted!.id });
@@ -63,16 +63,16 @@ test('persists demo submissions and allows admin-style approval updates', async 
 });
 
 test('generates signed demo storage URLs for uploaded files', async () => {
-  const supabase = createDemoSupabaseClient();
+  const backend = createDemoBackendClient();
 
-  const { data: uploadData, error: uploadError } = await supabase.storage
+  const { data: uploadData, error: uploadError } = await backend.storage
     .from('pictures-and-documents')
     .upload('demo-faculty-1/Certificates/demo-certificate.png', new Blob(['demo']));
 
   expect(uploadError).toBeNull();
   expect(uploadData?.path).toBe('demo-faculty-1/Certificates/demo-certificate.png');
 
-  const { data: signedData, error: signedError } = await supabase.storage
+  const { data: signedData, error: signedError } = await backend.storage
     .from('pictures-and-documents')
     .createSignedUrl('demo-faculty-1/Certificates/demo-certificate.png', 3600);
 
@@ -97,13 +97,65 @@ test('recovers seeded demo state when browser storage is corrupted', async () =>
     },
   });
   window.localStorage.setItem('smart-profile-demo-state-v1', '{not-json');
-  const supabase = createDemoSupabaseClient();
+  const backend = createDemoBackendClient();
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await backend.auth.signInWithPassword({
     email: 'faculty@umak.edu.ph',
     password: 'Faculty123',
   });
 
   expect(error).toBeNull();
   expect(data.user?.id).toBe('demo-faculty-1');
+});
+
+test('syncs a Clerk identity into a browser-local faculty demo account', async () => {
+  const backend = createDemoBackendClient();
+
+  const { data, error } = await syncClerkDemoUser({
+    clerkUserId: 'user_2abc',
+    email: 'clerk.faculty@example.com',
+    name: 'Clerk Faculty',
+  });
+
+  expect(error).toBeNull();
+  expect(data?.user?.id).toBe('clerk-user_2abc');
+
+  const { data: currentUser } = await backend.auth.getUser();
+  expect(currentUser.user?.id).toBe('clerk-user_2abc');
+
+  const { data: account, error: accountError } = await backend
+    .from('account_details')
+    .select('type,name,email,clerk_user_id')
+    .eq('id', 'clerk-user_2abc')
+    .single();
+
+  expect(accountError).toBeNull();
+  expect(account).toEqual({
+    type: 'faculty',
+    name: 'Clerk Faculty',
+    email: 'clerk.faculty@example.com',
+    clerk_user_id: 'user_2abc',
+  });
+
+  const { data: profileRows } = await backend
+    .from('profile_details')
+    .select()
+    .match({ id: 'clerk-user_2abc' });
+
+  expect(profileRows).toHaveLength(1);
+
+  await syncClerkDemoUser({
+    clerkUserId: 'user_2abc',
+    email: 'renamed.faculty@example.com',
+    name: 'Renamed Faculty',
+  });
+
+  const { data: accounts } = await backend
+    .from('account_details')
+    .select()
+    .match({ id: 'clerk-user_2abc' });
+
+  expect(accounts).toHaveLength(1);
+  expect(accounts[0].email).toBe('renamed.faculty@example.com');
+  expect(accounts[0].name).toBe('Renamed Faculty');
 });

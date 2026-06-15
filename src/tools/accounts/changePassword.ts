@@ -1,17 +1,17 @@
-import supabase from '@/client/supabase'
+import backend from '@/client/backend'
 
 const changePassword = async (newPassword: string) => {
   try {
     const {
       data: { user },
       error: userError
-    } = await supabase.auth.getUser()
+    } = await backend.auth.getUser()
 
     if (userError || !user) {
       return { success: false, message: 'User not authenticated' }
     }
 
-    const { error } = await supabase.auth.updateUser({
+    const { error } = await backend.auth.updateUser({
       password: newPassword
     })
 

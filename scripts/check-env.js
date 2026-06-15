@@ -1,55 +1,39 @@
 import fs from 'fs';
 import path from 'path';
 
-const REQUIRED_BACKEND_ENV_VARS = [
-  'VITE_SUPABASE_URL',
-  'VITE_SUPABASE_ANON_KEY'
-];
+const OPTIONAL_AI_ENV_VARS = ['VITE_OPENAI_API_KEY'];
+const OPTIONAL_AUTH_ENV_VARS = ['VITE_CLERK_PUBLISHABLE_KEY'];
 
-const OPTIONAL_ENV_VARS = ['VITE_OPENAI_API_KEY'];
-
-function readEnvValue(envContent, varName) {
+function readEnvValue(varName) {
   if (process.env[varName]) return process.env[varName];
-  const match = envContent.match(new RegExp(`^${varName}=(.*)$`, 'm'));
-  return match?.[1]?.trim().replace(/^['"]|['"]$/g, '');
+  for (const envFile of ['.env.local', '.env', '.env.example']) {
+    const envPath = path.resolve(process.cwd(), envFile);
+    if (!fs.existsSync(envPath)) continue;
+
+    const envContent = fs.readFileSync(envPath, 'utf-8');
+    const match = envContent.match(new RegExp(`^${varName}=(.*)$`, 'm'));
+    if (match?.[1]) return match[1].trim().replace(/^['"]|['"]$/g, '');
+  }
+  return undefined;
 }
 
 function checkEnv() {
-  const envPaths = [
-    path.resolve(process.cwd(), '.env.local'),
-    path.resolve(process.cwd(), '.env')
-  ];
-  const envPath = envPaths.find((candidate) => fs.existsSync(candidate));
-  
-  const envContent = envPath ? fs.readFileSync(envPath, 'utf-8') : '';
-  const demoMode = readEnvValue(envContent, 'VITE_DEMO_MODE') === 'true';
-  const missingBackendVars = REQUIRED_BACKEND_ENV_VARS.filter(
-    (key) => !readEnvValue(envContent, key)
+  const missingOptionalAiVars = OPTIONAL_AI_ENV_VARS.filter(
+    (key) => !readEnvValue(key)
   );
-  const missingOptionalVars = OPTIONAL_ENV_VARS.filter(
-    (key) => !readEnvValue(envContent, key)
+  const missingOptionalAuthVars = OPTIONAL_AUTH_ENV_VARS.filter(
+    (key) => !readEnvValue(key)
   );
 
-  if (demoMode || (!envPath && missingBackendVars.length === REQUIRED_BACKEND_ENV_VARS.length)) {
-    console.log('Local demo mode enabled. Supabase/OpenAI credentials are not required for the demo flow.');
-    if (missingOptionalVars.length > 0) {
-      console.warn(`Optional AI integration not configured: ${missingOptionalVars.join(', ')}. Demo AI fallbacks will be used.`);
-    }
-    return;
+  console.log('Demo-only backend enabled. Remote backend credentials are not required for the showcase flow.');
+
+  if (missingOptionalAuthVars.length > 0) {
+    console.warn(`Optional Clerk showcase auth not configured: ${missingOptionalAuthVars.join(', ')}. Seeded demo auth will be used.`);
   }
 
-  if (missingBackendVars.length > 0) {
-    console.error('❌ Missing required environment variables:');
-    missingBackendVars.forEach(v => console.error(`   - ${v}`));
-    console.error('Set VITE_DEMO_MODE=true for local demo mode, or add Supabase values to .env.local, .env, or your deployment environment.');
-    process.exit(1);
+  if (missingOptionalAiVars.length > 0) {
+    console.warn(`Optional AI integration not configured: ${missingOptionalAiVars.join(', ')}. Demo AI fallbacks will be used.`);
   }
-
-  if (missingOptionalVars.length > 0) {
-    console.warn(`Optional AI integration not configured: ${missingOptionalVars.join(', ')}. AI fallbacks will be used.`);
-  }
-
-  console.log('✅ Required backend environment variables are present.');
 }
 
 checkEnv();

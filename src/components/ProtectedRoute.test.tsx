@@ -13,7 +13,7 @@ const mocks = vi.hoisted(() => {
   return { getUser, single, eq, select, from };
 });
 
-vi.mock('@/client/supabase', () => ({
+vi.mock('@/client/backend', () => ({
   default: {
     auth: { getUser: mocks.getUser },
     from: mocks.from,

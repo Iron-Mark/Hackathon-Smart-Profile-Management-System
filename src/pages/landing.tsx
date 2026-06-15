@@ -24,7 +24,7 @@ const publicDemoFacts = [
       'No. The public showcase is for generated sample files only, not real IDs, transcripts, licenses, or private records.',
   },
   {
-    question: 'Does the GitHub Pages demo need Supabase or OpenAI secrets?',
+    question: 'Does the GitHub Pages demo need backend or OpenAI secrets?',
     answer:
       'No. The public build runs in demo mode with deterministic browser-local data and fallback AI/OCR behavior.',
   },

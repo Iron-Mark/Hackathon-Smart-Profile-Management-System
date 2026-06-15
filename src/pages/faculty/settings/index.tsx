@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog";
-import supabaseAccountActions from "@/tools/accounts/supabaseAccountActions";
+import demoAccountActions from "@/tools/accounts/demoAccountActions";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "sonner";
@@ -70,7 +70,7 @@ export default function FacultySettingsPage() {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = async () => {
-    const response = await supabaseAccountActions.logOutUser();
+    const response = await demoAccountActions.logOutUser();
     if (response.success) {
       toast.success("Logged out successfully");
       setTimeout(() => navigate("/auth/login", { replace: true }), 1000);
@@ -91,7 +91,7 @@ export default function FacultySettingsPage() {
 
     try {
       setIsChanging(true);
-      const response = await supabaseAccountActions.changePassword(newPassword);
+      const response = await demoAccountActions.changePassword(newPassword);
       if (response.success) {
         toast.success("Password updated successfully");
         await logAudit('SETTINGS_CHANGE', 'User changed their account password');

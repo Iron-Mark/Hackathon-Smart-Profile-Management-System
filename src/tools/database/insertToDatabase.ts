@@ -1,4 +1,4 @@
-import supabase from '@/client/supabase.ts'
+import backend from '@/client/backend'
 
 export default async function insertToDatabase ({
   table,
@@ -7,7 +7,7 @@ export default async function insertToDatabase ({
   table: string
   data: object
 }): Promise<object> {
-  const { error } = await supabase.from(table).insert(data)
+  const { error } = await backend.from(table).insert(data)
 
   if (error) {
     console.error('Error inserting data:', error.message)

@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
-import supabaseAccountActions from '@/tools/accounts/supabaseAccountActions'
+import demoAccountActions from '@/tools/accounts/demoAccountActions'
 import { DemoAccessPanel } from '@/components/DemoAccessPanel'
+import { ClerkAuthPanel } from '@/components/ClerkShowcaseControls'
 
 export default function RegisterPage () {
   const [email, setEmail] = useState('')
@@ -60,7 +61,7 @@ export default function RegisterPage () {
       try {
         setRegistrationError('')
         setDemoMessage('')
-        const response = await supabaseAccountActions.signUpUser({
+        const response = await demoAccountActions.signUpUser({
           email: email,
           password: password,
           name: name,
@@ -92,6 +93,8 @@ export default function RegisterPage () {
         <h2 className='text-3xl font-bold text-center text-white drop-shadow-md'>
           Create Your Account
         </h2>
+
+        <ClerkAuthPanel mode='register' />
 
         <DemoAccessPanel
           showSeedAccounts={false}

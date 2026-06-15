@@ -1,8 +1,9 @@
 import { Home, Inbox, User2, Settings, LogOut, RotateCcw } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import supabaseAccountActions from '@/tools/accounts/supabaseAccountActions'
-import { isDemoSupabaseEnabled, resetDemoSupabaseState } from '@/client/demoSupabase'
+import demoAccountActions from '@/tools/accounts/demoAccountActions'
+import { isDemoBackendEnabled, resetDemoBackendState } from '@/client/demoBackend'
 import logoLong from '@/assets/LOGO-FPMS_Long.png'
+import { ClerkShowcaseControls } from '@/components/ClerkShowcaseControls'
 
 import {
   Sidebar,
@@ -32,7 +33,7 @@ export function AppSidebar ({ className }: AppSidebarProps) {
       title: 'Logout',
       icon: LogOut,
       onClick: () => {
-        supabaseAccountActions.logOutUser()
+        demoAccountActions.logOutUser()
         navigate('/')
       }
     }
@@ -50,7 +51,7 @@ export function AppSidebar ({ className }: AppSidebarProps) {
       title: 'Logout',
       icon: LogOut,
       onClick: () => {
-        supabaseAccountActions.logOutUser()
+        demoAccountActions.logOutUser()
         navigate('/')
       } // Assuming admin and faculty logout is the same
     }
@@ -58,10 +59,10 @@ export function AppSidebar ({ className }: AppSidebarProps) {
   const location = useLocation()
   const isAdminRoute = location.pathname.startsWith('/admin')
   const items = isAdminRoute ? adminItems : facultyItems
-  const showDemoReset = isDemoSupabaseEnabled()
+  const showDemoReset = isDemoBackendEnabled()
 
   const handleDemoReset = () => {
-    resetDemoSupabaseState()
+    resetDemoBackendState()
     window.sessionStorage.setItem(
       'smart-profile-demo-reset-message',
       'Demo data reset to the seeded showcase state.'
@@ -127,7 +128,8 @@ export function AppSidebar ({ className }: AppSidebarProps) {
               )}
             </SidebarGroupContent>
           </SidebarGroup>
-          <div className="mt-auto p-4 flex justify-start">
+          <div className="mt-auto space-y-4 p-4">
+            <ClerkShowcaseControls />
             <ThemeToggle />
           </div>
         </SidebarContent>

@@ -18,6 +18,18 @@ https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
 
 The visitor account is stored only in the current browser when demo mode is active.
 
+## Optional Clerk Showcase Auth
+
+If `VITE_CLERK_PUBLISHABLE_KEY` is configured locally:
+
+1. Open Login or Register.
+2. Select the Clerk sign-in or sign-up action.
+3. Complete Clerk authentication.
+4. Confirm the app routes to the faculty dashboard.
+5. Confirm the sidebar shows the Clerk user menu and Organization switcher.
+
+Clerk-authenticated visitors are still mapped to browser-local faculty demo profiles. Use the seeded admin account for admin approval checks.
+
 ## Seeded Faculty/Admin Flow
 
 1. Open Login.
@@ -79,6 +91,7 @@ PowerShell:
 ```powershell
 $env:VITE_DEMO_MODE = 'true'
 $env:VITE_BASE_PATH = '/Hackathon-Smart-Profile-Management-System/'
+$env:VITE_SITE_URL = 'https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/'
 npm run build
 
 $env:PLAYWRIGHT_BASE_URL = 'http://127.0.0.1:4173'

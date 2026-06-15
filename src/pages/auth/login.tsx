@@ -3,10 +3,11 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Eye, EyeOff } from 'lucide-react'
-import supabaseAccountActions from '@/tools/accounts/supabaseAccountActions'
+import demoAccountActions from '@/tools/accounts/demoAccountActions'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useDocumentTitle } from '@/hooks/use-document-title'
 import { DemoAccessPanel } from '@/components/DemoAccessPanel'
+import { ClerkAuthPanel } from '@/components/ClerkShowcaseControls'
 
 export default function LoginPage () {
   useDocumentTitle('Login')
@@ -58,7 +59,7 @@ export default function LoginPage () {
     e.preventDefault()
     if (validate()) {
       try {
-        const response = await supabaseAccountActions.loginUser(
+        const response = await demoAccountActions.loginUser(
           email,
           password,
           navigate
@@ -83,6 +84,8 @@ export default function LoginPage () {
         <h2 className='text-3xl font-bold text-center drop-shadow-md'>
           Welcome Back
         </h2>
+
+        <ClerkAuthPanel mode='login' />
 
         <DemoAccessPanel
           onUseAccount={account => {

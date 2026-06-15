@@ -1,4 +1,4 @@
-import supabase from '@/client/supabase'
+import backend from '@/client/backend'
 import removeItemFromBucket from './removeItemFromBucket'
 /**
  * Creates a folder for a user inside a bucket by uploading a placeholder file.
@@ -15,7 +15,7 @@ const createUserFolderInBucket = async (
     const placeholderFile = new Blob([''], { type: 'text/plain' })
     const fileName = `${userId}/${type}/.placeholder`
 
-    const { data, error } = await supabase.storage
+    const { data, error } = await backend.storage
       .from(bucketName)
       .upload(fileName, placeholderFile, {
         cacheControl: '3600',

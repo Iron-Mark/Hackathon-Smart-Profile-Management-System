@@ -1,5 +1,5 @@
 import { analyzeDocument } from '@/tools/ai/analyzeDocument'
-import { isDemoSupabaseEnabled } from '@/client/demoSupabase'
+import { isDemoBackendEnabled } from '@/client/demoBackend'
 import extractTextFromImage from './extractTextFromImage'
 
 const inferDemoDocumentType = (fileName: string): string => {
@@ -20,7 +20,7 @@ const inferDemoDocumentType = (fileName: string): string => {
 const determineDocumentType = async (image: File): Promise<string> => {
   if (image) {
     try {
-      if (isDemoSupabaseEnabled()) {
+      if (isDemoBackendEnabled()) {
         return inferDemoDocumentType(image.name)
       }
 

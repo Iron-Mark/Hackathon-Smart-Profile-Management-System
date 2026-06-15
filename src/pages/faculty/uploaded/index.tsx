@@ -44,7 +44,7 @@ import { analyzeDocument } from '@/tools/ai/analyzeDocument'
 import uploadToUserFolder from '@/tools/buckets/uploadToUserFolder'
 import insertToDatabase from '@/tools/database/insertToDatabase'
 import getFromDatabase from '@/tools/database/getFromDatabase'
-import supabase from '@/client/supabase'
+import backend from '@/client/backend'
 
 type UploadedFile = {
   id: number;
@@ -148,7 +148,7 @@ export default function UploadedFilesPage() {
   useEffect(() => {
     if (!userId) return;
 
-    const channel = supabase
+    const channel = backend
       .channel('public:submissions')
       .on(
         'postgres_changes',
@@ -168,7 +168,7 @@ export default function UploadedFilesPage() {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      backend.removeChannel(channel);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);

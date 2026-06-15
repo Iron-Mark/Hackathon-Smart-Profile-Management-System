@@ -79,7 +79,7 @@ export default function BackupSettings() {
           <div className="flex items-center justify-between p-4 border rounded-lg opacity-50">
             <div>
               <p className="font-medium">Automatic Cloud Backup</p>
-              <p className="text-sm text-muted-foreground">Scheduled weekly backups to Supabase Storage.</p>
+              <p className="text-sm text-muted-foreground">Export browser-local demo data before resetting the showcase.</p>
             </div>
             <Button disabled variant="outline">Coming Soon</Button>
           </div>

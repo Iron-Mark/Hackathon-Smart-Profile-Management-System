@@ -9,7 +9,7 @@ const answerQuestions = [
   'Can anyone try the public demo?',
   'Where is public demo data stored?',
   'Should visitors upload real faculty records?',
-  'Does the GitHub Pages demo need Supabase or OpenAI secrets?',
+  'Does the GitHub Pages demo need backend or OpenAI secrets?',
   'Who built the original hackathon project?',
 ];
 type JsonLdNode = { '@type'?: string; [key: string]: unknown };

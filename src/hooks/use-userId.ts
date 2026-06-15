@@ -1,4 +1,4 @@
-import supabase from "@/client/supabase";
+import backend from "@/client/backend";
 import { useState, useEffect } from "react";
 
 export const useUserId = async (): Promise<{
@@ -8,7 +8,7 @@ export const useUserId = async (): Promise<{
   const {
     data: { user },
     error,
-  } = await supabase.auth.getUser();
+  } = await backend.auth.getUser();
 
   if (error || !user) {
     return { success: false, userId: null };

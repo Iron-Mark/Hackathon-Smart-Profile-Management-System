@@ -1,14 +1,14 @@
 // loginUser.ts
-import supabase from '@/client/supabase'
-import type { User, Session } from '@supabase/supabase-js'
+import backend from '@/client/backend'
+import type { DemoSession, DemoUser } from '@/client/demoBackend'
 import getFromDatabase from '../database/getFromDatabase'
 import { logAudit } from '../database/logAudit'
 
 interface LoginResponse {
   success: boolean
   message?: string
-  user?: User | null
-  session?: Session | null
+  user?: DemoUser | null
+  session?: DemoSession | null
 }
 
 const loginUser = async (
@@ -17,7 +17,7 @@ const loginUser = async (
   navigate: (path: string) => void
 ): Promise<LoginResponse> => {
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await backend.auth.signInWithPassword({
       email,
       password
     })

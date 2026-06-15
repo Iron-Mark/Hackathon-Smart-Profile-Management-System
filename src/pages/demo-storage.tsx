@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Download, FileText, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getDemoStoredFileFromUrl } from '@/client/demoSupabase';
+import { getDemoStoredFileFromUrl } from '@/client/demoBackend';
 
 const formatBytes = (size?: number) => {
   if (!size) return 'Unknown size';

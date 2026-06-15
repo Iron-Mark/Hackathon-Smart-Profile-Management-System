@@ -1,4 +1,4 @@
-import supabase from '@/client/supabase'
+import backend from '@/client/backend'
 
 const removeItemFromBucket = async ({
   bucketName,
@@ -13,7 +13,7 @@ const removeItemFromBucket = async ({
 }): Promise<boolean> => {
   try {
     const path = `${userId}/${type}/${filename}`
-    const { error } = await supabase.storage.from(bucketName).remove([path])
+    const { error } = await backend.storage.from(bucketName).remove([path])
 
     if (error) throw error
 

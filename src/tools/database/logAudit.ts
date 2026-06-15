@@ -1,5 +1,5 @@
 import insertToDatabase from './insertToDatabase';
-import supabase from '@/client/supabase';
+import backend from '@/client/backend';
 
 
 export type AuditAction = 
@@ -12,7 +12,7 @@ export type AuditAction =
 
 export const logAudit = async (action: AuditAction, details: string, userId?: string) => {
   try {
-    const resolvedUserId = userId ?? (await supabase.auth.getUser()).data.user?.id;
+    const resolvedUserId = userId ?? (await backend.auth.getUser()).data.user?.id;
 
     if (!resolvedUserId) {
       console.warn('Could not log audit: User not authenticated');

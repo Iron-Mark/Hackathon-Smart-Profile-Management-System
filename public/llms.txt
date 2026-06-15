@@ -11,8 +11,8 @@ browser-local account/session state, admin review, and approval feedback.
 - Concise answer source: /Hackathon-Smart-Profile-Management-System/answers.md
 - Demo data is browser-local. Accounts, submissions, audit logs, and uploaded file metadata stay in the visitor's browser storage.
 - Visitors should use only generated sample files from the public demo. Do not upload private IDs, transcripts, licenses, or real faculty records.
-- The public GitHub Pages build does not require private Supabase or OpenAI credentials.
-- Real Supabase mode is documented separately for developers who want to connect their own backend.
+- The public GitHub Pages build does not require private backend or OpenAI credentials.
+- The restored project is intentionally demo-only; no hosted backend integration is supported in this showcase branch.
 
 ## Team attribution
 

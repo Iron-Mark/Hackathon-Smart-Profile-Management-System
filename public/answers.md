@@ -5,7 +5,7 @@
 Smart Profile Management System is a restored UMak CCIS hackathon showcase for
 faculty credential management. The public demo runs on GitHub Pages, stores demo
 state in the visitor's browser, and lets reviewers try a sample upload, admin
-review, and approval flow without private Supabase or OpenAI credentials.
+review, and approval flow without private backend or OpenAI credentials.
 
 ## Direct Answers
 
@@ -29,7 +29,7 @@ file metadata are stored locally.
 No. The public showcase is for generated sample files only, not real IDs,
 transcripts, licenses, or private records.
 
-### Does the GitHub Pages demo need Supabase or OpenAI secrets?
+### Does the GitHub Pages demo need backend or OpenAI secrets?
 
 No. The public build runs in demo mode with deterministic browser-local data and
 fallback AI/OCR behavior.

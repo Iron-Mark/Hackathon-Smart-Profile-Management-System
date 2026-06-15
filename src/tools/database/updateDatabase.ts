@@ -1,4 +1,4 @@
-import supabase from '@/client/supabase'
+import backend from '@/client/backend'
 
 interface UpdateParams {
   table: string
@@ -11,7 +11,7 @@ export default async function updateDatabase ({
   data,
   match
 }: UpdateParams): Promise<{ success: boolean }> {
-  const { error } = await supabase
+  const { error } = await backend
     .from(table)
     .update(data)
     .match(match)

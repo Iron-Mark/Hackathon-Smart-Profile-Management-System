@@ -1,4 +1,4 @@
-import supabase from '@/client/supabase'
+import backend from '@/client/backend'
 
 const moveFile = async ({
   bucketName,
@@ -15,13 +15,13 @@ const moveFile = async ({
 }): Promise<boolean> => {
   try {
 
-    const { data, error: downloadError } = await supabase.storage
+    const { data, error: downloadError } = await backend.storage
       .from(bucketName)
       .download(`${userId}/${oldType}/${filename}`)
 
     if (downloadError) throw downloadError
 
-    const { error: uploadError } = await supabase.storage
+    const { error: uploadError } = await backend.storage
       .from(bucketName)
       .upload(`${userId}/${newType}/${filename}`, data!, {
         upsert: true
@@ -29,7 +29,7 @@ const moveFile = async ({
 
     if (uploadError) throw uploadError
 
-    const { error: deleteError } = await supabase.storage
+    const { error: deleteError } = await backend.storage
       .from(bucketName)
       .remove([`${userId}/${oldType}/${filename}`])
 

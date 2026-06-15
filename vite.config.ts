@@ -63,11 +63,6 @@ export default defineConfig({
               priority: 7
             },
             {
-              name: 'supabase-vendor',
-              test: /[\\/]node_modules[\\/]@supabase[\\/]/,
-              priority: 6
-            },
-            {
               name: 'floating-vendor',
               test: /[\\/]node_modules[\\/]@floating-ui[\\/]/,
               priority: 5

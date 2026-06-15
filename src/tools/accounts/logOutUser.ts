@@ -1,4 +1,4 @@
-import supabase from '@/client/supabase'
+import backend from '@/client/backend'
 
 interface LogoutResponse {
   success: boolean
@@ -7,7 +7,7 @@ interface LogoutResponse {
 
 const logOutUser = async (): Promise<LogoutResponse> => {
   try {
-    const { error } = await supabase.auth.signOut()
+    const { error } = await backend.auth.signOut()
 
     if (error) {
       console.error('Error logging out:', error.message)

@@ -1,4 +1,4 @@
-import supabase from '@/client/supabase'
+import backend from '@/client/backend'
 
 /**
  * Checks if a user folder exists in the specified bucket.
@@ -11,7 +11,7 @@ const doesUserFolderExist = async (
   userId: string
 ): Promise<boolean> => {
   try {
-    const { data, error } = await supabase.storage
+    const { data, error } = await backend.storage
       .from(bucketName)
       .list(`${userId}/`, { limit: 1 })
 

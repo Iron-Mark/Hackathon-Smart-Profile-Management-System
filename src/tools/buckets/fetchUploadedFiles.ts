@@ -1,4 +1,4 @@
-import supabase from "@/client/supabase";
+import backend from "@/client/backend";
 
 import getFromDatabase from "../database/getFromDatabase";
 
@@ -48,7 +48,7 @@ async function fetchUploadedFiles(userId: string): Promise<UploadedFile[] | null
   let currentId = 1;
 
   for (const category of categories) {
-    const { data, error } = await supabase.storage
+    const { data, error } = await backend.storage
       .from("pictures-and-documents")
       .list(`${userId}/${category}`);
 

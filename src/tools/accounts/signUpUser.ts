@@ -1,12 +1,12 @@
-import supabase from '@/client/supabase'
-import type { User, Session } from '@supabase/supabase-js'
+import backend from '@/client/backend'
+import type { DemoSession, DemoUser } from '@/client/demoBackend'
 import insertToDatabase from '../database/insertToDatabase'
 
 interface SignUpResponse {
   success: boolean
   message?: string
-  user?: User | null
-  session?: Session | null
+  user?: DemoUser | null
+  session?: DemoSession | null
 }
 
 const signUpUser = async ({
@@ -21,7 +21,7 @@ const signUpUser = async ({
   type: string
 }): Promise<SignUpResponse> => {
   try {
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await backend.auth.signUp({
       email,
       password
     })
@@ -54,7 +54,7 @@ const signUpUser = async ({
     })
 
     if (response && result) {
-      supabase.auth.signOut()
+      backend.auth.signOut()
     }
 
     return { success: true, user: data.user, session: data.session }

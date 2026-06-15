@@ -1,9 +1,35 @@
 type DemoRow = Record<string, any>;
+type DemoError = { message: string };
+type DemoResult<T> = { data: T; error: DemoError | null };
 
 interface DemoAuthUser {
   id: string;
   email: string;
   password: string;
+  provider?: 'demo' | 'clerk';
+}
+
+export interface ClerkDemoIdentity {
+  clerkUserId: string;
+  email: string;
+  name?: string | null;
+}
+
+export interface DemoUser {
+  id: string;
+  email: string;
+  app_metadata: Record<string, never>;
+  user_metadata: Record<string, never>;
+  aud: 'authenticated';
+  created_at: string;
+}
+
+export interface DemoSession {
+  access_token: string;
+  refresh_token: string;
+  token_type: 'bearer';
+  expires_in: number;
+  user: DemoUser | null;
 }
 
 export interface DemoStoredFile {
@@ -16,12 +42,75 @@ export interface DemoStoredFile {
   dataUrl?: string;
 }
 
+interface DemoStoredFileListItem {
+  name: string;
+  updated_at: string;
+  metadata: {
+    size?: number;
+    mimetype?: string;
+  };
+}
+
 interface DemoState {
   currentUserId: string | null;
   nextId: number;
   authUsers: DemoAuthUser[];
   tables: Record<string, DemoRow[]>;
   storage: Record<string, DemoStoredFile>;
+}
+
+interface DemoTableClient {
+  select: (columns?: string) => DemoSelectQuery;
+  insert: (input: DemoRow | DemoRow[]) => Promise<DemoResult<DemoRow[]>>;
+  update: (payload: DemoRow) => DemoMutationQuery;
+  delete: () => DemoMutationQuery;
+}
+
+interface DemoStorageBucket {
+  upload: (
+    filePath: string,
+    file: Blob,
+    options?: DemoRow
+  ) => Promise<DemoResult<{ path: string }>>;
+  list: (prefix?: string, options?: DemoRow) => Promise<DemoResult<DemoStoredFileListItem[]>>;
+  getPublicUrl: (filePath: string) => { data: { publicUrl: string } };
+  createSignedUrl: (
+    filePath: string,
+    expiresIn: number
+  ) => Promise<DemoResult<{ signedUrl: string } | null>>;
+  remove: (paths: string[]) => Promise<DemoResult<string[]>>;
+  download: (filePath: string) => Promise<DemoResult<Blob | null>>;
+}
+
+interface DemoRealtimeChannel {
+  on: (
+    event?: string,
+    filter?: DemoRow,
+    callback?: (payload: any) => void
+  ) => DemoRealtimeChannel;
+  subscribe: () => DemoRealtimeChannel;
+}
+
+export interface DemoBackendClient {
+  auth: {
+    signInWithPassword: (credentials: {
+      email: string;
+      password: string;
+    }) => Promise<DemoResult<{ user: DemoUser | null; session: DemoSession | null }>>;
+    signUp: (credentials: {
+      email: string;
+      password: string;
+    }) => Promise<DemoResult<{ user: DemoUser | null; session: DemoSession | null }>>;
+    getUser: () => Promise<DemoResult<{ user: DemoUser | null }>>;
+    updateUser: (attributes: { password?: string }) => Promise<DemoResult<{ user: DemoUser | null }>>;
+    signOut: () => Promise<DemoResult<null>>;
+  };
+  from: (table: string) => DemoTableClient;
+  storage: {
+    from: (bucket: string) => DemoStorageBucket;
+  };
+  channel: (name?: string) => DemoRealtimeChannel;
+  removeChannel: (channel: DemoRealtimeChannel) => Promise<'ok'>;
 }
 
 const DEMO_STORAGE_KEY = 'smart-profile-demo-state-v1';
@@ -232,7 +321,7 @@ export function getDemoStoredFileFromUrl(pathname: string): DemoStoredFile | nul
   return stored ? clone(stored) : null;
 }
 
-const userFromAuth = (authUser: DemoAuthUser | undefined | null) => {
+const userFromAuth = (authUser: DemoAuthUser | undefined | null): DemoUser | null => {
   if (!authUser) return null;
   return {
     id: authUser.id,
@@ -244,7 +333,9 @@ const userFromAuth = (authUser: DemoAuthUser | undefined | null) => {
   };
 };
 
-const sessionFromAuth = (authUser: DemoAuthUser) => ({
+const demoUserIdFromClerkId = (clerkUserId: string) => `clerk-${clerkUserId}`;
+
+const sessionFromAuth = (authUser: DemoAuthUser): DemoSession => ({
   access_token: `demo-token-${authUser.id}`,
   refresh_token: `demo-refresh-${authUser.id}`,
   token_type: 'bearer',
@@ -273,6 +364,74 @@ const ensureTable = (state: DemoState, table: string) => {
   return state.tables[table];
 };
 
+export async function syncClerkDemoUser({
+  clerkUserId,
+  email,
+  name,
+}: ClerkDemoIdentity): Promise<DemoResult<{ user: DemoUser | null; session: DemoSession | null }>> {
+  const normalizedEmail = email.trim().toLowerCase();
+  const normalizedClerkUserId = clerkUserId.trim();
+
+  if (!normalizedClerkUserId || !normalizedEmail) {
+    return {
+      data: { user: null, session: null },
+      error: { message: 'Clerk demo sync requires a user id and email address' },
+    };
+  }
+
+  const state = readState();
+  const demoUserId = demoUserIdFromClerkId(normalizedClerkUserId);
+  const displayName = name?.trim() || normalizedEmail.split('@')[0] || 'Clerk Faculty';
+  const authUser = {
+    id: demoUserId,
+    email: normalizedEmail,
+    password: '',
+    provider: 'clerk' as const,
+  };
+  const existingAuthIndex = state.authUsers.findIndex((user) => user.id === demoUserId);
+
+  if (existingAuthIndex >= 0) {
+    state.authUsers[existingAuthIndex] = {
+      ...state.authUsers[existingAuthIndex],
+      ...authUser,
+    };
+  } else {
+    state.authUsers.push(authUser);
+  }
+
+  const accountRows = ensureTable(state, 'account_details');
+  const existingAccountIndex = accountRows.findIndex((row) => row.id === demoUserId);
+  const account = {
+    id: demoUserId,
+    type: 'faculty',
+    name: displayName,
+    email: normalizedEmail,
+    clerk_user_id: normalizedClerkUserId,
+  };
+
+  if (existingAccountIndex >= 0) {
+    accountRows[existingAccountIndex] = {
+      ...accountRows[existingAccountIndex],
+      ...account,
+    };
+  } else {
+    accountRows.push(account);
+  }
+
+  const profileRows = ensureTable(state, 'profile_details');
+  if (!profileRows.some((row) => row.id === demoUserId)) {
+    profileRows.push({ id: demoUserId });
+  }
+
+  state.currentUserId = demoUserId;
+  writeState(state);
+
+  return {
+    data: { user: userFromAuth(authUser), session: sessionFromAuth(authUser) },
+    error: null,
+  };
+}
+
 class DemoSelectQuery {
   private filters: DemoRow = {};
   private table: string;
@@ -293,7 +452,7 @@ class DemoSelectQuery {
     return this.execute();
   }
 
-  async single() {
+  async single(): Promise<DemoResult<DemoRow | null>> {
     const { data } = await this.execute();
     if (data.length === 0) {
       return { data: null, error: { message: 'No rows found' } };
@@ -303,13 +462,13 @@ class DemoSelectQuery {
   }
 
   then<TResult1 = any, TResult2 = never>(
-    onfulfilled?: ((value: { data: DemoRow[]; error: null }) => TResult1 | PromiseLike<TResult1>) | null,
+    onfulfilled?: ((value: DemoResult<DemoRow[]>) => TResult1 | PromiseLike<TResult1>) | null,
     onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null
   ) {
     return this.execute().then(onfulfilled, onrejected);
   }
 
-  private async execute() {
+  private async execute(): Promise<DemoResult<DemoRow[]>> {
     const state = readState();
     const rows = ensureTable(state, this.table)
       .filter((row) => matches(row, this.filters))
@@ -330,7 +489,7 @@ class DemoMutationQuery {
     this.payload = payload;
   }
 
-  async match(filters: DemoRow) {
+  async match(filters: DemoRow): Promise<DemoResult<DemoRow[]>> {
     const state = readState();
     const tableRows = ensureTable(state, this.table);
 
@@ -355,9 +514,9 @@ class DemoMutationQuery {
   }
 }
 
-const createTableClient = (table: string) => ({
+const createTableClient = (table: string): DemoTableClient => ({
   select: (columns?: string) => new DemoSelectQuery(table, columns),
-  insert: async (input: DemoRow | DemoRow[]) => {
+  insert: async (input: DemoRow | DemoRow[]): Promise<DemoResult<DemoRow[]>> => {
     const state = readState();
     const tableRows = ensureTable(state, table);
     const rows = Array.isArray(input) ? input : [input];
@@ -383,8 +542,12 @@ const createTableClient = (table: string) => ({
   delete: () => new DemoMutationQuery(table, 'delete'),
 });
 
-const createStorageBucket = (bucket: string) => ({
-  upload: async (filePath: string, file: Blob, _options?: DemoRow) => {
+const createStorageBucket = (bucket: string): DemoStorageBucket => ({
+  upload: async (
+    filePath: string,
+    file: Blob,
+    _options?: DemoRow
+  ): Promise<DemoResult<{ path: string }>> => {
     const state = readState();
     const key = `${bucket}/${filePath}`;
     const name = filePath.split('/').pop() || filePath;
@@ -402,7 +565,10 @@ const createStorageBucket = (bucket: string) => ({
 
     return { data: { path: filePath }, error: null };
   },
-  list: async (prefix = '') => {
+  list: async (
+    prefix = '',
+    _options?: DemoRow
+  ): Promise<DemoResult<DemoStoredFileListItem[]>> => {
     const state = readState();
     const normalizedPrefix = prefix.replace(/\/$/, '');
     const files = Object.values(state.storage)
@@ -424,7 +590,10 @@ const createStorageBucket = (bucket: string) => ({
       publicUrl: createDemoStorageUrl(bucket, filePath),
     },
   }),
-  createSignedUrl: async (filePath: string, expiresIn: number) => {
+  createSignedUrl: async (
+    filePath: string,
+    expiresIn: number
+  ): Promise<DemoResult<{ signedUrl: string } | null>> => {
     const state = readState();
     const stored = state.storage[`${bucket}/${filePath}`];
     if (!stored) {
@@ -438,7 +607,7 @@ const createStorageBucket = (bucket: string) => ({
       error: null,
     };
   },
-  remove: async (paths: string[]) => {
+  remove: async (paths: string[]): Promise<DemoResult<string[]>> => {
     const state = readState();
     paths.forEach((filePath) => {
       delete state.storage[`${bucket}/${filePath}`];
@@ -447,7 +616,7 @@ const createStorageBucket = (bucket: string) => ({
 
     return { data: paths, error: null };
   },
-  download: async (filePath: string) => {
+  download: async (filePath: string): Promise<DemoResult<Blob | null>> => {
     const state = readState();
     const stored = state.storage[`${bucket}/${filePath}`];
     if (!stored) {
@@ -458,7 +627,7 @@ const createStorageBucket = (bucket: string) => ({
   },
 });
 
-export function resetDemoSupabaseState() {
+export function resetDemoBackendState() {
   const storage = getLocalStorage();
   memoryState = seedState();
   if (storage) {
@@ -466,27 +635,17 @@ export function resetDemoSupabaseState() {
   }
 }
 
-export function isDemoSupabaseEnabled(env: Record<string, string | undefined> = import.meta.env) {
-  const explicitDemo = env.VITE_DEMO_MODE === 'true';
-  const supabaseUrl = env.VITE_SUPABASE_URL;
-  const supabaseKey = env.VITE_SUPABASE_ANON_KEY;
-  const missingSupabase = !supabaseUrl || !supabaseKey;
-  const placeholderSupabase =
-    supabaseUrl?.includes('your_supabase_project_url_here') ||
-    supabaseUrl?.includes('dummy-project') ||
-    supabaseKey?.includes('your_supabase_anon_key_here') ||
-    supabaseKey?.includes('dummy-key');
-
-  return explicitDemo || missingSupabase || placeholderSupabase;
+export function isDemoBackendEnabled(_env: Record<string, string | undefined> = import.meta.env) {
+  return true;
 }
 
-export function createDemoSupabaseClient() {
+export function createDemoBackendClient(): DemoBackendClient {
   return {
     auth: {
       signInWithPassword: async ({ email, password }: { email: string; password: string }) => {
         const state = readState();
         const authUser = state.authUsers.find(
-          (user) => user.email === email && user.password === password
+          (user) => user.provider !== 'clerk' && user.email === email && user.password === password
         );
 
         if (!authUser) {
@@ -549,21 +708,21 @@ export function createDemoSupabaseClient() {
         const state = readState();
         state.currentUserId = null;
         writeState(state);
-        return { error: null };
+        return { data: null, error: null };
       },
     },
     from: (table: string) => createTableClient(table),
     storage: {
       from: (bucket: string) => createStorageBucket(bucket),
     },
-    channel: () => ({
-      on: function on() {
+    channel: (_name?: string) => ({
+      on: function on(_event?: string, _filter?: DemoRow, _callback?: (payload: any) => void) {
         return this;
       },
       subscribe: function subscribe() {
         return this;
       },
     }),
-    removeChannel: async () => 'ok',
+    removeChannel: async (_channel: DemoRealtimeChannel) => 'ok',
   };
 }

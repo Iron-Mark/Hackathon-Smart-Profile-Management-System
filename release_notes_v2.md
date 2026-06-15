@@ -1,6 +1,6 @@
 # The Modernization Update 🚀 (v2.0.0)
 
-We have officially revived the year-old **Smart Profile Management System** hackathon project and meticulously engineered it into a production-grade, enterprise-ready SaaS application. This massive release replaces the legacy foundation with cutting-edge web technologies, an intelligent AI layer, and an industry-leading user experience.
+We have revived the year-old **Smart Profile Management System** hackathon project into a reviewable public demo. This release keeps the original product idea alive with modern web tooling, browser-local demo data, an optional AI layer, and a clearer showcase flow.
 
 ## 🌟 The "Wow" Factor: What's New?
 
@@ -19,7 +19,7 @@ We completely transformed the standard React Single Page Application into a true
 ### 3. Masterclass Discoverability & SEO
 The application is no longer just a locked dashboard; it is a highly discoverable entity optimized for both Google and the next generation of Search.
 * **Open Graph (OG) Dominance**: Dynamic Twitter Cards and Theme Colors ensure any shared links unfurl into beautiful graphic previews.
-* **AI Search Engine Integration**: We architected an industry-leading `llms.txt` file and explicitly invited `GPTBot`, `ClaudeBot`, and `PerplexityBot` via `robots.txt` to perfectly index the specific architectural achievements of the engineering team.
+* **AI Search Engine Guidance**: The repo includes `llms.txt`, `answers.md`, and crawler guidance so answer engines can summarize the public demo accurately.
 * **Strict Canonical Directives**: W3C-compliant `sitemap.xml` mapping with duplicate-content protections tied directly to personal portfolios.
 
 ### 4. AI-Powered Autonomous Ecosystem
@@ -31,8 +31,8 @@ The core workflow is now a fully automated, hands-off pipeline.
 ![Faculty Profile](docs/images/profile.png)
 
 ### 5. Iron-Clad Security & RBAC
-* **Strict Route Segregation**: Administrators and Faculty operate in entirely different architectural spaces, protected by our custom `<ProtectedRoute />` routing wrapper that validates Supabase Auth sessions in real-time.
-* **Automated E2E Verification**: The entire security model is permanently guarded by a 100% green headless **Playwright** End-to-End testing suite to ensure no RBAC regression ever reaches production.
+* **Strict Route Segregation**: Administrators and Faculty operate in separate demo areas, protected by the custom `<ProtectedRoute />` routing wrapper that validates browser-local demo sessions.
+* **Automated E2E Verification**: The restored demo flow is covered by headless **Playwright** End-to-End tests for the main faculty/admin path.
 
 ### 6. Real-Time Admin Tooling
 Administrators have access to a lightning-fast data layer.
@@ -44,7 +44,7 @@ Administrators have access to a lightning-fast data layer.
 ---
 
 ## 👥 Meet the Team (Team 2nd Choice)
-This platform represents a collaborative triumph by an elite engineering trio:
+This restored showcase represents a collaborative hackathon project by Team 2nd Choice:
 * **Mark Siazon** – Lead Frontend Developer & UI/UX
 * **Charles Nathaniel Togle** – Backend & Integration
 * **Alexa San Jose** – Systems & Architecture

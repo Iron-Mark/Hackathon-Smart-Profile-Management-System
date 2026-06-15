@@ -74,6 +74,7 @@ test('public demo allows non-UMak visitors to register and sign in', async ({ pa
   await expect(page).toHaveURL(appRoutePattern('/auth/login'));
 
   await page.getByLabel('Email').fill(email);
+  await expect(page.getByLabel('Email')).toHaveValue(email);
   await page.locator('input#password').fill(password);
   await page.getByRole('button', { name: 'Login' }).click();
 
@@ -128,6 +129,7 @@ test('demo reset removes visitor accounts and restores seeded access', async ({ 
   });
 
   await page.getByLabel('Email').fill(email);
+  await expect(page.getByLabel('Email')).toHaveValue(email);
   await page.locator('input#password').fill(password);
   await page.getByRole('button', { name: 'Login' }).click();
   await expect(page.getByText(/Invalid demo credentials/i)).toBeVisible();

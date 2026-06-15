@@ -5,6 +5,8 @@ Use this repo as a static GitHub Pages showcase:
 https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
 
 Demo mode stores accounts, submissions, audit logs, and uploaded file metadata in the visitor's browser only.
+There is no hosted backend for the public showcase.
+Optional Clerk sign-in can be enabled locally with `VITE_CLERK_PUBLISHABLE_KEY`; it maps visitors to browser-local faculty demo profiles and does not create production document storage.
 
 ## Fast Path
 
@@ -19,6 +21,8 @@ Demo mode stores accounts, submissions, audit logs, and uploaded file metadata i
 
 - Do not upload real IDs, transcripts, licenses, or private faculty records.
 - Use only generated/sample files when sharing the public URL.
+- Uploaded files and account state stay in the current browser and are not synced to a server.
+- Clerk Organizations, when enabled, are showcase context only and do not grant admin access in this static app.
 - Use **Clear demo data** in the sidebar or **Reset demo data** on auth pages to restore the seeded state.
 - The Web Vitals panel is local to the browser and does not send analytics anywhere.
 
