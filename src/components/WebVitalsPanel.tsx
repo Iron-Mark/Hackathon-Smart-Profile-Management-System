@@ -39,7 +39,7 @@ export function WebVitalsPanel() {
       {open && (
         <section
           aria-label="Web Vitals panel"
-          className="w-72 rounded-lg border bg-popover p-4 text-popover-foreground shadow-lg"
+          className="w-[calc(100vw-2rem)] rounded-lg border bg-popover p-4 text-popover-foreground shadow-lg sm:w-72"
         >
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
@@ -79,12 +79,12 @@ export function WebVitalsPanel() {
       <Button
         type="button"
         size="sm"
-        className="shadow-lg"
+        className="h-11 w-11 rounded-full p-0 shadow-lg sm:h-9 sm:w-auto sm:rounded-md sm:px-3"
         aria-expanded={open}
         onClick={() => setOpen((current) => !current)}
       >
-        <Activity className="mr-2 h-4 w-4" />
-        Web Vitals
+        <Activity className="h-4 w-4 sm:mr-2" />
+        <span className="sr-only sm:not-sr-only">Web Vitals</span>
       </Button>
     </div>
   );

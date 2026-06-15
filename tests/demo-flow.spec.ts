@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { appRoute } from './helpers';
+import { appRoute, appRoutePattern } from './helpers';
 
 test('demo faculty upload can be approved by an admin end to end', async ({ page }) => {
   await page.goto(appRoute('/auth/login'));
   await page.getByRole('button', { name: 'Faculty demo' }).click();
   await page.getByRole('button', { name: 'Login' }).click();
 
-  await expect(page).toHaveURL(/\/faculty\/dashboard$/);
+  await expect(page).toHaveURL(appRoutePattern('/faculty/dashboard'));
   await expect(page.getByRole('heading', { name: /Welcome, Dr\. Maria Santos/i })).toBeVisible();
   await expect(page.getByText(/Use sample files only/i)).toBeVisible();
 
@@ -25,7 +25,7 @@ test('demo faculty upload can be approved by an admin end to end', async ({ page
   await page.getByRole('button', { name: 'Admin demo' }).click();
   await page.getByRole('button', { name: 'Login' }).click();
 
-  await expect(page).toHaveURL(/\/admin\/dashboard$/);
+  await expect(page).toHaveURL(appRoutePattern('/admin/dashboard'));
   await page.goto(appRoute('/admin/approvals'));
 
   const uploadedRow = page.locator('tr', { hasText: 'board-exam-certificate.png' });
@@ -71,13 +71,13 @@ test('public demo allows non-UMak visitors to register and sign in', async ({ pa
   await page.locator('input#confirm-password').fill(password);
   await page.getByRole('button', { name: 'Register' }).click();
 
-  await expect(page).toHaveURL(/\/auth\/login$/);
+  await expect(page).toHaveURL(appRoutePattern('/auth/login'));
 
   await page.getByLabel('Email').fill(email);
   await page.locator('input#password').fill(password);
   await page.getByRole('button', { name: 'Login' }).click();
 
-  await expect(page).toHaveURL(/\/faculty\/dashboard$/);
+  await expect(page).toHaveURL(appRoutePattern('/faculty/dashboard'));
   await expect(page.getByRole('heading', { name: /Welcome, Public Demo Visitor/i })).toBeVisible();
 });
 
@@ -92,7 +92,7 @@ test('public demo explains duplicate registration attempts', async ({ page }) =>
   await page.locator('input#confirm-password').fill(password);
   await page.getByRole('button', { name: 'Register' }).click();
 
-  await expect(page).toHaveURL(/\/auth\/login$/);
+  await expect(page).toHaveURL(appRoutePattern('/auth/login'));
 
   await page.goto(appRoute('/auth/register'));
   await page.getByLabel('Full Name').fill('Duplicate Demo Visitor');
@@ -101,7 +101,7 @@ test('public demo explains duplicate registration attempts', async ({ page }) =>
   await page.locator('input#confirm-password').fill(password);
   await page.getByRole('button', { name: 'Register' }).click();
 
-  await expect(page).toHaveURL(/\/auth\/register$/);
+  await expect(page).toHaveURL(appRoutePattern('/auth/register'));
   await expect(page.getByText('Email already registered')).toBeVisible();
 });
 
@@ -116,7 +116,7 @@ test('demo reset removes visitor accounts and restores seeded access', async ({ 
   await page.locator('input#confirm-password').fill(password);
   await page.getByRole('button', { name: 'Register' }).click();
 
-  await expect(page).toHaveURL(/\/auth\/login$/);
+  await expect(page).toHaveURL(appRoutePattern('/auth/login'));
   await page.getByRole('button', { name: 'Reset demo data' }).click();
   await expect(page.getByRole('status')).toContainText('Demo data reset');
 
@@ -135,5 +135,5 @@ test('demo reset removes visitor accounts and restores seeded access', async ({ 
 
   await page.getByRole('button', { name: 'Faculty demo' }).click();
   await page.getByRole('button', { name: 'Login' }).click();
-  await expect(page).toHaveURL(/\/faculty\/dashboard$/);
+  await expect(page).toHaveURL(appRoutePattern('/faculty/dashboard'));
 });

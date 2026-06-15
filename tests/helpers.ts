@@ -18,3 +18,16 @@ export function appRoute (path: string) {
 
   return `${normalizedBase}${normalizedPath}`
 }
+
+function escapeRegExp (value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+export function appRoutePattern (path: string) {
+  const [pathname, query] = path.split('?')
+  const normalizedPathname = pathname.replace(/\/+$/, '')
+  const escapedPathname = escapeRegExp(normalizedPathname)
+  const escapedQuery = query ? `\\?${escapeRegExp(query)}` : ''
+
+  return new RegExp(`${escapedPathname}/?${escapedQuery}$`)
+}

@@ -18,6 +18,7 @@ const DOC_FILES = [
   'PUBLIC_DEMO.md',
   'README.md',
   'docs/demo-checklist.md',
+  'docs/post-deploy-review.md',
   'docs/seo-readiness.md',
 ];
 const REQUIRED_DIST_FALLBACKS = [

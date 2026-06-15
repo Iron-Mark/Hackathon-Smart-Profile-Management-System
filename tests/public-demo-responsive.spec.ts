@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { appRoute } from './helpers'
+import { appRoute, appRoutePattern } from './helpers'
 
 async function expectNoHorizontalOverflow (page: import('@playwright/test').Page) {
   const overflow = await page.evaluate(() => {
@@ -34,7 +34,7 @@ test('start demo prepares seeded faculty credentials', async ({ page }) => {
   await page.goto(appRoute('/'))
 
   await page.getByRole('link', { name: 'Start demo' }).click()
-  await expect(page).toHaveURL(/\/auth\/login\?demo=faculty$/)
+  await expect(page).toHaveURL(appRoutePattern('/auth/login?demo=faculty'))
   await expect(page.getByLabel('Email')).toHaveValue('faculty@umak.edu.ph')
   await expect(page.locator('input#password')).toHaveValue('Faculty123')
   await expect(page.getByRole('status')).toContainText('faculty@umak.edu.ph is ready to sign in.')
@@ -49,7 +49,7 @@ test('seeded demo login is usable on a tablet viewport', async ({ page }) => {
   await expect(page.locator('input#password')).toHaveValue('Faculty123')
 
   await page.getByRole('button', { name: 'Login' }).click()
-  await expect(page).toHaveURL(/\/faculty\/dashboard$/)
+  await expect(page).toHaveURL(appRoutePattern('/faculty/dashboard'))
   await expect(
     page.getByRole('heading', { name: /Welcome, Dr\. Maria Santos/i })
   ).toBeVisible()
@@ -64,7 +64,7 @@ test('faculty dashboard upload controls stay reachable on mobile', async ({ page
   await page.getByRole('button', { name: 'Faculty demo' }).click()
   await page.getByRole('button', { name: 'Login' }).click()
 
-  await expect(page).toHaveURL(/\/faculty\/dashboard$/)
+  await expect(page).toHaveURL(appRoutePattern('/faculty/dashboard'))
   await expect(page.getByRole('region', { name: 'Smart upload' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Browse files' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Submit files' })).toBeDisabled()
