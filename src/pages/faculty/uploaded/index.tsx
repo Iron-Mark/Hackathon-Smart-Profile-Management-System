@@ -214,9 +214,9 @@ export default function UploadedFilesPage() {
             <SidebarTrigger />
           </div>
 
-          <main className="flex-1 w-full p-6 bg-gray-50">
+          <main className="flex-1 w-full p-6 bg-muted/40 text-foreground">
             <div className="flex justify-between items-center mb-4">
-              <h1 className="text-3xl font-extrabold text-gray-800">
+              <h1 className="text-3xl font-extrabold text-foreground">
                 Uploaded Files ({filteredFiles.length})
               </h1>
               <DropdownMenu>
@@ -234,7 +234,7 @@ export default function UploadedFilesPage() {
                       className={cn(
                         "flex items-center gap-2 px-3 py-1 rounded-md transition-colors",
                         count === 0
-                          ? "bg-gray-100 text-gray-600 cursor-not-allowed"
+                          ? "bg-muted text-muted-foreground cursor-not-allowed"
                           : ""
                       )}
                       disabled={count === 0}
@@ -258,13 +258,13 @@ export default function UploadedFilesPage() {
                       "cursor-pointer flex items-center gap-2 px-3 py-1 rounded-full transition-colors whitespace-nowrap",
                       statusFilter === status.label
                         ? status.label === "Verified"
-                          ? "bg-green-100 text-green-700"
+                          ? "bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-200"
                           : status.label === "Pending"
-                          ? "bg-blue-100 text-blue-700"
+                          ? "bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-200"
                           : status.label === "Not Approved"
-                          ? "bg-red-100 text-red-700"
+                          ? "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-200"
                           : ""
-                        : "hover:bg-gray-100"
+                        : "hover:bg-muted"
                     )}
                     onClick={() => setStatusFilter(status.label)}
                   >
@@ -280,7 +280,7 @@ export default function UploadedFilesPage() {
 
             {/* Drag and Drop Zone */}
             <div
-              className="border-2 border-dashed border-gray-300 rounded-lg p-8 mb-6 flex flex-col items-center justify-center bg-white hover:bg-gray-50 transition-colors"
+              className="border-2 border-dashed border-border rounded-lg p-8 mb-6 flex flex-col items-center justify-center bg-card hover:bg-muted/60 transition-colors"
               onDragOver={(e) => e.preventDefault()}
               onDrop={async (e) => {
                 e.preventDefault();
@@ -290,9 +290,9 @@ export default function UploadedFilesPage() {
                 }
               }}
             >
-              <UploadCloud className="w-12 h-12 text-gray-400 mb-4" />
-              <p className="text-gray-600 mb-2">Drag and drop an image here</p>
-              <p className="text-sm text-gray-400">or click to select a file</p>
+              <UploadCloud className="w-12 h-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground mb-2">Drag and drop an image here</p>
+              <p className="text-sm text-muted-foreground">or click to select a file</p>
               <input
                 type="file"
                 accept="image/*"
@@ -307,25 +307,25 @@ export default function UploadedFilesPage() {
               />
               <label
                 htmlFor="file-upload"
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md cursor-pointer hover:bg-blue-700 transition-colors"
+                className="mt-4 px-4 py-2 bg-blue-700 text-white rounded-md cursor-pointer hover:bg-blue-800 transition-colors dark:bg-blue-500 dark:text-blue-950 dark:hover:bg-blue-400"
               >
                 Select File
               </label>
             </div>
 
             {isUploading && (
-              <div className="mb-6 p-4 bg-blue-50 text-blue-700 rounded-lg animate-pulse">
+              <div className="mb-6 p-4 bg-blue-50 text-blue-800 rounded-lg animate-pulse dark:bg-blue-950/60 dark:text-blue-200">
                 Extracting text from image... Please wait.
               </div>
             )}
 
             {extractedText && (
-              <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
-                <h3 className="font-semibold text-green-800 mb-2 flex justify-between items-center">
+              <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200 dark:bg-green-950/50 dark:border-green-900/70">
+                <h3 className="font-semibold text-green-900 mb-2 flex justify-between items-center dark:text-green-200">
                   Extracted Text:
                   <Button variant="outline" size="sm" onClick={() => setExtractedText(null)}>Clear</Button>
                 </h3>
-                <p className="whitespace-pre-wrap text-sm text-green-700 max-h-60 overflow-y-auto">{extractedText}</p>
+                <p className="whitespace-pre-wrap text-sm text-green-800 max-h-60 overflow-y-auto dark:text-green-200">{extractedText}</p>
               </div>
             )}
 
@@ -370,10 +370,10 @@ export default function UploadedFilesPage() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-muted-foreground">
                         Uploaded on: {file.uploadedAt}
                       </p>
-                      <p className="text-sm text-gray-600 flex items-center">
+                      <p className="text-sm text-muted-foreground flex items-center">
                         {
                           categoryIcons[
                             file.category as keyof typeof categoryIcons
@@ -418,7 +418,7 @@ export default function UploadedFilesPage() {
                           </DialogHeader>
                           <div className="space-y-4">
                             <div>
-                              <label className="block text-sm font-medium text-gray-700">
+                              <label className="block text-sm font-medium text-foreground">
                                 File Name
                               </label>
                               <Input
@@ -435,7 +435,7 @@ export default function UploadedFilesPage() {
                               />
                             </div>
                             <div>
-                              <label className="block text-sm font-medium text-gray-700">
+                              <label className="block text-sm font-medium text-foreground">
                                 Category
                               </label>
                               <Select

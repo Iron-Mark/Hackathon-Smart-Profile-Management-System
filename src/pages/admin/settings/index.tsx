@@ -11,7 +11,7 @@ export default function AdminSettingsPage() {
       <div className="flex w-screen min-h-screen">
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">
-          <main className="flex-1 w-full bg-gray-50 p-6">
+          <main className="flex-1 w-full bg-muted/40 text-foreground p-6">
             <h1 className="text-3xl font-bold mb-6">System Settings</h1>
             <Tabs defaultValue="notifications" className="w-full">
               <TabsList className="grid w-full grid-cols-3 mb-4">

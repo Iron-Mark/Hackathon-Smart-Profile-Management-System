@@ -73,48 +73,48 @@ export default function PersonalInfoForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <p className="text-red-600 bg-red-100 p-2 rounded text-sm">{error}</p>
+        <p className="text-red-800 bg-red-100 p-2 rounded text-sm dark:bg-red-950/60 dark:text-red-200">{error}</p>
       )}
 
       <div className="grid gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Name</label>
+          <label className="block text-sm font-medium text-foreground">Name</label>
           <input
             type="text"
             value={form.name}
             onChange={handleChange("name")}
             required
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-input bg-background text-foreground px-3 py-2 shadow-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Email (Read-only)</label>
+          <label className="block text-sm font-medium text-foreground">Email (Read-only)</label>
           <input
             type="email"
             value={form.email}
             disabled
-            className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm cursor-not-allowed"
+            className="mt-1 block w-full rounded-md border border-border bg-muted px-3 py-2 text-muted-foreground shadow-sm cursor-not-allowed"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Profession</label>
+          <label className="block text-sm font-medium text-foreground">Profession</label>
           <input
             type="text"
             value={form.profession}
             onChange={handleChange("profession")}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-input bg-background text-foreground px-3 py-2 shadow-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-foreground">
             Profile Description
           </label>
           <textarea
             value={form.description}
             onChange={handleChange("description")}
             rows={4}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-input bg-background text-foreground px-3 py-2 shadow-sm placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
       </div>

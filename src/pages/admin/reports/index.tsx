@@ -76,7 +76,7 @@ export default function AdminReportsPage() {
       <div className="flex w-screen min-h-screen">
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">
-          <main className="flex-1 w-full bg-gray-50 p-6">
+          <main className="flex-1 w-full bg-muted/40 text-foreground p-6">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-3xl font-bold">Reports and Analytics</h1>
             </div>
@@ -89,7 +89,7 @@ export default function AdminReportsPage() {
                 <div>
                   <label
                     htmlFor="reportType"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block text-sm font-medium text-foreground mb-1"
                   >
                     Select Report Type
                   </label>
@@ -111,7 +111,7 @@ export default function AdminReportsPage() {
                   <div>
                     <label
                       htmlFor="dateRange"
-                      className="block text-sm font-medium text-gray-700 mb-1"
+                      className="block text-sm font-medium text-foreground mb-1"
                     >
                       Date Range (Optional)
                     </label>
@@ -136,7 +136,7 @@ export default function AdminReportsPage() {
                 <CardTitle>Analytics Insights</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-center text-gray-500 py-4">
+                <p className="text-center text-muted-foreground py-4">
                   Data visualization modules are integrated with Recharts in the Dashboard.
                 </p>
               </CardContent>

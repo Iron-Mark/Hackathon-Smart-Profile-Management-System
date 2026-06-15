@@ -13,7 +13,7 @@ export default function AdminHelpPage() {
       <div className="flex w-screen min-h-screen">
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">
-          <main className="flex-1 w-full bg-gray-50 p-6">
+          <main className="flex-1 w-full bg-muted/40 text-foreground p-6">
             <h1 className="text-3xl font-bold mb-6">Help & Support</h1>
 
             <Accordion type="single" collapsible className="w-full">
@@ -54,14 +54,14 @@ export default function AdminHelpPage() {
               </AccordionItem>
             </Accordion>
 
-            <div className="mt-8 p-4 border rounded-md bg-blue-50">
+            <div className="mt-8 p-4 border rounded-md bg-blue-50 text-blue-950 dark:bg-blue-950/50 dark:text-blue-100 dark:border-blue-900/70">
               <h2 className="text-xl font-semibold mb-2">Contact Support</h2>
               <p>
                 If you encounter any issues or have questions not covered in
                 this guide, please contact the IT support team at{" "}
                 <a
                   href="mailto:support@ccis.edu"
-                  className="text-blue-600 hover:underline"
+                  className="text-blue-700 hover:underline dark:text-blue-300"
                 >
                   support@ccis.edu
                 </a>

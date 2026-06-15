@@ -91,8 +91,8 @@ export function AppSidebar ({ className }: AppSidebarProps) {
                       <SidebarMenuButton
                         className={`flex items-center gap-2 rounded-md p-2 cursor-pointer transition-colors ${
                           isActive
-                            ? 'bg-gray-100 text-green-500! font-semibold'
-                            : 'text-gray-50! hover:bg-gray-500 focus:bg-gray-100'
+                            ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold'
+                            : 'text-sidebar-foreground hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground focus-visible:bg-sidebar-accent focus-visible:text-sidebar-accent-foreground'
                         }`}
                         asChild
                         onClick={item.onClick}
@@ -117,7 +117,7 @@ export function AppSidebar ({ className }: AppSidebarProps) {
                 <div className="mt-6">
                   <button
                     type="button"
-                    className="flex w-full cursor-pointer items-center gap-2 rounded-md p-2 text-left text-gray-50! transition-colors hover:bg-gray-500 focus:bg-gray-100"
+                    className="flex w-full cursor-pointer items-center gap-2 rounded-md p-2 text-left text-sidebar-foreground transition-colors hover:bg-sidebar-accent/80 hover:text-sidebar-accent-foreground focus-visible:bg-sidebar-accent focus-visible:text-sidebar-accent-foreground"
                     onClick={handleDemoReset}
                   >
                     <RotateCcw className="h-5 w-5" />

@@ -56,9 +56,9 @@ export default function BackupSettings() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg flex gap-3">
-          <ShieldAlert className="w-6 h-6 text-amber-600 shrink-0" />
-          <div className="text-sm text-amber-800">
+        <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg flex gap-3 dark:bg-amber-950/50 dark:border-amber-900/70">
+          <ShieldAlert className="w-6 h-6 text-amber-700 shrink-0 dark:text-amber-300" />
+          <div className="text-sm text-amber-900 dark:text-amber-200">
             <p className="font-bold mb-1">Warning</p>
             Backups contain sensitive faculty information including personal details and document records. Ensure all exported data is stored securely.
           </div>
@@ -68,7 +68,7 @@ export default function BackupSettings() {
           <div className="flex items-center justify-between p-4 border rounded-lg">
             <div>
               <p className="font-medium">Full System Export</p>
-              <p className="text-sm text-gray-500">Download all database tables as a single JSON file.</p>
+              <p className="text-sm text-muted-foreground">Download all database tables as a single JSON file.</p>
             </div>
             <Button onClick={handleExportAll} disabled={isExporting}>
               <Download className="w-4 h-4 mr-2" />
@@ -79,7 +79,7 @@ export default function BackupSettings() {
           <div className="flex items-center justify-between p-4 border rounded-lg opacity-50">
             <div>
               <p className="font-medium">Automatic Cloud Backup</p>
-              <p className="text-sm text-gray-500">Scheduled weekly backups to Supabase Storage.</p>
+              <p className="text-sm text-muted-foreground">Scheduled weekly backups to Supabase Storage.</p>
             </div>
             <Button disabled variant="outline">Coming Soon</Button>
           </div>

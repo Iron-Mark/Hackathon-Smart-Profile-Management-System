@@ -11,6 +11,11 @@ import getFromDatabase from "@/tools/database/getFromDatabase";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A288FE', '#00F49F', '#F0BB28', '#F08042'];
+const chartTooltipStyle = {
+  backgroundColor: 'var(--popover)',
+  borderColor: 'var(--border)',
+  color: 'var(--popover-foreground)'
+};
 
 export default function AdminDashboard() {
   useDocumentTitle('Admin Dashboard');
@@ -120,9 +125,9 @@ export default function AdminDashboard() {
       <div className="flex w-screen min-h-screen">
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">
-          <main className="flex-1 w-full bg-gradient-to-br from-gray-100 to-gray-200 p-6">
+          <main className="flex-1 w-full bg-muted/40 text-foreground p-6">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-4xl font-extrabold text-gray-800">
+              <h1 className="text-4xl font-extrabold text-foreground">
                 Admin Dashboard
               </h1>
               <Button onClick={handleExportCSV}>Export CSV</Button>
@@ -130,7 +135,7 @@ export default function AdminDashboard() {
             <Separator className="mb-6" />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="shadow-lg transition-shadow bg-gradient-to-r from-blue-400 to-blue-200 text-stone-800">
+              <Card className="shadow-lg transition-shadow border-blue-200 bg-blue-50 text-blue-950 dark:border-blue-900/70 dark:bg-blue-950/50 dark:text-blue-100">
                 <CardHeader>
                   <CardTitle className="text-sm">Total Users</CardTitle>
                 </CardHeader>
@@ -139,7 +144,7 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
 
-              <Card className="shadow-lg transition-shadow bg-gradient-to-r from-green-400 to-green-200 text-stone-800">
+              <Card className="shadow-lg transition-shadow border-green-200 bg-green-50 text-green-950 dark:border-green-900/70 dark:bg-green-950/50 dark:text-green-100">
                 <CardHeader>
                   <CardTitle className="text-sm">Active Sessions (24h)</CardTitle>
                 </CardHeader>
@@ -148,7 +153,7 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
 
-              <Card className="shadow-lg transition-shadow bg-gradient-to-r from-amber-400 to-amber-200 text-stone-800">
+              <Card className="shadow-lg transition-shadow border-amber-200 bg-amber-50 text-amber-950 dark:border-amber-900/70 dark:bg-amber-950/50 dark:text-amber-100">
                 <CardHeader>
                   <CardTitle className="text-sm">Pending Approvals</CardTitle>
                 </CardHeader>
@@ -163,14 +168,14 @@ export default function AdminDashboard() {
                 <CardHeader>
                   <CardTitle>Documents Uploaded (Last 7 Days)</CardTitle>
                 </CardHeader>
-                <CardContent className="h-[300px]">
+                <CardContent className="h-[300px] text-muted-foreground">
                   {isLoading ? <Skeleton className="w-full h-full" /> : (
                     <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 500, height: 300 }}>
                       <BarChart data={uploadData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <RechartsTooltip />
+                        <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.2} />
+                        <XAxis dataKey="name" tick={{ fill: 'currentColor' }} />
+                        <YAxis tick={{ fill: 'currentColor' }} />
+                        <RechartsTooltip contentStyle={chartTooltipStyle} labelStyle={{ color: 'var(--popover-foreground)' }} />
                         <Bar dataKey="uploads" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
@@ -182,7 +187,7 @@ export default function AdminDashboard() {
                 <CardHeader>
                   <CardTitle>Document Categories</CardTitle>
                 </CardHeader>
-                <CardContent className="h-[300px]">
+                <CardContent className="h-[300px] text-muted-foreground">
                   {isLoading ? <Skeleton className="w-full h-full" /> : (
                     <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 500, height: 300 }}>
                       <PieChart>
@@ -195,14 +200,14 @@ export default function AdminDashboard() {
                           fill="#8884d8"
                           paddingAngle={5}
                           dataKey="value"
-                          label
+                          label={{ fill: 'currentColor' }}
                         >
                           {categoryData.map((_, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
-                        <RechartsTooltip />
-                        <Legend />
+                        <RechartsTooltip contentStyle={chartTooltipStyle} labelStyle={{ color: 'var(--popover-foreground)' }} />
+                        <Legend wrapperStyle={{ color: 'currentColor' }} />
                       </PieChart>
                     </ResponsiveContainer>
                   )}
@@ -212,7 +217,7 @@ export default function AdminDashboard() {
 
             <div className="mt-8">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold text-gray-800">
+                <h2 className="text-2xl font-semibold text-foreground">
                   Recent Submissions for Approval
                 </h2>
                 <input
@@ -220,10 +225,10 @@ export default function AdminDashboard() {
                   placeholder="Search faculty or docs..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
+                  className="px-4 py-2 border border-input rounded-md bg-background text-foreground shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring w-64"
                 />
               </div>
-              <div className="bg-white shadow-md rounded-md p-4">
+              <div className="bg-card text-card-foreground shadow-md rounded-md border p-4">
                 <ul className="space-y-3">
                   {isLoading ? (
                     Array.from({ length: 3 }).map((_, i) => (
@@ -237,8 +242,8 @@ export default function AdminDashboard() {
                       .filter(s => (s.file_name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) || (s.document_type?.toLowerCase() || '').includes(searchQuery.toLowerCase()))
                       .map((sub) => (
                       <li key={sub.id} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
-                        <span className="text-sm text-gray-600">
-                          {sub.document_type} upload: <span className="font-medium text-gray-900">{sub.file_name}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {sub.document_type} upload: <span className="font-medium text-foreground">{sub.file_name}</span>
                         </span>
                         <div className="space-x-2">
                           <Button asChild size="sm" variant="outline">
@@ -248,40 +253,40 @@ export default function AdminDashboard() {
                       </li>
                     ))
                   ) : (
-                    <li className="text-center text-sm text-gray-500 py-2">No pending submissions.</li>
+                    <li className="text-center text-sm text-muted-foreground py-2">No pending submissions.</li>
                   )}
                 </ul>
               </div>
             </div>
 
             <div className="mt-8">
-              <h2 className="text-2xl font-semi bold text-gray-800 mb-4">
+              <h2 className="text-2xl font-semibold text-foreground mb-4">
                 Quick Actions
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
                   <Button
                     asChild
-                    className="w-full bg-blue-300 hover:bg-blue-200 text-stone-800"
+                    className="w-full bg-blue-100 hover:bg-blue-200 text-blue-950 dark:bg-blue-900/70 dark:text-blue-100 dark:hover:bg-blue-900"
                   >
                     <Link to="/admin/accounts">Add User</Link>
                   </Button>
                   <Button
                     asChild
-                    className="w-full bg-amber-300 hover:bg-amber-200 text-stone-800"
+                    className="w-full bg-amber-100 hover:bg-amber-200 text-amber-950 dark:bg-amber-900/70 dark:text-amber-100 dark:hover:bg-amber-900"
                   >
                     <Link to="/admin/approvals">View Approvals</Link>
                   </Button>
 
                   <Button
                     asChild
-                    className="w-full bg-green-300 hover:bg-green-200 text-stone-800"
+                    className="w-full bg-green-100 hover:bg-green-200 text-green-950 dark:bg-green-900/70 dark:text-green-100 dark:hover:bg-green-900"
                   >
                     <Link to="/admin/reports">Generate Report</Link>
                   </Button>
 
                   <Button
                     asChild
-                    className="w-full bg-stone-300 hover:bg-stone-400 text-stone-800"
+                    className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80"
                   >
                     <Link to="/admin/settings">Settings</Link>
                   </Button>

@@ -29,7 +29,7 @@ export function DatePickerWithRange({
 
   return (
     <div className={cn("grid gap-2", className)}>
-      <label htmlFor="date" className="text-sm font-medium text-gray-700">
+      <label htmlFor="date" className="text-sm font-medium text-foreground">
         Select Date Range
       </label>
       <Popover>
@@ -59,7 +59,7 @@ export function DatePickerWithRange({
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <div className="p-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">
+            <p className="text-sm font-medium text-foreground mb-2">
               Select Start and End Dates
             </p>
           </div>

@@ -75,7 +75,7 @@ export default function AdminAuditLogsPage() {
       <div className="flex w-screen min-h-screen">
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">
-          <main className="flex-1 w-full bg-gray-50 p-6">
+          <main className="flex-1 w-full bg-muted/40 text-foreground p-6">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-3xl font-bold">System Audit Logs</h1>
             </div>
@@ -137,7 +137,7 @@ export default function AdminAuditLogsPage() {
                           ))
                         ) : (
                           logs.map((log) => (
-                            <tr key={log.id} className="border-b hover:bg-gray-100">
+                            <tr key={log.id} className="border-b hover:bg-muted/60">
                               <td className="px-4 py-2 whitespace-nowrap">
                                 {new Date(log.timestamp).toLocaleString()}
                               </td>
@@ -151,7 +151,7 @@ export default function AdminAuditLogsPage() {
                     </table>
                 </div>
                 {!isLoading && logs.length === 0 && (
-                  <p className="text-center text-gray-500 py-4">
+                  <p className="text-center text-muted-foreground py-4">
                     No audit logs found.
                   </p>
                 )}

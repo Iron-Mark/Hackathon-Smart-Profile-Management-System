@@ -122,8 +122,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             className='object-cover w-full h-full rounded-t-md'
           />
         ) : (
-          <div className='absolute inset-0 flex items-center justify-center bg-gray-200/50 rounded-t-md'>
-            <span className='text-sm text-gray-600'>Upload Cover Photo</span>
+          <div className='absolute inset-0 flex items-center justify-center bg-muted/70 rounded-t-md'>
+            <span className='text-sm text-muted-foreground'>Upload Cover Photo</span>
           </div>
         )}
         <div className='absolute inset-0 bg-black/25 bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center transition-opacity duration-300 rounded-t-md'>
@@ -140,11 +140,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         />
       </div>
 
-      <div className='bg-white p-4 sm:p-6 rounded-b-md shadow-md z-10 mt-6 w-full'>
+      <div className='bg-card text-card-foreground p-4 sm:p-6 rounded-b-md shadow-md z-10 mt-6 w-full'>
         {/* Profile Pic and Basic Info */}
         <div className='flex flex-col sm:flex-row items-center sm:items-end -mt-16 sm:-mt-20'>
           <div
-            className='group relative rounded-full h-24 w-24 md:h-32 md:w-32 bg-gray-300 overflow-hidden border-4 border-white shadow-lg cursor-pointer'
+            className='group relative rounded-full h-24 w-24 md:h-32 md:w-32 bg-muted overflow-hidden border-4 border-card shadow-lg cursor-pointer'
             onClick={() => profileImageInputRef.current?.click()}
           >
             {profileImageUrl ? (
@@ -154,7 +154,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 className='object-cover w-full h-full'
               />
             ) : (
-              <div className='absolute inset-0 flex items-center justify-center bg-gray-200 text-gray-500'>
+              <div className='absolute inset-0 flex items-center justify-center bg-muted text-muted-foreground'>
                 <span className='text-xs'>No Image</span>
               </div>
             )}
@@ -172,10 +172,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             />
           </div>
           <div className='mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left w-full sm:w-auto'>
-            <h1 className='text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 truncate'>
+            <h1 className='text-xl sm:text-2xl md:text-3xl font-bold text-card-foreground truncate'>
               {userData.name}
             </h1>
-            <p className='text-sm md:text-base text-gray-600 truncate'>
+            <p className='text-sm md:text-base text-muted-foreground truncate'>
               {userData.email}
             </p>
           </div>

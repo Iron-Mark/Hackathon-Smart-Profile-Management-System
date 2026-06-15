@@ -20,14 +20,14 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
   return (
     <AccordionItem
       value={value}
-      className="bg-white rounded-md shadow-sm overflow-hidden"
+      className="bg-card text-card-foreground rounded-md shadow-sm overflow-hidden"
     >
-      <AccordionTrigger className="flex justify-between items-center w-full p-4 hover:bg-gray-50 transition-colors">
-        <span className="font-semibold text-md sm:text-lg text-green-600">
+      <AccordionTrigger className="flex justify-between items-center w-full p-4 hover:bg-muted/60 transition-colors">
+        <span className="font-semibold text-md sm:text-lg text-green-700 dark:text-green-300">
           {title}
         </span>
       </AccordionTrigger>
-      <AccordionContent className="p-4 border-t text-gray-700 leading-relaxed text-sm sm:text-base">
+      <AccordionContent className="p-4 border-t text-card-foreground leading-relaxed text-sm sm:text-base">
         {children}
       </AccordionContent>
     </AccordionItem>

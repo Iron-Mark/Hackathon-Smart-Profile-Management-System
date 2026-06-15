@@ -66,14 +66,14 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: oklch(0.24 0.035 150);
+  --sidebar-foreground: oklch(0.97 0.015 95);
+  --sidebar-primary: oklch(0.72 0.17 145);
+  --sidebar-primary-foreground: oklch(0.16 0.02 150);
+  --sidebar-accent: oklch(0.34 0.055 150);
+  --sidebar-accent-foreground: oklch(0.985 0.015 95);
+  --sidebar-border: oklch(0.42 0.055 150);
+  --sidebar-ring: oklch(0.72 0.17 145);
 }
 
 .dark {
@@ -100,14 +100,14 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar: oklch(0.18 0.03 150);
+  --sidebar-foreground: oklch(0.985 0.015 95);
+  --sidebar-primary: oklch(0.74 0.16 145);
+  --sidebar-primary-foreground: oklch(0.14 0.025 150);
+  --sidebar-accent: oklch(0.28 0.05 150);
+  --sidebar-accent-foreground: oklch(0.985 0.015 95);
+  --sidebar-border: oklch(0.38 0.05 150);
+  --sidebar-ring: oklch(0.74 0.16 145);
 }
 
 @layer base {
@@ -118,35 +118,14 @@
     @apply bg-background text-foreground;
   }
 
-  :root {
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
 }
 
 /* Update styles for danger elements to use a light red background */
 .danger {
-  @apply text-red-600 bg-red-200 border border-red-400 rounded-md p-2 flex items-center gap-2;
+  @apply text-red-700 bg-red-100 border border-red-300 rounded-md p-2 flex items-center gap-2 dark:text-red-200 dark:bg-red-950/50 dark:border-red-900;
 }
 .danger-icon {
-  @apply text-red-600;
+  @apply text-red-700 dark:text-red-300;
 }
 
 @keyframes bounce-slow {

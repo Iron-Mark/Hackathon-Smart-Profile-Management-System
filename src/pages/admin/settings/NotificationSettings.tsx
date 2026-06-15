@@ -34,11 +34,11 @@ export default function NotificationSettings() {
         <CardTitle>Notification Settings</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-sm text-gray-500 mb-4">Configure system-wide notification preferences.</p>
+        <p className="text-sm text-muted-foreground mb-4">Configure system-wide notification preferences.</p>
         <div className="flex items-center justify-between p-2 border rounded-md">
           <Label htmlFor="submission-notif" className="flex-1 cursor-pointer">
             Faculty Submission Notifications
-            <p className="text-xs font-normal text-gray-500">Get notified when a faculty member uploads a new document.</p>
+            <p className="text-xs font-normal text-muted-foreground">Get notified when a faculty member uploads a new document.</p>
           </Label>
           <Switch 
             id="submission-notif" 
@@ -49,7 +49,7 @@ export default function NotificationSettings() {
         <div className="flex items-center justify-between p-2 border rounded-md">
           <Label htmlFor="approval-notif" className="flex-1 cursor-pointer">
             Approval Status Notifications
-            <p className="text-xs font-normal text-gray-500">Notify faculty when their documents are approved or returned.</p>
+            <p className="text-xs font-normal text-muted-foreground">Notify faculty when their documents are approved or returned.</p>
           </Label>
           <Switch 
             id="approval-notif" 
@@ -60,7 +60,7 @@ export default function NotificationSettings() {
         <div className="flex items-center justify-between p-2 border rounded-md">
           <Label htmlFor="reminder-notif" className="flex-1 cursor-pointer">
             Reminder Notifications
-            <p className="text-xs font-normal text-gray-500">Automated reminders for license expiry and missing documents.</p>
+            <p className="text-xs font-normal text-muted-foreground">Automated reminders for license expiry and missing documents.</p>
           </Label>
           <Switch 
             id="reminder-notif" 

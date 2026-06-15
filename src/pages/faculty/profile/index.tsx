@@ -388,7 +388,7 @@ export default function ProfilePage () {
   }
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading Profile...</div>
+    return <div className="flex h-screen items-center justify-center bg-background text-foreground">Loading Profile...</div>
   }
 
   return (
@@ -400,7 +400,7 @@ export default function ProfilePage () {
           <div className='md:hidden p-4 border-b print:hidden'>
             <SidebarTrigger />
           </div>
-          <main className='flex-1 w-full bg-gray-100 p-4 md:p-6 lg:p-8 print:bg-white print:p-0'>
+          <main className='flex-1 w-full bg-muted/40 text-foreground p-4 md:p-6 lg:p-8 print:bg-white print:p-0 print:text-black print:[--background:white] print:[--foreground:black] print:[--card:white] print:[--card-foreground:black] print:[--muted:white] print:[--muted-foreground:#374151] print:[--border:#d1d5db] print:[&_*]:!text-black'>
             <ProfileHeader
               userId={userId}
               onProfileImageUpload={handleProfileImageUpload}
@@ -410,14 +410,14 @@ export default function ProfilePage () {
 
             <div className='mt-6 max-w-4xl mx-auto space-y-3'>
               {/* Auto-Fill Action Banner */}
-              <Card className="bg-indigo-50 border-indigo-100 shadow-sm overflow-hidden mb-4 print:hidden">
+              <Card className="bg-indigo-50 border-indigo-200 text-indigo-950 shadow-sm overflow-hidden mb-4 print:hidden dark:bg-indigo-950/50 dark:border-indigo-900/70 dark:text-indigo-100">
                 <CardContent className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
-                    <h3 className="font-semibold text-indigo-800 flex items-center">
+                    <h3 className="font-semibold text-indigo-950 flex items-center dark:text-indigo-100">
                       <SparklesIcon className="w-5 h-5 mr-2" />
                       Smart Profile Builder
                     </h3>
-                    <p className="text-sm text-indigo-600">
+                    <p className="text-sm text-indigo-800 dark:text-indigo-200">
                       Upload your CV, Certificate, or Diploma and let AI extract the details for you.
                     </p>
                   </div>
@@ -425,7 +425,7 @@ export default function ProfilePage () {
                     <Button 
                       variant="outline"
                       onClick={() => window.print()}
-                      className="border-indigo-200 text-indigo-700 hover:bg-indigo-100"
+                      className="border-indigo-300 text-indigo-800 hover:bg-indigo-100 dark:border-indigo-700 dark:text-indigo-200 dark:hover:bg-indigo-900/60"
                     >
                       <DownloadIcon className="w-4 h-4 mr-2" />
                       Export PDF
@@ -433,7 +433,7 @@ export default function ProfilePage () {
                     <Button 
                       onClick={() => autoFillInputRef.current?.click()}
                       disabled={isAutoFilling}
-                      className="bg-indigo-600 hover:bg-indigo-700 whitespace-nowrap"
+                      className="bg-indigo-700 hover:bg-indigo-800 text-white whitespace-nowrap dark:bg-indigo-400 dark:text-indigo-950 dark:hover:bg-indigo-300"
                     >
                       <FileTextIcon className="w-4 h-4 mr-2" />
                       {isAutoFilling ? 'Extracting...' : 'Upload & Auto-fill'}
@@ -450,9 +450,9 @@ export default function ProfilePage () {
               </Card>
 
               {/* Profile Description Card */}
-              <Card className="bg-white rounded-md shadow-sm overflow-hidden print:shadow-none print:border-none">
+              <Card className="bg-card text-card-foreground rounded-md shadow-sm overflow-hidden print:shadow-none print:border-none">
                 <CardHeader className="flex justify-between items-center flex-row print:p-2">
-                  <CardTitle className="font-semibold text-md sm:text-lg text-green-600">
+                  <CardTitle className="font-semibold text-md sm:text-lg text-green-700 dark:text-green-300">
                     Profile Description
                   </CardTitle>
                   <div className="flex gap-2 print:hidden">
@@ -461,14 +461,14 @@ export default function ProfilePage () {
                       size="sm" 
                       onClick={handleGenerateAIBio} 
                       disabled={isGenerating}
-                      className="text-indigo-600 border-indigo-200 hover:bg-indigo-50 text-xs sm:text-sm"
+                      className="text-indigo-700 border-indigo-300 hover:bg-indigo-50 text-xs sm:text-sm dark:text-indigo-200 dark:border-indigo-700 dark:hover:bg-indigo-950/60"
                     >
                       <SparklesIcon className="w-4 h-4 mr-1 sm:mr-2" />
                       {isGenerating ? 'Generating Bio...' : 'Generate AI Bio'}
                     </Button>
                     <Dialog>
                       <DialogTrigger asChild>
-                        <button className='text-gray-500 hover:text-gray-700 p-2'>
+                        <button className='text-muted-foreground hover:text-foreground p-2'>
                           <Edit3Icon className='w-5 h-5' />
                         </button>
                       </DialogTrigger>
@@ -488,7 +488,7 @@ export default function ProfilePage () {
                               variant="outline" 
                               onClick={handleGenerateSummary} 
                               disabled={isGenerating}
-                              className="text-indigo-600 border-indigo-200 hover:bg-indigo-50"
+                              className="text-indigo-700 border-indigo-300 hover:bg-indigo-50 dark:text-indigo-200 dark:border-indigo-700 dark:hover:bg-indigo-950/60"
                             >
                               <SparklesIcon className="w-4 h-4 mr-2" />
                               {isGenerating ? 'Generating...' : 'AI Generate Summary'}
@@ -500,8 +500,8 @@ export default function ProfilePage () {
                     </Dialog>
                   </div>
                 </CardHeader>
-                <CardContent className='text-gray-700 leading-relaxed text-sm sm:text-base'>
-                  {description.description || <span className="text-gray-400 italic">No description provided. Click edit to add one.</span>}
+                <CardContent className='text-card-foreground leading-relaxed text-sm sm:text-base'>
+                  {description.description || <span className="text-muted-foreground italic">No description provided. Click edit to add one.</span>}
                 </CardContent>
               </Card>
 
@@ -520,13 +520,13 @@ export default function ProfilePage () {
                     {educationData.map(ed => (
                       <div key={ed.id} className='pb-3 border-b last:border-b-0 flex justify-between items-start'>
                         <div>
-                          <p className='font-medium text-gray-800 text-sm sm:text-md'>{ed.degree}</p>
-                          <p className='text-xs sm:text-sm text-gray-600'>{ed.institution} • {ed.startDate} - {ed.endDate}</p>
+                          <p className='font-medium text-foreground text-sm sm:text-md'>{ed.degree}</p>
+                          <p className='text-xs sm:text-sm text-muted-foreground'>{ed.institution} • {ed.startDate} - {ed.endDate}</p>
                         </div>
                         <div className="flex space-x-2">
                           <Dialog>
                             <DialogTrigger asChild>
-                              <button className='text-gray-400 hover:text-green-600' onClick={() => { setEditingEducation(ed); setIsAddingEdu(false); }}>
+                              <button className='text-muted-foreground hover:text-green-700 dark:hover:text-green-300' onClick={() => { setEditingEducation(ed); setIsAddingEdu(false); }}>
                                 <Edit3Icon className='w-4 h-4' />
                               </button>
                             </DialogTrigger>
@@ -535,7 +535,7 @@ export default function ProfilePage () {
                               <EducationForm data={editingEducation} onChange={setEditingEducation} onSave={handleSaveEducation} onCancel={() => setEditingEducation(null)} />
                             </DialogContent>
                           </Dialog>
-                          <button className='text-gray-400 hover:text-red-600' onClick={() => handleDelete('educational_background', ed.id)}>
+                          <button className='text-muted-foreground hover:text-red-700 dark:hover:text-red-300' onClick={() => handleDelete('educational_background', ed.id)}>
                             <Trash2Icon className='w-4 h-4' />
                           </button>
                         </div>
@@ -571,14 +571,14 @@ export default function ProfilePage () {
                     {workData.map(we => (
                       <div key={we.id} className='pb-4 border-b last:border-b-0 flex justify-between items-start'>
                         <div>
-                          <p className='font-medium text-gray-800 text-sm sm:text-md'>{we.role}</p>
-                          <p className='text-xs sm:text-sm text-gray-600'>{we.organization} • {we.period}</p>
-                          {we.details && <p className='mt-1 text-xs sm:text-sm text-gray-700'>{we.details}</p>}
+                          <p className='font-medium text-foreground text-sm sm:text-md'>{we.role}</p>
+                          <p className='text-xs sm:text-sm text-muted-foreground'>{we.organization} • {we.period}</p>
+                          {we.details && <p className='mt-1 text-xs sm:text-sm text-card-foreground'>{we.details}</p>}
                         </div>
                         <div className="flex space-x-2">
                           <Dialog>
                             <DialogTrigger asChild>
-                              <button className='text-gray-400 hover:text-green-600' onClick={() => { setEditingWork(we); setIsAddingWork(false); }}>
+                              <button className='text-muted-foreground hover:text-green-700 dark:hover:text-green-300' onClick={() => { setEditingWork(we); setIsAddingWork(false); }}>
                                 <Edit3Icon className='w-4 h-4' />
                               </button>
                             </DialogTrigger>
@@ -587,7 +587,7 @@ export default function ProfilePage () {
                               <WorkForm data={editingWork} onChange={setEditingWork} onSave={handleSaveWork} onCancel={() => setEditingWork(null)} />
                             </DialogContent>
                           </Dialog>
-                          <button className='text-gray-400 hover:text-red-600' onClick={() => handleDelete('work_experiences', we.id)}>
+                          <button className='text-muted-foreground hover:text-red-700 dark:hover:text-red-300' onClick={() => handleDelete('work_experiences', we.id)}>
                             <Trash2Icon className='w-4 h-4' />
                           </button>
                         </div>
@@ -623,14 +623,14 @@ export default function ProfilePage () {
                     {developmentData.map(item => (
                       <div key={item.id} className='pb-4 border-b last:border-b-0 flex justify-between items-start'>
                         <div>
-                          <p className='font-medium text-gray-800 text-sm sm:text-md'>{item.role}</p>
-                          <p className='text-xs sm:text-sm text-gray-600'>{item.organization} • {item.period}</p>
-                          {item.details && <p className='mt-1 text-xs sm:text-sm text-gray-700'>{item.details}</p>}
+                          <p className='font-medium text-foreground text-sm sm:text-md'>{item.role}</p>
+                          <p className='text-xs sm:text-sm text-muted-foreground'>{item.organization} • {item.period}</p>
+                          {item.details && <p className='mt-1 text-xs sm:text-sm text-card-foreground'>{item.details}</p>}
                         </div>
                         <div className="flex space-x-2">
                           <Dialog>
                             <DialogTrigger asChild>
-                              <button className='text-gray-400 hover:text-green-600' onClick={() => { setEditingDevelopment(item); setIsAddingDev(false); }}>
+                              <button className='text-muted-foreground hover:text-green-700 dark:hover:text-green-300' onClick={() => { setEditingDevelopment(item); setIsAddingDev(false); }}>
                                 <Edit3Icon className='w-4 h-4' />
                               </button>
                             </DialogTrigger>
@@ -639,7 +639,7 @@ export default function ProfilePage () {
                               <DevForm data={editingDevelopment} onChange={setEditingDevelopment} onSave={handleSaveDevelopment} onCancel={() => setEditingDevelopment(null)} />
                             </DialogContent>
                           </Dialog>
-                          <button className='text-gray-400 hover:text-red-600' onClick={() => handleDelete('professional_development', item.id)}>
+                          <button className='text-muted-foreground hover:text-red-700 dark:hover:text-red-300' onClick={() => handleDelete('professional_development', item.id)}>
                             <Trash2Icon className='w-4 h-4' />
                           </button>
                         </div>

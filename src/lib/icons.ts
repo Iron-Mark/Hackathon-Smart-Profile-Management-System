@@ -45,22 +45,22 @@ const createIconItem = (
 });
 
 export const categoryIcons: Record<Category, IconItem> = {
-  "Curriculum Vitae": createIconItem(GraduationCap, "text-teal-600"),
-  "PRC License": createIconItem(User, "text-orange-600"),
-  Resume: createIconItem(Briefcase, "text-indigo-600"),
-  "Valid ID": createIconItem(User, "text-pink-600"),
-  Diplomas: createIconItem(GraduationCap, "text-purple-600"),
-  "Transcript of records": createIconItem(GraduationCap, "text-yellow-600"),
-  Certificates: createIconItem(CheckCircle, "text-green-600"),
-  "Research Publications": createIconItem(GraduationCap, "text-red-600"),
-  Others: createIconItem(AlertTriangle, "text-gray-600"),
+  "Curriculum Vitae": createIconItem(GraduationCap, "text-teal-700 dark:text-teal-300"),
+  "PRC License": createIconItem(User, "text-orange-700 dark:text-orange-300"),
+  Resume: createIconItem(Briefcase, "text-indigo-700 dark:text-indigo-300"),
+  "Valid ID": createIconItem(User, "text-pink-700 dark:text-pink-300"),
+  Diplomas: createIconItem(GraduationCap, "text-purple-700 dark:text-purple-300"),
+  "Transcript of records": createIconItem(GraduationCap, "text-amber-700 dark:text-amber-300"),
+  Certificates: createIconItem(CheckCircle, "text-green-700 dark:text-green-300"),
+  "Research Publications": createIconItem(GraduationCap, "text-red-700 dark:text-red-300"),
+  Others: createIconItem(AlertTriangle, "text-slate-700 dark:text-slate-300"),
 
 };
 
 export const statusVariants: Record<Status, IconItem> = {
-  Verified: createIconItem(CheckCircle, "text-green-600"),
-  "Not Approved": createIconItem(XCircle, "text-red-600"),
-  "Not Accurate": createIconItem(AlertTriangle, "text-yellow-600"),
-  Pending: createIconItem(Clock, "text-blue-600"),
-  Expired: createIconItem(XCircle, "text-gray-600"),
+  Verified: createIconItem(CheckCircle, "text-green-700 dark:text-green-300"),
+  "Not Approved": createIconItem(XCircle, "text-red-700 dark:text-red-300"),
+  "Not Accurate": createIconItem(AlertTriangle, "text-amber-700 dark:text-amber-300"),
+  Pending: createIconItem(Clock, "text-blue-700 dark:text-blue-300"),
+  Expired: createIconItem(XCircle, "text-slate-700 dark:text-slate-300"),
 };
