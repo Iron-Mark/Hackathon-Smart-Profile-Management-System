@@ -56,3 +56,17 @@ test('seeded demo login is usable on a tablet viewport', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Clear demo data' })).toBeVisible()
   await expectNoHorizontalOverflow(page)
 })
+
+test('faculty dashboard upload controls stay reachable on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto(appRoute('/auth/login'))
+
+  await page.getByRole('button', { name: 'Faculty demo' }).click()
+  await page.getByRole('button', { name: 'Login' }).click()
+
+  await expect(page).toHaveURL(/\/faculty\/dashboard$/)
+  await expect(page.getByRole('region', { name: 'Smart upload' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Browse files' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Submit files' })).toBeDisabled()
+  await expectNoHorizontalOverflow(page)
+})

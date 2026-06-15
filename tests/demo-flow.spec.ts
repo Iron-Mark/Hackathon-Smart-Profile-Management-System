@@ -10,12 +10,15 @@ test('demo faculty upload can be approved by an admin end to end', async ({ page
   await expect(page.getByRole('heading', { name: /Welcome, Dr\. Maria Santos/i })).toBeVisible();
   await expect(page.getByText(/Use sample files only/i)).toBeVisible();
 
-  await page.locator('input#file-upload').setInputFiles({
-    name: 'board-exam-certificate.png',
-    mimeType: 'image/png',
-    buffer: Buffer.from('demo image content'),
-  });
-  await page.getByRole('button', { name: 'Submit' }).click();
+  await page
+    .getByRole('region', { name: 'Smart upload' })
+    .locator('input[type="file"]')
+    .setInputFiles({
+      name: 'board-exam-certificate.png',
+      mimeType: 'image/png',
+      buffer: Buffer.from('demo image content'),
+    });
+  await page.getByRole('button', { name: 'Submit files' }).click();
   await expect(page.getByText('Type: Certificates')).toBeVisible();
 
   await page.goto(appRoute('/auth/login'));

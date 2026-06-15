@@ -20,7 +20,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
   useDocumentTitle('Faculty Dashboard')
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
   const [uploadResults, setUploadResults] = useState<
-    { fileName: string; progress: number; documentType?: string }[]
+    { fileName: string; progress: number; documentType?: string; status: 'processing' | 'uploaded' | 'failed' }[]
   >([])
   const [name, setName] = useState<string>('')
   const [userId, setUserId] = useState<string>('')
@@ -28,19 +28,10 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
   const [completion, setCompletion] = useState<number>(0)
   const [notificationsCount, setNotificationsCount] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
   const handleFileUpload = (files: File[]) => {
-    const newUniqueFiles = files.filter(
-      file => !uploadedFiles.some(f => f.name === file.name)
-    )
-
-    if (newUniqueFiles.length < files.length) {
-      toast.warning('Some files were already uploaded')
-    }
-
-    if (newUniqueFiles.length === 0) return
-
-    setUploadedFiles(prev => [...prev, ...newUniqueFiles])
+    setUploadedFiles(files)
   }
 
   useEffect(() => {
@@ -95,6 +86,8 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
   }
 
   const handleSubmit = async () => {
+    if (isSubmitting) return
+
     if (!uploadedFiles || uploadedFiles.length === 0) {
       toast.error('Please upload at least one file to submit.')
       return
@@ -103,34 +96,62 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
     const results = uploadedFiles.map(file => ({
       fileName: file.name,
       progress: 0,
-      documentType: undefined
+      documentType: undefined,
+      status: 'processing' as const
     }))
     setUploadResults(results)
+    setIsSubmitting(true)
 
-    for (const [index, file] of uploadedFiles.entries()) {
-      const result = await determineDocumentTypeAndUpload(file, userId)
+    let successfulUploads = 0
 
-      if (!result) {
-        toast.error(`Failed to upload: ${file.name}`)
-        continue
+    try {
+      for (const [index, file] of uploadedFiles.entries()) {
+        const result = await determineDocumentTypeAndUpload(file, userId)
+
+        if (!result) {
+          setUploadResults(prev =>
+            prev.map((item, i) =>
+              i === index
+                ? {
+                    ...item,
+                    progress: 100,
+                    status: 'failed'
+                  }
+                : item
+            )
+          )
+          toast.error(`Failed to upload: ${file.name}`)
+          continue
+        }
+
+        successfulUploads += 1
+
+        setUploadResults(prev =>
+          prev.map((item, i) =>
+            i === index
+              ? {
+                  ...item,
+                  progress: 100,
+                  documentType: result.documentType,
+                  status: 'uploaded'
+                }
+              : item
+          )
+        )
       }
 
-      setUploadResults(prev =>
-        prev.map((item, i) =>
-          i === index
-            ? {
-                ...item,
-                progress: 100,
-                documentType: result.documentType
-              }
-            : item
+      if (successfulUploads > 0) {
+        toast.success(
+          successfulUploads === uploadedFiles.length
+            ? 'Files uploaded successfully!'
+            : `${successfulUploads} file(s) uploaded. Review failed files before retrying.`
         )
-      )
+        setUploadedFiles([])
+        fetchDashboardData(userId) // Refresh pending count
+      }
+    } finally {
+      setIsSubmitting(false)
     }
-
-    toast.success('Files uploaded successfully!')
-    setUploadedFiles([])
-    fetchDashboardData(userId) // Refresh pending count
   }
 
   return (
@@ -143,14 +164,14 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
             <SidebarTrigger />
           </div>
 
-          <main className='flex-1 w-full p-6 bg-gray-100'>
+          <main className='flex-1 w-full p-6 bg-muted/40 text-foreground'>
             <Toaster position='top-right' />
             {children ?? (
               <>
-                <h1 className='text-3xl font-extrabold text-gray-800 mb-2'>
+                <h1 className='text-3xl font-extrabold text-foreground mb-2'>
                   {isLoading ? <Skeleton className="h-9 w-64" /> : `Welcome, ${name}`}
                 </h1>
-                <div className='text-gray-600 mb-6'>
+                <div className='text-muted-foreground mb-6'>
                   {isLoading ? <Skeleton className="h-4 w-80" /> : 'Track your records and compliance status here.'}
                 </div>
                 <Separator className='mb-6' />
@@ -159,14 +180,14 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                   <div>
                     <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
                       {[
-                        { label: 'Profile Completion', val: `${completion}%`, color: 'text-green-400' },
-                        { label: 'Pending Approvals', val: pendingCount, color: 'text-amber-400' },
-                        { label: 'Notifications', val: notificationsCount, color: 'text-stone-800' },
-                        { label: 'Upcoming Deadlines', val: '3', color: 'text-red-500' }
+                        { label: 'Profile Completion', val: `${completion}%`, color: 'text-emerald-700 dark:text-emerald-300' },
+                        { label: 'Pending Approvals', val: pendingCount, color: 'text-amber-700 dark:text-amber-300' },
+                        { label: 'Notifications', val: notificationsCount, color: 'text-foreground' },
+                        { label: 'Upcoming Deadlines', val: '3', color: 'text-red-700 dark:text-red-300' }
                       ].map((item, i) => (
                         <Card key={i} className='shadow-sm hover:shadow-md transition-shadow'>
                           <CardHeader>
-                            <CardTitle className='text-sm text-gray-500'>
+                            <CardTitle className='text-sm text-muted-foreground'>
                               {item.label}
                             </CardTitle>
                           </CardHeader>
@@ -181,17 +202,18 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                   </div>
 
                   <div>
-                    <p className='text-gray-600 mb-3'>
+                    <p className='text-muted-foreground mb-3'>
                       Use our AI-powered smart upload to automatically organize
                       and process your documents effortlessly.
                     </p>
-                    <p className='mb-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800'>
+                    <p className='mb-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/50 dark:text-amber-200'>
                       Use sample files only. Public demo uploads stay in this browser and are meant for showcase testing.
                     </p>
 
                     <DropZone
                       setData={handleFileUpload}
                       handleSubmit={() => handleSubmit()}
+                      isSubmitting={isSubmitting}
                     />
 
                     <div>
@@ -202,12 +224,12 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                             className='shadow-sm hover:shadow-md transition-shadow'
                           >
                             <CardHeader>
-                              <CardTitle className='text-sm text-gray-500 truncate'>
+                              <CardTitle className='text-sm text-muted-foreground truncate'>
                                 {result.fileName}
                               </CardTitle>
                             </CardHeader>
                             <CardContent>
-                              <div className='w-full bg-gray-200 rounded-full h-2.5 mb-2'>
+                              <div className='w-full bg-muted rounded-full h-2.5 mb-2'>
                                 <div
                                   className='h-2.5 rounded-full bg-blue-600'
                                   style={{
@@ -216,12 +238,21 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                                   }}
                                 ></div>
                               </div>
-                              {result.documentType ? (
-                                <p className='text-sm text-green-600'>
-                                  Type: {result.documentType}
+                              {result.status === 'uploaded' && result.documentType ? (
+                                <div className='space-y-1'>
+                                  <p className='text-sm font-medium text-emerald-700 dark:text-emerald-300'>
+                                    Uploaded
+                                  </p>
+                                  <p className='text-sm text-emerald-700 dark:text-emerald-300'>
+                                    Type: {result.documentType}
+                                  </p>
+                                </div>
+                              ) : result.status === 'failed' ? (
+                                <p className='text-sm text-red-700 dark:text-red-300'>
+                                  Upload failed. Check the file and try again.
                                 </p>
                               ) : (
-                                <p className='text-sm text-gray-600 animate-pulse'>
+                                <p className='text-sm text-muted-foreground animate-pulse'>
                                   Processing...
                                 </p>
                               )}
