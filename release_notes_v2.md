@@ -1,52 +1,46 @@
-# The Modernization Update 🚀 (v2.0.0)
+# v2.1 Public Demo Handoff Release
 
-We have revived the year-old **Smart Profile Management System** hackathon project into a reviewable public demo. This release keeps the original product idea alive with modern web tooling, browser-local demo data, an optional AI layer, and a clearer showcase flow.
+This release closes the restoration pass for the Smart Profile Management System hackathon project. The app is now positioned as a GitHub Pages-friendly public showcase that can be cloned, installed, run locally, and demonstrated without a hosted backend.
 
-## 🌟 The "Wow" Factor: What's New?
+## Highlights
 
-### 1. The Glassmorphic UI/UX Overhaul
-The entire platform has been visually rebuilt from the ground up by Lead Frontend Developer **Mark Siazon**. The application now features a stunning, fluid Glassmorphic interface powered by Tailwind CSS and Radix UI primitives. 
-* **Global Dark/Light Mode**: Seamlessly toggles deeply integrated theme tokens for maximum accessibility and visual flair.
-* **Responsive Architecture**: Fully optimized for both desktop administrator analytics and mobile faculty uploads.
+- Restored the faculty-to-admin demo flow with browser-local seeded accounts, document upload metadata, admin approval, faculty status visibility, and demo file previews.
+- Converted the unsupported hosted backend path into a browser-local demo backend, so no Supabase, Appwrite, Firebase, or custom server is required.
+- Added optional Clerk showcase authentication with sign-in, sign-up, user menu, and Organization switcher controls when `VITE_CLERK_PUBLISHABLE_KEY` is configured.
+- Kept admin access on the seeded demo admin account rather than trusting browser-side Clerk Organization state.
+- Updated SEO, AEO, GEO, social preview, robots, sitemap, `llms.txt`, and public demo copy for the canonical GitHub Pages URL.
+- Reworked the demo information panel into a responsive bottom-right snackbar with dismiss, reset, and seeded-account actions.
+- Added focused tests and Playwright coverage for the restored demo flow, responsive auth screens, SEO smoke checks, route noindex behavior, duplicate registration messaging, and demo reset behavior.
 
-![Login Portal](docs/images/login.png)
+## Public Demo
 
-### 2. Intelligent Progressive Web App (PWA)
-We completely transformed the standard React Single Page Application into a true **Progressive Web App (PWA)**.
-* **Offline Mode Mastery**: Built-in network listeners instantly detect Wi-Fi drops, triggering elegant `sonner` persistent toast notifications ("Offline Mode - Operating from Cache") to ensure the presentation never breaks, even under extreme network latency.
-* **Installable**: Beautiful custom 192x192 and 512x512 manifest icons allow users to install the platform natively on their devices.
+- URL: https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
+- Runtime model: browser-local demo storage
+- Supported setup: `npm ci`, then `npm run dev` or the documented GitHub Pages build/preview commands
+- Optional Clerk setup: add `VITE_CLERK_PUBLISHABLE_KEY` only if you want the hosted Clerk UI layer
 
-### 3. Masterclass Discoverability & SEO
-The application is no longer just a locked dashboard; it is a highly discoverable entity optimized for both Google and the next generation of Search.
-* **Open Graph (OG) Dominance**: Dynamic Twitter Cards and Theme Colors ensure any shared links unfurl into beautiful graphic previews.
-* **AI Search Engine Guidance**: The repo includes `llms.txt`, `answers.md`, and crawler guidance so answer engines can summarize the public demo accurately.
-* **Strict Canonical Directives**: W3C-compliant `sitemap.xml` mapping with duplicate-content protections tied directly to personal portfolios.
+## Safety Notes
 
-### 4. AI-Powered Autonomous Ecosystem
-The core workflow is now a fully automated, hands-off pipeline.
-* **OCR Text Extraction**: Raw faculty uploads are instantly parsed via `Tesseract.js`.
-* **GPT-4 Classification**: Extracted text is fed to a custom OpenAI pipeline that autonomously classifies and categorizes the document type.
-* **Generative Biographies**: With a single click, the platform evaluates a faculty member's *Approved* credentials and ghostwrites a stellar, professional biography using Generative AI.
+- Uploaded demo files and generated previews stay in the visitor's browser-local state.
+- No backend secrets are required for the public showcase.
+- The app does not claim production authentication, production document storage, or durable multi-user institutional records.
+- Optional OpenAI and Clerk keys are public/demo configuration paths only; the app continues to work without them.
 
-![Faculty Profile](docs/images/profile.png)
+## Verification Gate
 
-### 5. Iron-Clad Security & RBAC
-* **Strict Route Segregation**: Administrators and Faculty operate in separate demo areas, protected by the custom `<ProtectedRoute />` routing wrapper that validates browser-local demo sessions.
-* **Automated E2E Verification**: The restored demo flow is covered by headless **Playwright** End-to-End tests for the main faculty/admin path.
+The v2.1 release should be considered valid only when these checks pass on the release commit:
 
-### 6. Real-Time Admin Tooling
-Administrators have access to a lightning-fast data layer.
-* **Live Global Search**: The "Recent Submissions" dashboard now features a real-time, zero-latency search index for instantly filtering faculty files.
-* **Native CSV Exporting**: Replaced buggy external libraries with a custom-engineered vanilla JS module for instantly downloading pristine CSV analytics reports.
+- `npm ci`
+- `npm test -- --run`
+- `npm run lint`
+- `npm run security:scan`
+- `npm run seo:check`
+- `npm run links:check`
+- GitHub Pages-style `npm run build`
+- GitHub Pages-style `npx playwright test --reporter=line`
 
-![Admin Dashboard](docs/images/dashboard.png)
+## Handoff Notes
 
----
-
-## 👥 Meet the Team (Team 2nd Choice)
-This restored showcase represents a collaborative hackathon project by Team 2nd Choice:
-* **Mark Siazon** – Lead Frontend Developer & UI/UX
-* **Charles Nathaniel Togle** – Backend & Integration
-* **Alexa San Jose** – Systems & Architecture
-
-*Built with ❤️ for the UMak CCIS Hackathon*
+- Continue from the `v2.1` tag or the latest `main` commit.
+- Do not add a real backend unless the project goal changes from showcase to production.
+- If continuing on another PC, clone the repo, run `npm ci`, copy `.env.example` to `.env.local` if needed, and keep `VITE_DEMO_MODE=true`.
