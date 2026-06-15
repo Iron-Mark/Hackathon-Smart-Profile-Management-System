@@ -45,30 +45,31 @@ The authenticated sidebar also includes **Clear demo data**, which resets the br
 
 For GitHub Pages or any static SPA host, check these direct links after deployment:
 
-- `/auth/login`
-- `/auth/register`
-- `/demo-storage/pictures-and-documents/missing/sample.png`
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/auth/login/`
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/auth/register/`
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-storage/pictures-and-documents/missing/sample/`
 
 The auth routes should render normally. The missing demo storage link should render the Demo File Unavailable page instead of a static-hosting 404.
 
-Also verify `/demo-samples/sample-certificate.svg` returns the generated sample credential.
+Also verify `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-samples/sample-certificate.svg` returns the generated sample credential.
 
 ## SEO Smoke Check
 
 After deployment, verify:
 
 - The landing page canonical URL is `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/`.
-- `/sitemap.xml` lists only the public landing page.
-- `/robots.txt` points to the GitHub Pages sitemap.
-- `/llms.txt` describes the browser-local demo and sample-file guidance.
-- `/answers.md` provides concise answer-engine facts for AEO/GEO-style summaries.
-- `/og-image.png` returns the 1200x630 public share image.
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/sitemap.xml` lists only the public landing page.
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/robots.txt` points to the GitHub Pages sitemap.
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/llms.txt` describes the browser-local demo and sample-file guidance.
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/answers.md` provides concise answer-engine facts for AEO/GEO-style summaries.
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/og-image.png` returns the 1200x630 public share image.
 - Auth, admin, faculty, and demo-storage routes render but expose `noindex,nofollow`.
 
 Local command:
 
 ```bash
 npm run seo:check
+npm run links:check
 ```
 
 ## Build Preview Commands

@@ -12,14 +12,14 @@ Set the same value in `VITE_SITE_URL` for local checks and deployment builds.
 
 Indexable:
 
-- `/` - public landing page and showcase entry point.
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/` - public landing page and showcase entry point.
 
 Intentionally noindexed after React renders:
 
-- `/auth/*`
-- `/admin/*`
-- `/faculty/*`
-- `/demo-storage/*`
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/auth/*`
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/admin/*`
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/faculty/*`
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-storage/*`
 - unknown app routes
 
 The app routes still work for reviewers, but they should not be treated as public search pages.

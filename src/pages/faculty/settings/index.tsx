@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import supabaseAccountActions from "@/tools/accounts/supabaseAccountActions";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "sonner";
 import { logAudit } from "@/tools/database/logAudit";
 import { Lock, LogOut, Bell, Shield } from "lucide-react";
@@ -32,7 +33,7 @@ function Preferences() {
     <Card className="h-full shadow-lg border-stone-200">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Bell className="w-5 h-5 text-blue-600" /> Preferences
+          <Bell className="w-5 h-5 text-blue-700 dark:text-blue-300" /> Preferences
         </CardTitle>
         <CardDescription>Manage your app experience and notifications.</CardDescription>
       </CardHeader>
@@ -40,7 +41,7 @@ function Preferences() {
         <div className="flex items-center justify-between p-3 border rounded-lg">
           <div className="space-y-0.5">
             <Label htmlFor="notifications" className="text-base">Push Notifications</Label>
-            <p className="text-sm text-gray-500">Receive alerts about document approvals.</p>
+            <p className="text-sm text-muted-foreground">Receive alerts about document approvals.</p>
           </div>
           <Switch 
             id="notifications" 
@@ -52,7 +53,7 @@ function Preferences() {
         <div className="flex items-center justify-between p-3 border rounded-lg opacity-50">
           <div className="space-y-0.5">
             <Label htmlFor="dark-mode" className="text-base">Dark Mode</Label>
-            <p className="text-sm text-gray-500">Switch to a darker interface theme.</p>
+            <p className="text-sm text-muted-foreground">Switch to a darker interface theme.</p>
           </div>
           <Switch id="dark-mode" disabled />
         </div>
@@ -62,6 +63,7 @@ function Preferences() {
 }
 
 export default function FacultySettingsPage() {
+  const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isChanging, setIsChanging] = useState(false);
@@ -71,7 +73,7 @@ export default function FacultySettingsPage() {
     const response = await supabaseAccountActions.logOutUser();
     if (response.success) {
       toast.success("Logged out successfully");
-      setTimeout(() => window.location.href = "/auth/login", 1000);
+      setTimeout(() => navigate("/auth/login", { replace: true }), 1000);
     } else {
       toast.error("Logout failed: " + response.message);
     }
@@ -109,7 +111,7 @@ export default function FacultySettingsPage() {
   return (
     <SidebarProvider>
       <Toaster position="top-right" />
-      <div className="flex w-screen min-h-screen bg-stone-50">
+      <div className="flex w-screen min-h-screen bg-muted/40 text-foreground">
         <AppSidebar />
         <div className="flex-1 flex flex-col">
           <main className="p-6 md:p-10 max-w-5xl mx-auto w-full">
@@ -119,7 +121,7 @@ export default function FacultySettingsPage() {
               <Card className="h-full shadow-lg border-stone-200">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-green-600" /> Account Security
+                    <Shield className="w-5 h-5 text-green-700 dark:text-green-300" /> Account Security
                   </CardTitle>
                   <CardDescription>Manage your password and session.</CardDescription>
                 </CardHeader>
@@ -179,7 +181,7 @@ export default function FacultySettingsPage() {
               <Preferences />
             </div>
 
-            <footer className="mt-16 text-center text-sm text-gray-500 max-w-md mx-auto">
+            <footer className="mt-16 text-center text-sm text-muted-foreground max-w-md mx-auto">
               <p className="mb-2">Developed for the UMak CCIS Hackathon by Team 2nd Choice.</p>
               <p>&copy; 2026 Smart Faculty Profile Management System</p>
             </footer>

@@ -21,7 +21,15 @@ test('landing exposes crawlable showcase metadata and static SEO assets', async 
   await expect(page.getByRole('heading', { name: 'Public Demo Facts' })).toBeVisible();
   await expect(page.getByText('Demo data stays in your browser.')).toBeVisible();
 
-  for (const path of ['/sitemap.xml', '/robots.txt', '/llms.txt', '/answers.md', '/og-image.png']) {
+  for (const path of [
+    '/sitemap.xml',
+    '/robots.txt',
+    '/llms.txt',
+    '/answers.md',
+    '/og-image.png',
+    '/fav-icon.png',
+    '/pwa-192x192.png',
+  ]) {
     const response = await request.get(appRoute(path));
     expect(response.ok(), `${path} should be served by the preview host`).toBe(true);
   }
@@ -33,7 +41,7 @@ test('private and utility app routes are marked noindex after render', async ({ 
     '/auth/register',
     '/admin/dashboard',
     '/faculty/dashboard',
-    '/demo-storage/pictures-and-documents/missing/sample.png',
+    '/demo-storage/pictures-and-documents/missing/sample/',
   ]) {
     await page.goto(appRoute(path));
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex,nofollow');

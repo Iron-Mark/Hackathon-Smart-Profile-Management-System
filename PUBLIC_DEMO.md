@@ -35,10 +35,10 @@ Run these after GitHub Pages publishes:
 
 - Landing page renders and shows **Browser-local demo mode**.
 - **Start demo** opens login with seeded faculty credentials.
-- `/auth/login` and `/auth/register` direct links render.
-- `/demo-storage/pictures-and-documents/missing/sample.png` renders the Demo File Unavailable page.
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/auth/login/` and `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/auth/register/` direct links render.
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-storage/pictures-and-documents/missing/sample/` renders the Demo File Unavailable page.
 - Faculty upload accepts the sample certificate and rejects oversized or unsupported files.
 - Admin can view and approve an uploaded file.
 - Faculty can view the approved file from Uploaded Files.
-- `/sitemap.xml`, `/robots.txt`, `/llms.txt`, and `/og-image.png` return 200 from the deployed GitHub Pages base path.
-- `/answers.md` returns 200 and matches the public demo facts.
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/sitemap.xml`, `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/robots.txt`, `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/llms.txt`, and `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/og-image.png` return 200 from the deployed GitHub Pages base path.
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/answers.md` returns 200 and matches the public demo facts.

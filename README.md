@@ -153,6 +153,7 @@ npm test -- --run
 npm run lint
 npm run security:scan
 npm run seo:check
+npm run links:check
 npm run build
 npx playwright test
 ```
