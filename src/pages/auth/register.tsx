@@ -84,7 +84,7 @@ export default function RegisterPage () {
   }
 
   return (
-    <div className='min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-green-950 via-black to-yellow-900 relative overflow-hidden'>
+    <div className='min-h-screen flex items-center justify-center px-4 py-8 pb-72 bg-gradient-to-br from-green-950 via-black to-yellow-900 relative overflow-x-hidden sm:pb-52 lg:pb-8'>
       {/* Glowing blobs */}
       <div className='absolute w-72 h-72 bg-green-600 opacity-30 rounded-full filter blur-3xl top-10 left-10 animate-pulse' />
       <div className='absolute w-64 h-64 bg-yellow-400 opacity-20 rounded-full filter blur-2xl bottom-10 right-10 animate-pulse' />
@@ -220,7 +220,7 @@ export default function RegisterPage () {
 
           <Button
             type='submit'
-            className='w-full hover:shadow-[0_0_20px_#22c55e] transition'
+            className='w-full scroll-mb-72 hover:shadow-[0_0_20px_#22c55e] transition sm:scroll-mb-52 lg:scroll-mb-8'
           >
             Register
           </Button>
