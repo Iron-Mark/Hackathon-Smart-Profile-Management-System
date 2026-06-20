@@ -4,6 +4,21 @@ import path from 'path';
 const DEFAULT_SITE_URL = 'https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/';
 const FORBIDDEN_SITEMAP_PATHS = ['/auth/', '/admin/', '/faculty/', '/demo-storage/'];
 const STALE_HOSTS = ['marksiazon.dev'];
+const AI_CRAWLER_AGENTS = [
+  'OAI-SearchBot',
+  'GPTBot',
+  'ChatGPT-User',
+  'ClaudeBot',
+  'PerplexityBot',
+  'CCBot',
+  'Google-Extended',
+];
+const PRIVATE_ROBOT_PATHS = [
+  '/auth/',
+  '/admin/',
+  '/faculty/',
+  '/demo-storage/',
+];
 const ANSWER_QUESTIONS = [
   'What is Smart Profile Management System?',
   'Can anyone try the public demo?',
@@ -141,14 +156,21 @@ function checkSeo() {
   }
 
   for (const requiredRobotRule of [
-    'User-agent: OAI-SearchBot',
-    'User-agent: GPTBot',
-    'User-agent: ChatGPT-User',
-    'User-agent: Google-Extended',
+    ...AI_CRAWLER_AGENTS.map((agent) => `User-agent: ${agent}`),
     'Allow: /Hackathon-Smart-Profile-Management-System/answers.md',
   ]) {
     if (!robots.includes(requiredRobotRule)) {
       errors.push(`robots.txt missing AEO/GEO crawler rule: ${requiredRobotRule}`);
+    }
+  }
+
+  for (const userAgent of AI_CRAWLER_AGENTS) {
+    const group = robots.match(new RegExp(`User-agent: ${userAgent}[\\s\\S]*?(?=\\nUser-agent:|\\nSitemap:|$)`))?.[0] ?? '';
+    for (const privatePath of PRIVATE_ROBOT_PATHS) {
+      const disallow = `Disallow: /Hackathon-Smart-Profile-Management-System${privatePath}`;
+      if (!group.includes(disallow)) {
+        errors.push(`robots.txt ${userAgent} group must include ${disallow}`);
+      }
     }
   }
 

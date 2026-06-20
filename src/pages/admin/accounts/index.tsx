@@ -24,6 +24,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import {
   deleteDemoAuthUser,
+  deleteDemoStoredFilesForUser,
   setDemoCurrentUserId,
   updateDemoAuthUser
 } from "@/client/demoBackend";
@@ -53,6 +54,7 @@ export default function AdminAccountsPage() {
   const [editPassword, setEditPassword] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   // New user form state
   const [newUser, setNewUser] = useState({
@@ -65,11 +67,15 @@ export default function AdminAccountsPage() {
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
-      const data = await getFromDatabase({
-        table: "account_details",
-        getAll: true,
-        match: {},
-      });
+      const [{ data: currentAuth }, data] = await Promise.all([
+        backend.auth.getUser(),
+        getFromDatabase({
+          table: "account_details",
+          getAll: true,
+          match: {},
+        }),
+      ]);
+      setCurrentUserId(currentAuth.user?.id ?? null);
       setUsers(data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -117,6 +123,19 @@ export default function AdminAccountsPage() {
     setEditingUser({ ...user, type: user.type || "faculty" });
   };
 
+  const adminCount = users.filter((user) => user.type === "admin").length;
+  const getDeleteBlockReason = (user: AccountRow) => {
+    if (user.id === currentUserId) {
+      return "You cannot delete the active admin session.";
+    }
+
+    if (user.type === "admin" && adminCount <= 1) {
+      return "Keep at least one administrator account in the demo.";
+    }
+
+    return null;
+  };
+
   const handleUpdateUser = async () => {
     if (!editingUser) return;
 
@@ -155,6 +174,13 @@ export default function AdminAccountsPage() {
   const handleDeleteUser = async () => {
     if (!deletingUser) return;
 
+    const deleteBlockReason = getDeleteBlockReason(deletingUser);
+    if (deleteBlockReason) {
+      toast.error(deleteBlockReason);
+      setDeletingUser(null);
+      return;
+    }
+
     try {
       setIsDeleting(true);
       await Promise.all([
@@ -165,6 +191,7 @@ export default function AdminAccountsPage() {
         removeFromDatabase({ table: "professional_development", match: { user_id: deletingUser.id } }),
         removeFromDatabase({ table: "submissions", match: { user_id: deletingUser.id } }),
       ]);
+      deleteDemoStoredFilesForUser(deletingUser.id);
       deleteDemoAuthUser(deletingUser.id);
       await logAudit('APPROVAL_ACTION', `Admin deleted account: ${deletingUser.email}`);
       toast.success("User deleted successfully");
@@ -380,7 +407,10 @@ export default function AdminAccountsPage() {
                           </tr>
                         ))
                       ) : (
-                        users.map((user) => (
+                        users.map((user) => {
+                          const deleteBlockReason = getDeleteBlockReason(user);
+
+                          return (
                           <tr key={user.id} className="border-b hover:bg-muted/60">
                             <td className="px-4 py-2 font-medium">{user.name}</td>
                             <td className="px-4 py-2">{user.email}</td>
@@ -402,13 +432,16 @@ export default function AdminAccountsPage() {
                               <Button
                                 variant="destructive"
                                 size="sm"
+                                disabled={Boolean(deleteBlockReason)}
+                                title={deleteBlockReason || undefined}
                                 onClick={() => setDeletingUser(user)}
                               >
                                 Delete
                               </Button>
                             </td>
                           </tr>
-                        ))
+                          );
+                        })
                       )}
                     </tbody>
                   </table>

@@ -85,6 +85,21 @@ describe('static SEO metadata', () => {
     expect(robots).toContain('User-agent: OAI-SearchBot');
     expect(robots).toContain('User-agent: Google-Extended');
     expect(robots).toContain('Allow: /Hackathon-Smart-Profile-Management-System/answers.md');
+    for (const userAgent of [
+      'OAI-SearchBot',
+      'GPTBot',
+      'ChatGPT-User',
+      'ClaudeBot',
+      'PerplexityBot',
+      'CCBot',
+      'Google-Extended',
+    ]) {
+      const group = robots.match(new RegExp(`User-agent: ${userAgent}[\\s\\S]*?(?=\\nUser-agent:|\\nSitemap:|$)`))?.[0] ?? '';
+      expect(group).toContain('Disallow: /Hackathon-Smart-Profile-Management-System/auth/');
+      expect(group).toContain('Disallow: /Hackathon-Smart-Profile-Management-System/admin/');
+      expect(group).toContain('Disallow: /Hackathon-Smart-Profile-Management-System/faculty/');
+      expect(group).toContain('Disallow: /Hackathon-Smart-Profile-Management-System/demo-storage/');
+    }
     expect(robots).not.toContain('marksiazon.dev');
   });
 

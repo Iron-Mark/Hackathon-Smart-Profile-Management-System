@@ -37,7 +37,6 @@ const REQUIRED_DIST_FALLBACKS = [
   'auth/login/index.html',
   'auth/register/index.html',
   'demo-storage/index.html',
-  'demo-storage/pictures-and-documents/missing/sample/index.html',
   'faculty/dashboard/index.html',
   'faculty/profile/index.html',
   'faculty/settings/index.html',

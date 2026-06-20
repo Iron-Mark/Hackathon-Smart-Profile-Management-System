@@ -125,17 +125,18 @@ const normalizeAppBasePath = () => {
   return normalized === '' ? '' : normalized;
 };
 
-const encodeStoragePath = (filePath: string) =>
-  filePath
-    .split('/')
-    .filter(Boolean)
-    .map((part) => encodeURIComponent(part))
-    .join('/');
-
 const createDemoStorageUrl = (bucket: string, filePath: string, expiresIn?: number) => {
   const basePath = normalizeAppBasePath();
-  const query = expiresIn ? `?expiresIn=${encodeURIComponent(String(expiresIn))}` : '';
-  return `${basePath}/demo-storage/${encodeURIComponent(bucket)}/${encodeStoragePath(filePath)}${query}`;
+  const params = new URLSearchParams({
+    bucket,
+    path: filePath,
+  });
+
+  if (expiresIn) {
+    params.set('expiresIn', String(expiresIn));
+  }
+
+  return `${basePath}/demo-storage/?${params.toString()}`;
 };
 
 const blobToDataUrl = (file: Blob) =>
@@ -460,7 +461,18 @@ const writeState = (state: DemoState) => {
   storage.setItem(DEMO_STORAGE_KEY, JSON.stringify(state));
 };
 
-export function getDemoStoredFileFromUrl(pathname: string): DemoStoredFile | null {
+export function getDemoStoredFileFromUrl(pathname: string, search = ''): DemoStoredFile | null {
+  const query = search.startsWith('?') ? search : search ? `?${search}` : '';
+  const params = new URLSearchParams(query);
+  const queryBucket = params.get('bucket')?.trim();
+  const queryFilePath = params.get('path')?.trim();
+
+  if (queryBucket && queryFilePath) {
+    const state = readState();
+    const stored = state.storage[`${queryBucket}/${queryFilePath}`];
+    return stored ? clone(stored) : null;
+  }
+
   const basePath = normalizeAppBasePath();
   let appPath = pathname;
 
@@ -833,6 +845,24 @@ export function deleteDemoAuthUser(userId: string) {
 
   writeState(state);
   return state.authUsers.length !== originalLength;
+}
+
+export function deleteDemoStoredFilesForUser(
+  userId: string,
+  bucket = 'pictures-and-documents'
+) {
+  const state = readState();
+  const prefix = `${bucket}/${userId}/`;
+  const originalLength = Object.keys(state.storage).length;
+
+  for (const key of Object.keys(state.storage)) {
+    if (key.startsWith(prefix)) {
+      delete state.storage[key];
+    }
+  }
+
+  writeState(state);
+  return originalLength - Object.keys(state.storage).length;
 }
 
 export function isDemoBackendEnabled(_env: Record<string, string | undefined> = import.meta.env) {

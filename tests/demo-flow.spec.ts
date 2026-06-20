@@ -169,3 +169,60 @@ test('admin account action buttons edit and delete demo users', async ({ page })
   await page.getByRole('button', { name: 'Delete Account' }).click();
   await expect(page.locator('tr', { hasText: email })).toHaveCount(0);
 });
+
+test('admin account deletion is guarded and removes demo file previews', async ({ page }) => {
+  const email = `delete-files-${Date.now()}@example.com`;
+  const password = 'Delete123';
+
+  await page.goto(appRoute('/auth/login'));
+  await page.getByRole('button', { name: 'Admin demo' }).click();
+  await page.getByRole('button', { name: 'Login' }).click();
+  await page.goto(appRoute('/admin/accounts'));
+
+  const seededAdminRow = page.locator('tr', { hasText: 'admin@umak.edu.ph' });
+  await expect(seededAdminRow.getByRole('button', { name: /^delete$/i })).toBeDisabled();
+
+  await page.getByRole('button', { name: 'Add New User' }).click();
+  await page.getByLabel('Full Name').fill('Dr. Delete Files');
+  await page.getByLabel('Email Address').fill(email);
+  await page.getByLabel('Initial Password').fill(password);
+  await page.getByRole('button', { name: 'Create Account' }).click();
+  await expect(page.locator('tr', { hasText: email })).toContainText('Dr. Delete Files');
+
+  await page.goto(appRoute('/auth/login'));
+  await page.getByLabel('Email').fill(email);
+  await page.locator('input#password').fill(password);
+  await page.getByRole('button', { name: 'Login' }).click();
+  await expect(page).toHaveURL(appRoutePattern('/faculty/dashboard'));
+  await page
+    .getByRole('region', { name: 'Smart upload' })
+    .locator('input[type="file"]')
+    .setInputFiles({
+      name: 'delete-me-certificate.png',
+      mimeType: 'image/png',
+      buffer: Buffer.from('delete me'),
+    });
+  await page.getByRole('button', { name: 'Submit files' }).click();
+
+  await page.goto(appRoute('/auth/login'));
+  await page.getByRole('button', { name: 'Admin demo' }).click();
+  await page.getByRole('button', { name: 'Login' }).click();
+  await page.goto(appRoute('/admin/approvals'));
+
+  const uploadedRow = page.locator('tr', { hasText: 'delete-me-certificate.png' });
+  const previewPromise = page.waitForEvent('popup');
+  await uploadedRow.getByRole('button', { name: 'View' }).click();
+  const previewPage = await previewPromise;
+  const previewUrl = previewPage.url();
+  await expect(previewPage.getByRole('heading', { name: 'Demo File Preview' })).toBeVisible();
+  await previewPage.close();
+
+  await page.goto(appRoute('/admin/accounts'));
+  await page.locator('tr', { hasText: email }).getByRole('button', { name: /^delete$/i }).click();
+  await page.getByRole('button', { name: 'Delete Account' }).click();
+  await expect(page.locator('tr', { hasText: email })).toHaveCount(0);
+
+  const deletedPreviewResponse = await page.goto(previewUrl);
+  expect(deletedPreviewResponse?.ok()).toBe(true);
+  await expect(page.getByRole('heading', { name: 'Demo File Unavailable' })).toBeVisible();
+});

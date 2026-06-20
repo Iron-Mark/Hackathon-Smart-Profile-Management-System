@@ -60,7 +60,7 @@ For GitHub Pages or any static SPA host, check these direct links after deployme
 
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/auth/login/`
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/auth/register/`
-- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-storage/pictures-and-documents/missing/sample/`
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-storage/?bucket=pictures-and-documents&path=demo-faculty-1%2FCertificates%2Fsample-certificate.svg`
 
 The auth routes should render normally. The missing demo storage link should render the Demo File Unavailable page instead of a static-hosting 404.
 
@@ -82,7 +82,7 @@ After deployment, verify:
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/llms.txt` describes the browser-local demo and sample-file guidance.
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/answers.md` provides concise answer-engine facts for AEO/GEO-style summaries.
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/og-image.png` returns the 1200x630 public share image.
-- Auth, admin, faculty, and demo-storage routes render but expose `noindex,nofollow`.
+- Auth, admin, faculty, and demo-storage routes render but expose `noindex,nofollow`; matching private route prefixes are also disallowed for AI crawler groups in `robots.txt`.
 
 Local command:
 

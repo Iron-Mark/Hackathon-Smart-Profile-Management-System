@@ -22,6 +22,7 @@ Intentionally noindexed after React renders:
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/admin/*`
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/faculty/*`
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-storage/*`
+- Query-based file previews use the fixed project demo-storage route, for example `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-storage/?bucket=pictures-and-documents&path=demo-faculty-1%2FCertificates%2Fsample-certificate.svg`, so GitHub Pages does not need a static file for every browser-local upload path.
 - unknown app routes
 
 The app routes still work for reviewers, but they should not be treated as public search pages.

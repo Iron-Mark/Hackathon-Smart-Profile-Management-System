@@ -1,5 +1,10 @@
 import { beforeEach, expect, test, vi } from 'vitest';
-import { createDemoBackendClient, resetDemoBackendState, syncClerkDemoUser } from './demoBackend';
+import {
+  createDemoBackendClient,
+  getDemoStoredFileFromUrl,
+  resetDemoBackendState,
+  syncClerkDemoUser,
+} from './demoBackend';
 
 beforeEach(() => {
   resetDemoBackendState();
@@ -77,8 +82,19 @@ test('generates signed demo storage URLs for uploaded files', async () => {
     .createSignedUrl('demo-faculty-1/Certificates/demo-certificate.png', 3600);
 
   expect(signedError).toBeNull();
-  expect(signedData?.signedUrl).toContain('/demo-storage/pictures-and-documents/');
+  expect(signedData?.signedUrl).toContain('/demo-storage/?');
+  expect(signedData?.signedUrl).toContain('bucket=pictures-and-documents');
+  expect(signedData?.signedUrl).toContain('path=demo-faculty-1%2FCertificates%2Fdemo-certificate.png');
   expect(signedData?.signedUrl).toContain('expiresIn=3600');
+});
+
+test('resolves fixed-route demo storage previews from query parameters', () => {
+  const file = getDemoStoredFileFromUrl(
+    '/demo-storage/',
+    '?bucket=pictures-and-documents&path=demo-faculty-1%2FCertificates%2Fsample-certificate.svg'
+  );
+
+  expect(file?.name).toBe('sample-certificate.svg');
 });
 
 test('recovers seeded demo state when browser storage is corrupted', async () => {

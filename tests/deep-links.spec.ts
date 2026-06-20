@@ -18,11 +18,12 @@ test('static hosting deep links render auth and demo storage routes', async ({ p
   expect(demoStorageSlashResponse?.ok()).toBe(true);
   await expect(page.getByRole('heading', { name: 'Demo File Unavailable' })).toBeVisible();
 
-  const missingPreviewResponse = await page.goto(
-    appRoute('/demo-storage/pictures-and-documents/missing/sample/')
+  const seededPreviewResponse = await page.goto(
+    appRoute('/demo-storage/?bucket=pictures-and-documents&path=demo-faculty-1%2FCertificates%2Fsample-certificate.svg')
   );
-  expect(missingPreviewResponse?.ok()).toBe(true);
-  await expect(page.getByRole('heading', { name: 'Demo File Unavailable' })).toBeVisible();
+  expect(seededPreviewResponse?.ok()).toBe(true);
+  await expect(page.getByRole('heading', { name: 'Demo File Preview' })).toBeVisible();
+  await expect(page.getByText('sample-certificate.svg', { exact: true }).first()).toBeVisible();
 
   const sampleResponse = await page.goto(appRoute('/demo-samples/sample-certificate.svg'));
   expect(sampleResponse?.ok()).toBe(true);

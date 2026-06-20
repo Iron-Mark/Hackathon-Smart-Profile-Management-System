@@ -31,7 +31,7 @@ Optional Clerk sign-in can be enabled locally with `VITE_CLERK_PUBLISHABLE_KEY`;
 
 - Public shares should resolve to the GitHub Pages URL above.
 - Link previews should use `public/og-image.png`.
-- Search crawlers should index the landing page and discover the public `answers.md` and `llms.txt` source files. Auth, admin, faculty, and demo-storage routes are app routes and are marked noindex after render.
+- Search crawlers should index the landing page and discover the public `answers.md` and `llms.txt` source files. Auth, admin, faculty, and demo-storage routes are app routes and are disallowed in `robots.txt` plus marked noindex after render.
 - Answer engines can use the visible **Public Demo Facts** section, FAQ JSON-LD, `llms.txt`, and `answers.md` for concise project context.
 
 ## Post-Deploy Smoke Check
@@ -41,7 +41,7 @@ Run these after GitHub Pages publishes:
 - Landing page renders and shows **Browser-local demo mode**.
 - **Start demo** opens login with seeded faculty credentials.
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/auth/login/` and `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/auth/register/` direct links render.
-- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-storage/pictures-and-documents/missing/sample/` renders the Demo File Unavailable page.
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-storage/?bucket=pictures-and-documents&path=demo-faculty-1%2FCertificates%2Fsample-certificate.svg` renders a seeded demo preview without requiring a per-file static fallback.
 - Faculty upload accepts the sample certificate and rejects oversized or unsupported files.
 - Admin can view and approve an uploaded file.
 - Faculty can view the approved file from Uploaded Files.
