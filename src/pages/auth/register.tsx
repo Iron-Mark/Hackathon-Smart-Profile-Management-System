@@ -3,7 +3,8 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Link, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
+import { Eye, EyeOff, UserRoundPlus } from 'lucide-react'
 import demoAccountActions from '@/tools/accounts/demoAccountActions'
 import { DemoAccessPanel } from '@/components/DemoAccessPanel'
 import { ClerkAuthPanel } from '@/components/ClerkShowcaseControls'
@@ -68,6 +69,7 @@ export default function RegisterPage () {
           type: 'faculty'
         })
         if (response.success) {
+          window.sessionStorage.setItem('smart-profile-demo-login-email', email)
           navigate('/auth/login')
         } else if (!response.success) {
           const message = response.message || 'Registration failed. Please try again.'
@@ -84,15 +86,18 @@ export default function RegisterPage () {
   }
 
   return (
-    <div className='min-h-screen flex items-center justify-center px-4 py-8 pb-72 bg-gradient-to-br from-green-950 via-black to-yellow-900 relative overflow-x-hidden sm:pb-52 lg:pb-8'>
-      {/* Glowing blobs */}
-      <div className='absolute w-72 h-72 bg-green-600 opacity-30 rounded-full filter blur-3xl top-10 left-10 animate-pulse' />
-      <div className='absolute w-64 h-64 bg-yellow-400 opacity-20 rounded-full filter blur-2xl bottom-10 right-10 animate-pulse' />
-
-      <div className='w-full max-w-md border border-green-800 rounded-2xl p-8 backdrop-blur-md bg-black/50 shadow-[0_0_40px_rgba(0,255,0,0.1)] space-y-6 z-10'>
-        <h2 className='text-3xl font-bold text-center text-white drop-shadow-md'>
-          Create Your Account
-        </h2>
+    <div className='relative flex min-h-screen items-center justify-center overflow-x-hidden bg-slate-950 px-4 py-8 pb-72 sm:pb-52 lg:pb-8'>
+      <Card className='z-10 w-full max-w-md rounded-lg border-white/10 bg-white/[0.04] text-white shadow-2xl shadow-black/30'>
+        <CardHeader className='text-center'>
+          <div className='mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-md bg-sky-400/15 text-sky-200'>
+            <UserRoundPlus className='h-6 w-6' />
+          </div>
+          <h2 className='text-3xl font-semibold tracking-tight'>Create Your Account</h2>
+          <CardDescription className='text-slate-300'>
+            Create a browser-local faculty account for this public demo only.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className='space-y-6'>
 
         <ClerkAuthPanel mode='register' />
 
@@ -125,7 +130,9 @@ export default function RegisterPage () {
               placeholder='Juan Dela Cruz'
               value={name}
               onChange={e => setName(e.target.value)}
+              aria-invalid={Boolean(errors.name)}
               aria-describedby='name-error'
+              className='mt-2 bg-white text-slate-950'
             />
             {errors.name && (
               <p id='name-error' className='text-sm text-red-400 mt-1'>
@@ -144,7 +151,9 @@ export default function RegisterPage () {
               placeholder='name@example.com'
               value={email}
               onChange={e => setEmail(e.target.value)}
+              aria-invalid={Boolean(errors.email)}
               aria-describedby='email-error'
+              className='mt-2 bg-white text-slate-950'
             />
             {errors.email && (
               <p id='email-error' className='text-sm text-red-400 mt-1'>
@@ -164,13 +173,14 @@ export default function RegisterPage () {
                 placeholder='********'
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className='pr-10'
+                className='mt-2 bg-white pr-12 text-slate-950'
+                aria-invalid={Boolean(errors.password)}
                 aria-describedby='password-error'
               />
               <button
                 type='button'
                 onClick={() => setShowPassword(!showPassword)}
-                className='absolute right-3  text-gray-400 hover:text-white cursor-pointer'
+                className='absolute right-2 top-6 flex min-h-11 min-w-11 items-center justify-center text-slate-500 hover:text-slate-950'
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -194,13 +204,14 @@ export default function RegisterPage () {
                 placeholder='********'
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
-                className='pr-10'
+                className='mt-2 bg-white pr-12 text-slate-950'
+                aria-invalid={Boolean(errors.confirm)}
                 aria-describedby='confirm-error'
               />
               <button
                 type='button'
                 onClick={() => setShowConfirm(!showConfirm)}
-                className='absolute right-3 text-gray-400 hover:text-white cursor-pointer'
+                className='absolute right-2 top-6 flex min-h-11 min-w-11 items-center justify-center text-slate-500 hover:text-slate-950'
                 aria-label={
                   showConfirm
                     ? 'Hide confirm password'
@@ -220,7 +231,7 @@ export default function RegisterPage () {
 
           <Button
             type='submit'
-            className='w-full scroll-mb-72 hover:shadow-[0_0_20px_#22c55e] transition sm:scroll-mb-52 lg:scroll-mb-8'
+            className='w-full min-h-11 scroll-mb-72 bg-emerald-500 text-emerald-950 hover:bg-emerald-400 sm:scroll-mb-52 lg:scroll-mb-8'
           >
             Register
           </Button>
@@ -230,12 +241,13 @@ export default function RegisterPage () {
           Already have an account?{' '}
           <Link
             to='/auth/login'
-            className='text-yellow-300 hover:underline transition'
+            className='inline-flex min-h-11 items-center text-emerald-200 transition hover:underline'
           >
             Login here
           </Link>
         </p>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

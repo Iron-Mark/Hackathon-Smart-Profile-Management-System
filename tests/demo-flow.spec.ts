@@ -139,3 +139,33 @@ test('demo reset removes visitor accounts and restores seeded access', async ({ 
   await page.getByRole('button', { name: 'Login' }).click();
   await expect(page).toHaveURL(appRoutePattern('/faculty/dashboard'));
 });
+
+test('admin account action buttons edit and delete demo users', async ({ page }) => {
+  const email = `actions-${Date.now()}@example.com`;
+
+  await page.goto(appRoute('/auth/login'));
+  await page.getByRole('button', { name: 'Admin demo' }).click();
+  await page.getByRole('button', { name: 'Login' }).click();
+  await expect(page).toHaveURL(appRoutePattern('/admin/dashboard'));
+
+  await page.goto(appRoute('/admin/accounts'));
+  await page.getByRole('button', { name: 'Add New User' }).click();
+  await page.getByLabel('Full Name').fill('Dr. Action Button');
+  await page.getByLabel('Email Address').fill(email);
+  await page.getByLabel('Initial Password').fill('Action123');
+  await page.getByRole('button', { name: 'Create Account' }).click();
+
+  const createdRow = page.locator('tr', { hasText: email });
+  await expect(createdRow).toContainText('Dr. Action Button');
+
+  await createdRow.getByRole('button', { name: /^edit$/i }).click();
+  await expect(page.getByRole('dialog', { name: 'Edit User Account' })).toBeVisible();
+  await page.getByLabel('Full Name').fill('Dr. Edited Action');
+  await page.getByRole('button', { name: 'Save Changes' }).click();
+  await expect(page.locator('tr', { hasText: email })).toContainText('Dr. Edited Action');
+
+  await page.locator('tr', { hasText: email }).getByRole('button', { name: /^delete$/i }).click();
+  await expect(page.getByRole('dialog', { name: 'Delete User Account' })).toBeVisible();
+  await page.getByRole('button', { name: 'Delete Account' }).click();
+  await expect(page.locator('tr', { hasText: email })).toHaveCount(0);
+});

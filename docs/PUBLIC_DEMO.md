@@ -13,7 +13,7 @@ Optional Clerk sign-in can be enabled locally with `VITE_CLERK_PUBLISHABLE_KEY`;
 1. Open the deployed app.
 2. Select **Start demo**.
 3. Sign in with the prefilled faculty credentials.
-4. Upload one of the sample files from `public/demo-samples`.
+4. Upload one of the generated sample files from `public/demo-samples`.
 5. Sign in as admin, view the uploaded file, and approve it.
 6. Return as faculty and confirm the file is approved.
 
@@ -21,6 +21,7 @@ Optional Clerk sign-in can be enabled locally with `VITE_CLERK_PUBLISHABLE_KEY`;
 
 - Do not upload real IDs, transcripts, licenses, or private faculty records.
 - Use only generated/sample files when sharing the public URL.
+- The generated sample set covers certificate, transcript, diploma, CV, and research summary records.
 - Uploaded files and account state stay in the current browser and are not synced to a server.
 - Clerk Organizations, when enabled, are showcase context only and do not grant admin access in this static app.
 - Use **Clear demo data** in the sidebar or **Reset demo data** on auth pages to restore the seeded state.
@@ -30,7 +31,7 @@ Optional Clerk sign-in can be enabled locally with `VITE_CLERK_PUBLISHABLE_KEY`;
 
 - Public shares should resolve to the GitHub Pages URL above.
 - Link previews should use `public/og-image.png`.
-- Search crawlers should index only the landing page. Auth, admin, faculty, and demo-storage routes are app routes and are marked noindex after render.
+- Search crawlers should index the landing page and discover the public `answers.md` and `llms.txt` source files. Auth, admin, faculty, and demo-storage routes are app routes and are marked noindex after render.
 - Answer engines can use the visible **Public Demo Facts** section, FAQ JSON-LD, `llms.txt`, and `answers.md` for concise project context.
 
 ## Post-Deploy Smoke Check

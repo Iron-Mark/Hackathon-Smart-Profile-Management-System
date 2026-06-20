@@ -1,4 +1,18 @@
-import { Home, Inbox, User2, Settings, LogOut, RotateCcw } from 'lucide-react'
+import {
+  BarChart3,
+  CircleHelp,
+  ClipboardCheck,
+  FileStack,
+  Home,
+  LayoutDashboard,
+  LogOut,
+  RotateCcw,
+  ScrollText,
+  Settings,
+  ShieldCheck,
+  User2,
+  UsersRound
+} from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import demoAccountActions from '@/tools/accounts/demoAccountActions'
 import { isDemoBackendEnabled, resetDemoBackendState } from '@/client/demoBackend'
@@ -25,9 +39,9 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 export function AppSidebar ({ className }: AppSidebarProps) {
   const navigate = useNavigate()
   const facultyItems = [
-    { title: 'Dashboard', url: '/faculty/dashboard', icon: Home },
+    { title: 'Dashboard', url: '/faculty/dashboard', icon: LayoutDashboard },
     { title: 'Profile', url: '/faculty/profile', icon: User2 },
-    { title: 'Uploaded Files', url: '/faculty/uploaded', icon: Inbox },
+    { title: 'Uploaded Files', url: '/faculty/uploaded', icon: FileStack },
     { title: 'Settings', url: '/faculty/settings', icon: Settings },
     {
       title: 'Logout',
@@ -41,12 +55,12 @@ export function AppSidebar ({ className }: AppSidebarProps) {
 
   const adminItems = [
     { title: 'Dashboard', url: '/admin/dashboard', icon: Home },
-    { title: 'Accounts', url: '/admin/accounts', icon: User2 },
-    { title: 'Approvals', url: '/admin/approvals', icon: Inbox },
-    { title: 'Audit Logs', url: '/admin/audit-logs', icon: Inbox }, // Consider a more appropriate icon
-    { title: 'Reports', url: '/admin/reports', icon: Inbox }, // Consider a more appropriate icon
+    { title: 'Accounts', url: '/admin/accounts', icon: UsersRound },
+    { title: 'Approvals', url: '/admin/approvals', icon: ClipboardCheck },
+    { title: 'Audit Logs', url: '/admin/audit-logs', icon: ScrollText },
+    { title: 'Reports', url: '/admin/reports', icon: BarChart3 },
     { title: 'Settings', url: '/admin/settings', icon: Settings },
-    { title: 'Help & Support', url: '/admin/help', icon: Settings }, // Added Help & Support, consider a 'HelpCircle' icon if available
+    { title: 'Help & Support', url: '/admin/help', icon: CircleHelp },
     {
       title: 'Logout',
       icon: LogOut,
@@ -76,14 +90,15 @@ export function AppSidebar ({ className }: AppSidebarProps) {
         <SidebarContent className="flex flex-col h-full">
           <SidebarGroup className="flex-1">
             <SidebarGroupLabel>
-              {' '}
-              <img
-                alt='CCIS Smart FPMS'
-                src={logoLong}
-                className='mt-15 w-100 h-auto'
-              />
+              <div className="mt-6 flex items-center gap-3 px-1">
+                <img
+                  alt='CCIS Smart FPMS'
+                  src={logoLong}
+                  className='h-auto w-36'
+                />
+              </div>
             </SidebarGroupLabel>
-            <SidebarGroupContent className='mt-20'>
+            <SidebarGroupContent className='mt-12'>
               <SidebarMenu>
                 {items.map(item => {
                   const isActive = location.pathname === item.url
@@ -129,6 +144,10 @@ export function AppSidebar ({ className }: AppSidebarProps) {
             </SidebarGroupContent>
           </SidebarGroup>
           <div className="mt-auto space-y-4 p-4">
+            <div className="flex items-center gap-2 rounded-md border border-sidebar-border bg-sidebar-accent/40 p-2 text-xs text-sidebar-foreground">
+              <ShieldCheck className="h-4 w-4 shrink-0" />
+              <span>Browser-local reviewer mode</span>
+            </div>
             <ClerkShowcaseControls />
             <ThemeToggle />
           </div>

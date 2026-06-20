@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Eye, EyeOff } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
+import { Eye, EyeOff, ShieldCheck } from 'lucide-react'
 import demoAccountActions from '@/tools/accounts/demoAccountActions'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useDocumentTitle } from '@/hooks/use-document-title'
@@ -30,6 +31,14 @@ export default function LoginPage () {
     if (resetMessage) {
       window.sessionStorage.removeItem('smart-profile-demo-reset-message')
       setDemoMessage(resetMessage)
+    }
+
+    const registeredEmail = window.sessionStorage.getItem('smart-profile-demo-login-email')
+    if (registeredEmail) {
+      window.sessionStorage.removeItem('smart-profile-demo-login-email')
+      setEmail(registeredEmail)
+      setLoginError('')
+      setDemoMessage(`${registeredEmail} is ready to sign in.`)
     }
 
     if (searchParams.get('demo') === 'faculty') {
@@ -75,15 +84,18 @@ export default function LoginPage () {
   }
 
   return (
-    <div className='min-h-screen flex items-center justify-center px-4 py-8 pb-72 bg-gradient-to-br from-green-950 via-black to-yellow-900 relative overflow-x-hidden sm:pb-52 lg:pb-8'>
-      {/* background blobs */}
-      <div className='absolute w-72 h-72 bg-green-600 opacity-30 rounded-full filter blur-3xl top-10 left-10 animate-pulse' />
-      <div className='absolute w-64 h-64 bg-yellow-400 opacity-20 rounded-full filter blur-2xl bottom-10 right-10 animate-pulse' />
-
-      <div className='w-full max-w-md border border-green-800 rounded-2xl p-8 backdrop-blur-md bg-black/50 shadow-[0_0_40px_rgba(0,255,0,0.1)] space-y-6 z-10 text-white'>
-        <h2 className='text-3xl font-bold text-center drop-shadow-md'>
-          Welcome Back
-        </h2>
+    <div className='relative flex min-h-screen items-center justify-center overflow-x-hidden bg-slate-950 px-4 py-8 pb-72 text-white sm:pb-52 lg:pb-8'>
+      <Card className='z-10 w-full max-w-md rounded-lg border-white/10 bg-white/[0.04] text-white shadow-2xl shadow-black/30'>
+        <CardHeader className='text-center'>
+          <div className='mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-md bg-emerald-400/15 text-emerald-200'>
+            <ShieldCheck className='h-6 w-6' />
+          </div>
+          <h2 className='text-3xl font-semibold tracking-tight'>Welcome Back</h2>
+          <CardDescription className='text-slate-300'>
+            Sign in with seeded reviewer credentials or a browser-local demo account.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className='space-y-6'>
 
         <ClerkAuthPanel mode='login' />
 
@@ -117,8 +129,9 @@ export default function LoginPage () {
               placeholder='name@example.com'
               value={email}
               onChange={e => setEmail(e.target.value)}
+              aria-invalid={Boolean(errors.email)}
               aria-describedby='email-error'
-              className='mt-2'
+              className='mt-2 bg-white text-slate-950'
             />
             {errors.email && (
               <p id='email-error' className='text-sm text-red-400 mt-1'>
@@ -138,12 +151,14 @@ export default function LoginPage () {
                 placeholder='********'
                 value={password}
                 onChange={e => setPassword(e.target.value)}
+                aria-invalid={Boolean(errors.password)}
                 aria-describedby='password-error'
+                className='bg-white pr-12 text-slate-950'
               />
               <button
                 type='button'
                 onClick={() => setShowPassword(!showPassword)}
-                className='absolute right-3 text-gray-400 hover:text-white'
+                className='absolute right-2 flex min-h-11 min-w-11 items-center justify-center text-slate-500 hover:text-slate-950'
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -157,7 +172,7 @@ export default function LoginPage () {
           </div>
           {loginError && <p className='text-red-400'>{loginError}</p>}
           <Button
-            className='w-full scroll-mb-72 hover:cursor-pointer hover:shadow-[0_0_20px_#22c55e] transition sm:scroll-mb-52 lg:scroll-mb-8'
+            className='w-full min-h-11 scroll-mb-72 bg-emerald-500 text-emerald-950 hover:bg-emerald-400 sm:scroll-mb-52 lg:scroll-mb-8'
             type='submit'
           >
             Login
@@ -167,15 +182,17 @@ export default function LoginPage () {
         <p className='text-sm text-center text-gray-400'>
           Don’t have an account?{' '}
           <button
+            type='button'
             onClick={() => {
               navigate('/auth/register')
             }}
-            className='text-yellow-300 hover:underline transition'
+            className='min-h-11 text-emerald-200 transition hover:underline'
           >
             Register here
           </button>
         </p>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

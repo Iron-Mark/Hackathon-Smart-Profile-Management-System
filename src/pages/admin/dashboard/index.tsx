@@ -1,8 +1,9 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 import { Link } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
@@ -10,7 +11,8 @@ import { useState, useEffect } from "react";
 import getFromDatabase from "@/tools/database/getFromDatabase";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDocumentTitle } from "@/hooks/use-document-title";
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A288FE', '#00F49F', '#F0BB28', '#F08042'];
+import { ClipboardCheck, Download, FileStack, Search, UsersRound, Activity } from "lucide-react";
+const COLORS = ['#2563eb', '#059669', '#d97706', '#dc2626', '#7c3aed', '#0891b2', '#ca8a04', '#be123c'];
 const chartTooltipStyle = {
   backgroundColor: 'var(--popover)',
   borderColor: 'var(--border)',
@@ -126,36 +128,57 @@ export default function AdminDashboard() {
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">
           <main className="flex-1 w-full bg-muted/40 text-foreground p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-4xl font-extrabold text-foreground">
-                Admin Dashboard
-              </h1>
-              <Button onClick={handleExportCSV}>Export CSV</Button>
+            <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Reviewer workspace</p>
+                <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
+                  Admin Dashboard
+                </h1>
+                <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+                  Monitor browser-local demo submissions, credential mix, and reviewer activity from one place.
+                </p>
+              </div>
+              <Button onClick={handleExportCSV} className="w-full sm:w-auto">
+                <Download className="h-4 w-4" />
+                Export CSV
+              </Button>
             </div>
             <Separator className="mb-6" />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="shadow-lg transition-shadow border-blue-200 bg-blue-50 text-blue-950 dark:border-blue-900/70 dark:bg-blue-950/50 dark:text-blue-100">
+              <Card className="rounded-lg border-blue-200 bg-blue-50 text-blue-950 shadow-sm dark:border-blue-900/70 dark:bg-blue-950/50 dark:text-blue-100">
                 <CardHeader>
-                  <CardTitle className="text-sm">Total Users</CardTitle>
+                  <CardTitle className="flex items-center gap-2 text-sm">
+                    <UsersRound className="h-4 w-4" />
+                    Total Users
+                  </CardTitle>
+                  <CardDescription className="text-blue-800/80 dark:text-blue-100/75">Seeded and browser-local accounts</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : usersCount}</div>
                 </CardContent>
               </Card>
 
-              <Card className="shadow-lg transition-shadow border-green-200 bg-green-50 text-green-950 dark:border-green-900/70 dark:bg-green-950/50 dark:text-green-100">
+              <Card className="rounded-lg border-green-200 bg-green-50 text-green-950 shadow-sm dark:border-green-900/70 dark:bg-green-950/50 dark:text-green-100">
                 <CardHeader>
-                  <CardTitle className="text-sm">Active Sessions (24h)</CardTitle>
+                  <CardTitle className="flex items-center gap-2 text-sm">
+                    <Activity className="h-4 w-4" />
+                    Active Sessions (24h)
+                  </CardTitle>
+                  <CardDescription className="text-green-800/80 dark:text-green-100/75">Recent seeded login activity</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : activeSessions}</div>
                 </CardContent>
               </Card>
 
-              <Card className="shadow-lg transition-shadow border-amber-200 bg-amber-50 text-amber-950 dark:border-amber-900/70 dark:bg-amber-950/50 dark:text-amber-100">
+              <Card className="rounded-lg border-amber-200 bg-amber-50 text-amber-950 shadow-sm dark:border-amber-900/70 dark:bg-amber-950/50 dark:text-amber-100">
                 <CardHeader>
-                  <CardTitle className="text-sm">Pending Approvals</CardTitle>
+                  <CardTitle className="flex items-center gap-2 text-sm">
+                    <ClipboardCheck className="h-4 w-4" />
+                    Pending Approvals
+                  </CardTitle>
+                  <CardDescription className="text-amber-800/80 dark:text-amber-100/75">Credentials waiting for review</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : pendingApprovals}</div>
@@ -164,9 +187,13 @@ export default function AdminDashboard() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-              <Card className="shadow-lg">
+              <Card className="rounded-lg shadow-sm">
                 <CardHeader>
-                  <CardTitle>Documents Uploaded (Last 7 Days)</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileStack className="h-5 w-5" />
+                    Documents Uploaded (Last 7 Days)
+                  </CardTitle>
+                  <CardDescription>Demo submissions grouped by day</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[300px] text-muted-foreground">
                   {isLoading ? <Skeleton className="w-full h-full" /> : (
@@ -176,16 +203,17 @@ export default function AdminDashboard() {
                         <XAxis dataKey="name" tick={{ fill: 'currentColor' }} />
                         <YAxis tick={{ fill: 'currentColor' }} />
                         <RechartsTooltip contentStyle={chartTooltipStyle} labelStyle={{ color: 'var(--popover-foreground)' }} />
-                        <Bar dataKey="uploads" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="uploads" fill="#2563eb" radius={[4, 4, 0, 0]} isAnimationActive={false} />
                       </BarChart>
                     </ResponsiveContainer>
                   )}
                 </CardContent>
               </Card>
 
-              <Card className="shadow-lg">
+              <Card className="rounded-lg shadow-sm">
                 <CardHeader>
                   <CardTitle>Document Categories</CardTitle>
+                  <CardDescription>Credential types in the browser-local queue</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[300px] text-muted-foreground">
                   {isLoading ? <Skeleton className="w-full h-full" /> : (
@@ -201,6 +229,7 @@ export default function AdminDashboard() {
                           paddingAngle={5}
                           dataKey="value"
                           label={{ fill: 'currentColor' }}
+                          isAnimationActive={false}
                         >
                           {categoryData.map((_, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -216,19 +245,26 @@ export default function AdminDashboard() {
             </div>
 
             <div className="mt-8">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-semibold text-foreground">
-                  Recent Submissions for Approval
-                </h2>
-                <input
-                  type="text"
-                  placeholder="Search faculty or docs..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="px-4 py-2 border border-input rounded-md bg-background text-foreground shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring w-64"
-                />
+              <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h2 className="text-2xl font-semibold text-foreground">
+                    Recent Submissions for Approval
+                  </h2>
+                  <p className="text-sm text-muted-foreground">Search pending demo records before opening Approvals.</p>
+                </div>
+                <label className="relative block w-full md:w-72">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <span className="sr-only">Search submissions</span>
+                  <Input
+                    type="text"
+                    placeholder="Search faculty or docs..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9"
+                  />
+                </label>
               </div>
-              <div className="bg-card text-card-foreground shadow-md rounded-md border p-4">
+              <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
                 <ul className="space-y-3">
                   {isLoading ? (
                     Array.from({ length: 3 }).map((_, i) => (
@@ -260,7 +296,7 @@ export default function AdminDashboard() {
             </div>
 
             <div className="mt-8">
-              <h2 className="text-2xl font-semibold text-foreground mb-4">
+              <h2 className="mb-4 text-2xl font-semibold text-foreground">
                 Quick Actions
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">

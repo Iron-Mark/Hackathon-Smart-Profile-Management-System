@@ -5,7 +5,8 @@
 Smart Profile Management System is a restored UMak CCIS hackathon showcase for
 faculty credential management. The public demo runs on GitHub Pages, stores demo
 state in the visitor's browser, and lets reviewers try a sample upload, admin
-review, and approval flow without private backend or OpenAI credentials.
+review, approval, and profile proofing flow without private backend or OpenAI
+credentials.
 
 ## Direct Answers
 
@@ -43,4 +44,6 @@ Team 2nd Choice: Mark Siazon, Charles Nathaniel Togle, and Alexa San Jose.
 - Use sample files only.
 - Do not upload real IDs, transcripts, licenses, or private faculty records.
 - Public demo data is browser-local and can be reset from the app.
+- Generated sample files include certificate, transcript, diploma, CV, and research summary records.
+- Seeded reviewer accounts include a faculty reviewer and an admin reviewer on the Login screen.
 - The source repository is https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System.

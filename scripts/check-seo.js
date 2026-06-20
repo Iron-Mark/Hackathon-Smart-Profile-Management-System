@@ -125,8 +125,9 @@ function checkSeo() {
   }
 
   const sitemapLocations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
-  if (sitemapLocations.length !== 1 || sitemapLocations[0] !== siteUrl) {
-    errors.push('sitemap.xml must include only the public landing page URL');
+  const expectedSitemapLocations = [siteUrl, `${siteUrl}answers.md`, `${siteUrl}llms.txt`];
+  if (JSON.stringify(sitemapLocations) !== JSON.stringify(expectedSitemapLocations)) {
+    errors.push('sitemap.xml must include the landing page, answers.md, and llms.txt in order');
   }
 
   for (const forbiddenPath of FORBIDDEN_SITEMAP_PATHS) {

@@ -101,6 +101,7 @@ Demo credentials:
 
 - Faculty: `faculty@umak.edu.ph` / `Faculty123`
 - Admin: `admin@umak.edu.ph` / `Admin123`
+- Additional seeded faculty examples for admin review data: `daniel.reyes@umak.edu.ph` / `Faculty123` and `liza.mercado@umak.edu.ph` / `Faculty123`
 
 The landing page includes a Start demo button that opens the login screen with seeded faculty credentials prefilled. It also links to generated sample credential files in `public/demo-samples`.
 
@@ -115,7 +116,7 @@ Main demo flow:
 5. Approve the uploaded credential.
 6. Log back in as faculty, confirm the credential status is approved, and select View from the faculty file card.
 
-Public visitors can also register with any valid email address in demo mode. Registration creates a local faculty account in that browser only. Do not upload sensitive real documents to a public showcase build; demo data is browser-local and meant for sample files.
+Public visitors can also register with any valid email address in demo mode. Registration creates a local faculty account in that browser only. Do not upload sensitive real documents to a public showcase build; demo data is browser-local and meant for generated sample files. The included sample set covers certificate, transcript, diploma, CV, and research summary records.
 
 For a concise showcase script, see `docs/demo-checklist.md`.
 For public reviewer notes, see `PUBLIC_DEMO.md`.

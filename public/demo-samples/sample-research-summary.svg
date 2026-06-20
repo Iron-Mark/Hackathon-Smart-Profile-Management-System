@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780" role="img" aria-labelledby="title desc">
+  <title id="title">Generated sample research summary</title>
+  <desc id="desc">Fictional research publication summary for public demo testing.</desc>
+  <rect width="1200" height="780" fill="#f1f5f9"/>
+  <rect x="90" y="70" width="1020" height="640" rx="18" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="150" y="145" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#0f766e">Generated sample publication record</text>
+  <text x="150" y="210" font-family="Georgia, serif" font-size="42" font-weight="700" fill="#0f172a">Credential Analytics for Faculty Profile Review</text>
+  <text x="150" y="258" font-family="Arial, sans-serif" font-size="22" fill="#334155">Dr. Liza Mercado | UMak CCIS</text>
+  <line x1="150" y1="300" x2="1050" y2="300" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="150" y="355" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Abstract</text>
+  <text x="150" y="397" font-family="Arial, sans-serif" font-size="20" fill="#475569">This fictional sample summarizes a faculty credential workflow for</text>
+  <text x="150" y="429" font-family="Arial, sans-serif" font-size="20" fill="#475569">document intake, review status, and academic compliance reporting.</text>
+  <text x="150" y="506" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">Demo Keywords</text>
+  <rect x="150" y="536" width="150" height="36" rx="18" fill="#ccfbf1"/>
+  <rect x="320" y="536" width="170" height="36" rx="18" fill="#dbeafe"/>
+  <rect x="510" y="536" width="170" height="36" rx="18" fill="#fef3c7"/>
+  <text x="225" y="560" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#134e4a">AEO-ready</text>
+  <text x="405" y="560" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#1e3a8a">Demo data</text>
+  <text x="595" y="560" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#92400e">Sample only</text>
+  <text x="150" y="650" font-family="Arial, sans-serif" font-size="18" fill="#64748b">For public upload, admin approval, and preview testing. Not a real publication.</text>
+</svg>
