@@ -9,7 +9,7 @@ https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
 ## Public Visitor Flow
 
 1. Open the app landing page.
-2. Confirm **Browser-local demo mode** and the **Web Vitals** button are visible.
+2. Confirm **Browser-local demo mode** and the **Web Vitals** button are visible. The Web Vitals badge should show a live collected-metric count such as `0/5`, then increase as the browser reports metrics.
 3. Select Register.
 4. Create a faculty account with any valid email address and a password with letters and numbers.
 5. Sign in and confirm the faculty dashboard opens.
@@ -107,3 +107,5 @@ $env:PLAYWRIGHT_WEB_SERVER_COMMAND = 'npm run preview:pages'
 $env:PLAYWRIGHT_BASE_PATH = '/Hackathon-Smart-Profile-Management-System/'
 npx playwright test --reporter=line
 ```
+
+The CI workflow runs the same Pages-style Playwright suite after building `dist`.
