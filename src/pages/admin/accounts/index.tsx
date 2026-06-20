@@ -21,17 +21,40 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import {
+  deleteDemoAuthUser,
+  deleteDemoStoredFilesForUser,
+  setDemoCurrentUserId,
+  updateDemoAuthUser
+} from "@/client/demoBackend";
 import getFromDatabase from "@/tools/database/getFromDatabase";
+import removeFromDatabase from "@/tools/database/removeFromDatabase";
+import updateDatabase from "@/tools/database/updateDatabase";
 import signUpUser from "@/tools/accounts/signUpUser";
 import { toast, Toaster } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { logAudit } from "@/tools/database/logAudit";
+import backend from "@/client/backend";
+
+type AccountRow = {
+  id: string;
+  name: string;
+  email: string;
+  type?: string;
+};
 
 export default function AdminAccountsPage() {
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<AccountRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [isDialogOpen, setIsOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<AccountRow | null>(null);
+  const [deletingUser, setDeletingUser] = useState<AccountRow | null>(null);
+  const [editPassword, setEditPassword] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   // New user form state
   const [newUser, setNewUser] = useState({
@@ -44,11 +67,15 @@ export default function AdminAccountsPage() {
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
-      const data = await getFromDatabase({
-        table: "account_details",
-        getAll: true,
-        match: {},
-      });
+      const [{ data: currentAuth }, data] = await Promise.all([
+        backend.auth.getUser(),
+        getFromDatabase({
+          table: "account_details",
+          getAll: true,
+          match: {},
+        }),
+      ]);
+      setCurrentUserId(currentAuth.user?.id ?? null);
       setUsers(data);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -66,6 +93,7 @@ export default function AdminAccountsPage() {
 
     try {
       setIsCreating(true);
+      const { data: currentAuth } = await backend.auth.getUser();
       const response = await signUpUser({
         email: newUser.email,
         password: newUser.password,
@@ -74,6 +102,7 @@ export default function AdminAccountsPage() {
       });
 
       if (response.success) {
+        setDemoCurrentUserId(currentAuth.user?.id ?? null);
         toast.success("User created successfully");
         await logAudit('APPROVAL_ACTION', `Admin created new ${newUser.type} account: ${newUser.email}`);
         setIsOpen(false);
@@ -89,6 +118,92 @@ export default function AdminAccountsPage() {
     }
   };
 
+  const openEditDialog = (user: AccountRow) => {
+    setEditPassword("");
+    setEditingUser({ ...user, type: user.type || "faculty" });
+  };
+
+  const adminCount = users.filter((user) => user.type === "admin").length;
+  const getDeleteBlockReason = (user: AccountRow) => {
+    if (user.id === currentUserId) {
+      return "You cannot delete the active admin session.";
+    }
+
+    if (user.type === "admin" && adminCount <= 1) {
+      return "Keep at least one administrator account in the demo.";
+    }
+
+    return null;
+  };
+
+  const handleUpdateUser = async () => {
+    if (!editingUser) return;
+
+    if (!editingUser.name.trim() || !editingUser.email.trim()) {
+      toast.error("Name and email are required");
+      return;
+    }
+
+    try {
+      setIsUpdating(true);
+      await updateDatabase({
+        table: "account_details",
+        match: { id: editingUser.id },
+        data: {
+          name: editingUser.name.trim(),
+          email: editingUser.email.trim().toLowerCase(),
+          type: editingUser.type || "faculty"
+        }
+      });
+      updateDemoAuthUser(editingUser.id, {
+        email: editingUser.email,
+        password: editPassword.trim() || undefined
+      });
+      await logAudit('APPROVAL_ACTION', `Admin updated account: ${editingUser.email}`);
+      toast.success("User updated successfully");
+      setEditingUser(null);
+      setEditPassword("");
+      fetchUsers();
+    } catch (error) {
+      toast.error("Failed to update user");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    if (!deletingUser) return;
+
+    const deleteBlockReason = getDeleteBlockReason(deletingUser);
+    if (deleteBlockReason) {
+      toast.error(deleteBlockReason);
+      setDeletingUser(null);
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      await Promise.all([
+        removeFromDatabase({ table: "account_details", match: { id: deletingUser.id } }),
+        removeFromDatabase({ table: "profile_details", match: { id: deletingUser.id } }),
+        removeFromDatabase({ table: "educational_background", match: { user_id: deletingUser.id } }),
+        removeFromDatabase({ table: "work_experiences", match: { user_id: deletingUser.id } }),
+        removeFromDatabase({ table: "professional_development", match: { user_id: deletingUser.id } }),
+        removeFromDatabase({ table: "submissions", match: { user_id: deletingUser.id } }),
+      ]);
+      deleteDemoStoredFilesForUser(deletingUser.id);
+      deleteDemoAuthUser(deletingUser.id);
+      await logAudit('APPROVAL_ACTION', `Admin deleted account: ${deletingUser.email}`);
+      toast.success("User deleted successfully");
+      setDeletingUser(null);
+      fetchUsers();
+    } catch (error) {
+      toast.error("Failed to delete user");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -100,12 +215,17 @@ export default function AdminAccountsPage() {
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">
           <main className="flex-1 w-full bg-muted/40 text-foreground p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-bold">Account Management</h1>
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">Account Management</h1>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Manage browser-local demo reviewers, faculty profiles, and role access.
+                </p>
+              </div>
               
               <Dialog open={isDialogOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-green-700 hover:bg-green-800 text-white dark:bg-green-500 dark:text-green-950 dark:hover:bg-green-400">Add New User</Button>
+                  <Button>Add New User</Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
@@ -169,6 +289,96 @@ export default function AdminAccountsPage() {
               </Dialog>
             </div>
 
+            <Dialog open={Boolean(editingUser)} onOpenChange={(open) => !open && setEditingUser(null)}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Edit User Account</DialogTitle>
+                  <DialogDescription>
+                    Update the demo account profile. Leave password blank to keep the current password.
+                  </DialogDescription>
+                </DialogHeader>
+                {editingUser && (
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-name">Full Name</Label>
+                      <Input
+                        id="edit-name"
+                        value={editingUser.name}
+                        onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-email">Email Address</Label>
+                      <Input
+                        id="edit-email"
+                        type="email"
+                        value={editingUser.email}
+                        onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-password">New Password</Label>
+                      <Input
+                        id="edit-password"
+                        type="password"
+                        placeholder="Leave unchanged"
+                        value={editPassword}
+                        onChange={(e) => setEditPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="edit-type">Account Role</Label>
+                      <Select
+                        value={editingUser.type || "faculty"}
+                        onValueChange={(val) => setEditingUser({ ...editingUser, type: val })}
+                      >
+                        <SelectTrigger id="edit-type">
+                          <SelectValue placeholder="Select role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="faculty">Faculty</SelectItem>
+                          <SelectItem value="admin">Administrator</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setEditingUser(null)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleUpdateUser} disabled={isUpdating}>
+                    {isUpdating ? "Saving..." : "Save Changes"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog open={Boolean(deletingUser)} onOpenChange={(open) => !open && setDeletingUser(null)}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Delete User Account</DialogTitle>
+                  <DialogDescription>
+                    This removes the browser-local demo account, profile, submissions, and credential records.
+                  </DialogDescription>
+                </DialogHeader>
+                {deletingUser && (
+                  <div className="rounded-md border bg-muted/40 p-4 text-sm">
+                    <p className="font-medium text-foreground">{deletingUser.name}</p>
+                    <p className="text-muted-foreground">{deletingUser.email}</p>
+                  </div>
+                )}
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setDeletingUser(null)}>
+                    Cancel
+                  </Button>
+                  <Button variant="destructive" onClick={handleDeleteUser} disabled={isDeleting}>
+                    {isDeleting ? "Deleting..." : "Delete Account"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
             <Card>
               <CardHeader>
                 <CardTitle>Faculty & Administrator Accounts</CardTitle>
@@ -197,32 +407,41 @@ export default function AdminAccountsPage() {
                           </tr>
                         ))
                       ) : (
-                        users.map((user) => (
+                        users.map((user) => {
+                          const deleteBlockReason = getDeleteBlockReason(user);
+
+                          return (
                           <tr key={user.id} className="border-b hover:bg-muted/60">
-                            <td className="px-4 py-2">{user.name}</td>
+                            <td className="px-4 py-2 font-medium">{user.name}</td>
                             <td className="px-4 py-2">{user.email}</td>
                             <td className="px-4 py-2 capitalize">{user.type || "faculty"}</td>
                             <td className="px-4 py-2">
-                              <span
-                                className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                                  user.type !== "inactive"
-                                    ? "bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-200"
-                                    : "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-200"
-                                }`}
-                              >
-                                {user.type !== "inactive" ? "Active" : "Inactive"}
-                              </span>
+                              <Badge variant="outline" className="bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-200">
+                                Active
+                              </Badge>
                             </td>
                             <td className="px-4 py-2 text-right">
-                              <Button variant="outline" size="sm" className="mr-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="mr-2"
+                                onClick={() => openEditDialog(user)}
+                              >
                                 Edit
                               </Button>
-                              <Button variant="destructive" size="sm">
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                disabled={Boolean(deleteBlockReason)}
+                                title={deleteBlockReason || undefined}
+                                onClick={() => setDeletingUser(user)}
+                              >
                                 Delete
                               </Button>
                             </td>
                           </tr>
-                        ))
+                          );
+                        })
                       )}
                     </tbody>
                   </table>

@@ -13,6 +13,8 @@ Set the same value in `VITE_SITE_URL` for local checks and deployment builds.
 Indexable:
 
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/` - public landing page and showcase entry point.
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/answers.md` - concise answer-engine facts.
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/llms.txt` - AI crawler context and source guidance.
 
 Intentionally noindexed after React renders:
 
@@ -20,6 +22,7 @@ Intentionally noindexed after React renders:
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/admin/*`
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/faculty/*`
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-storage/*`
+- Query-based file previews use the fixed project demo-storage route, for example `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-storage/?bucket=pictures-and-documents&path=demo-faculty-1%2FCertificates%2Fsample-certificate.svg`, so GitHub Pages does not need a static file for every browser-local upload path.
 - unknown app routes
 
 The app routes still work for reviewers, but they should not be treated as public search pages.
@@ -27,7 +30,7 @@ The app routes still work for reviewers, but they should not be treated as publi
 ## Static SEO Files
 
 - `index.html` contains canonical, robots, Open Graph, Twitter card, JSON-LD, and no-script fallback metadata.
-- `public/sitemap.xml` includes only the canonical landing page.
+- `public/sitemap.xml` includes the canonical landing page, `answers.md`, and `llms.txt`.
 - `public/robots.txt` points crawlers to the sitemap and avoids intentional indexing of private app routes.
 - `public/llms.txt` gives AI crawlers factual project context without production overclaims.
 - `public/answers.md` provides concise answer-engine facts for AEO/GEO-style summaries.
@@ -40,7 +43,9 @@ For this repo, AEO means answer-engine optimization and GEO means generative-eng
 Implemented signals:
 
 - Visible **Public Demo Facts** content on the landing page.
+- Visible links from the landing page to `answers.md` and `llms.txt`.
 - Matching `FAQPage` JSON-LD in `index.html`.
+- Minimal `WebSite` and `Organization` JSON-LD context in `index.html`.
 - `llms.txt` with factual project context.
 - `answers.md` with concise question-and-answer summaries.
 - `robots.txt` entries for common AI/search crawlers, including `OAI-SearchBot`, `GPTBot`, `ChatGPT-User`, and `Google-Extended`.

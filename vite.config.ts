@@ -4,8 +4,10 @@ import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
-export default defineConfig({
-  base: process.env.VITE_BASE_PATH || '/',
+export default defineConfig(({ command }) => ({
+  base:
+    process.env.VITE_BASE_PATH ||
+    (command === 'build' ? '/Hackathon-Smart-Profile-Management-System/' : '/'),
   plugins: [
     react(),
     tailwindcss(),
@@ -77,4 +79,4 @@ export default defineConfig({
       }
     }
   }
-})
+}))

@@ -5,6 +5,9 @@ const DEFAULT_SITE_URL = 'https://iron-mark.github.io/Hackathon-Smart-Profile-Ma
 const REQUIRED_PUBLIC_ASSETS = [
   'answers.md',
   'demo-samples/sample-certificate.svg',
+  'demo-samples/sample-cv.svg',
+  'demo-samples/sample-diploma.svg',
+  'demo-samples/sample-research-summary.svg',
   'demo-samples/sample-transcript.svg',
   'fav-icon.png',
   'llms.txt',
@@ -18,6 +21,7 @@ const DOC_FILES = [
   'PUBLIC_DEMO.md',
   'README.md',
   'docs/demo-checklist.md',
+  'docs/PUBLIC_DEMO.md',
   'docs/post-deploy-review.md',
   'docs/seo-readiness.md',
 ];
@@ -32,7 +36,7 @@ const REQUIRED_DIST_FALLBACKS = [
   'admin/settings/index.html',
   'auth/login/index.html',
   'auth/register/index.html',
-  'demo-storage/pictures-and-documents/missing/sample/index.html',
+  'demo-storage/index.html',
   'faculty/dashboard/index.html',
   'faculty/profile/index.html',
   'faculty/settings/index.html',

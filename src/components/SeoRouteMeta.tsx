@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { SITE_DESCRIPTION, SITE_TITLE, SITE_URL, SOCIAL_IMAGE_URL } from '@/lib/seo';
+import { getRouteSeoMeta, SITE_URL, SOCIAL_IMAGE_URL } from '@/lib/seo';
 
 const INDEXABLE_ROBOTS = 'index,follow,max-image-preview:large';
 const NOINDEX_ROBOTS = 'noindex,nofollow';
@@ -35,27 +35,24 @@ function upsertCanonical(href: string) {
   element.setAttribute('href', href);
 }
 
-function isPublicLandingRoute(pathname: string) {
-  return pathname === '/' || pathname === '';
-}
-
 export function SeoRouteMeta() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    const isIndexable = isPublicLandingRoute(pathname);
-    const robots = isIndexable ? INDEXABLE_ROBOTS : NOINDEX_ROBOTS;
+    const routeMeta = getRouteSeoMeta(pathname);
+    const robots = routeMeta.indexable ? INDEXABLE_ROBOTS : NOINDEX_ROBOTS;
 
+    document.title = routeMeta.title;
     upsertCanonical(SITE_URL);
     upsertMetaByName('robots', robots);
-    upsertMetaByName('description', SITE_DESCRIPTION);
-    upsertMetaByProperty('og:title', SITE_TITLE);
-    upsertMetaByProperty('og:description', SITE_DESCRIPTION);
+    upsertMetaByName('description', routeMeta.description);
+    upsertMetaByProperty('og:title', routeMeta.title);
+    upsertMetaByProperty('og:description', routeMeta.description);
     upsertMetaByProperty('og:url', SITE_URL);
     upsertMetaByProperty('og:image', SOCIAL_IMAGE_URL);
     upsertMetaByProperty('og:image:secure_url', SOCIAL_IMAGE_URL);
-    upsertMetaByName('twitter:title', SITE_TITLE);
-    upsertMetaByName('twitter:description', SITE_DESCRIPTION);
+    upsertMetaByName('twitter:title', routeMeta.title);
+    upsertMetaByName('twitter:description', routeMeta.description);
     upsertMetaByName('twitter:image', SOCIAL_IMAGE_URL);
   }, [pathname]);
 

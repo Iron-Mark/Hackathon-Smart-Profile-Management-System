@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780" role="img" aria-labelledby="title desc">
+  <title id="title">Generated sample diploma</title>
+  <desc id="desc">Fictional diploma credential for the Smart Profile Management System public demo.</desc>
+  <rect width="1200" height="780" fill="#f8fafc"/>
+  <rect x="54" y="54" width="1092" height="672" rx="18" fill="#ffffff" stroke="#14532d" stroke-width="8"/>
+  <rect x="84" y="84" width="1032" height="612" rx="10" fill="none" stroke="#f59e0b" stroke-width="3"/>
+  <text x="600" y="150" text-anchor="middle" font-family="Georgia, serif" font-size="46" font-weight="700" fill="#14532d">University of Makati</text>
+  <text x="600" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" letter-spacing="4" fill="#334155">GENERATED PUBLIC DEMO DOCUMENT</text>
+  <text x="600" y="315" text-anchor="middle" font-family="Georgia, serif" font-size="62" fill="#0f172a">Diploma</text>
+  <text x="600" y="380" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#475569">This sample certifies that</text>
+  <text x="600" y="445" text-anchor="middle" font-family="Georgia, serif" font-size="44" font-weight="700" fill="#111827">Dr. Maria Santos</text>
+  <text x="600" y="505" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#1f2937">completed the Master of Science in Information Technology</text>
+  <text x="600" y="560" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#64748b">For upload, OCR, approval, and preview testing only.</text>
+  <line x1="170" y1="635" x2="390" y2="635" stroke="#334155" stroke-width="2"/>
+  <line x1="810" y1="635" x2="1030" y2="635" stroke="#334155" stroke-width="2"/>
+  <text x="280" y="668" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#334155">Registrar</text>
+  <text x="920" y="668" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#334155">Dean, CCIS</text>
+  <circle cx="600" cy="632" r="42" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/>
+  <text x="600" y="641" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#14532d">DEMO</text>
+</svg>

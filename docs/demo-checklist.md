@@ -17,6 +17,7 @@ https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
 7. Upload a sample credential image from `public/demo-samples`.
 
 The visitor account is stored only in the current browser when demo mode is active.
+The generated sample set includes certificate, transcript, diploma, CV, and research summary SVG files.
 
 ## Optional Clerk Showcase Auth
 
@@ -59,23 +60,29 @@ For GitHub Pages or any static SPA host, check these direct links after deployme
 
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/auth/login/`
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/auth/register/`
-- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-storage/pictures-and-documents/missing/sample/`
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-storage/?bucket=pictures-and-documents&path=demo-faculty-1%2FCertificates%2Fsample-certificate.svg`
 
 The auth routes should render normally. The missing demo storage link should render the Demo File Unavailable page instead of a static-hosting 404.
 
-Also verify `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-samples/sample-certificate.svg` returns the generated sample credential.
+Also verify these generated sample credentials return successfully:
+
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-samples/sample-certificate.svg`
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-samples/sample-transcript.svg`
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-samples/sample-diploma.svg`
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-samples/sample-cv.svg`
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/demo-samples/sample-research-summary.svg`
 
 ## SEO Smoke Check
 
 After deployment, verify:
 
 - The landing page canonical URL is `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/`.
-- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/sitemap.xml` lists only the public landing page.
+- `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/sitemap.xml` lists the public landing page, `answers.md`, and `llms.txt`.
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/robots.txt` points to the GitHub Pages sitemap.
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/llms.txt` describes the browser-local demo and sample-file guidance.
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/answers.md` provides concise answer-engine facts for AEO/GEO-style summaries.
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/og-image.png` returns the 1200x630 public share image.
-- Auth, admin, faculty, and demo-storage routes render but expose `noindex,nofollow`.
+- Auth, admin, faculty, and demo-storage routes render but expose `noindex,nofollow`; matching private route prefixes are also disallowed for AI crawler groups in `robots.txt`.
 
 Local command:
 

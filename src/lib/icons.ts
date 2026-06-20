@@ -23,6 +23,8 @@ export type Category =
   | "Others";
 
 export type Status =
+  | "Approved"
+  | "Returned"
   | "Verified"
   | "Not Approved"
   | "Not Accurate"
@@ -58,6 +60,8 @@ export const categoryIcons: Record<Category, IconItem> = {
 };
 
 export const statusVariants: Record<Status, IconItem> = {
+  Approved: createIconItem(CheckCircle, "text-green-700 dark:text-green-300"),
+  Returned: createIconItem(XCircle, "text-red-700 dark:text-red-300"),
   Verified: createIconItem(CheckCircle, "text-green-700 dark:text-green-300"),
   "Not Approved": createIconItem(XCircle, "text-red-700 dark:text-red-300"),
   "Not Accurate": createIconItem(AlertTriangle, "text-amber-700 dark:text-amber-300"),

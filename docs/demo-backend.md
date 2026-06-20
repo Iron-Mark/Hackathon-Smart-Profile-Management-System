@@ -7,6 +7,7 @@ Clerk can be enabled as an optional identity showcase by setting `VITE_CLERK_PUB
 ## What It Stores
 
 - Seeded faculty and admin demo accounts.
+- Additional fictional faculty profile rows used to populate admin dashboards, approval queues, and reports.
 - Browser-local registrations created from the public Register screen.
 - Profile details, submissions, audit logs, and uploaded-file metadata.
 - Small uploaded-file previews when the file can be safely stored as browser-local data.
@@ -29,6 +30,18 @@ Clerk Organizations are shown for reviewer context only. Admin access is not gra
 ## Reset Behavior
 
 Use **Reset demo data** on the auth screens or **Clear demo data** in the authenticated sidebar to restore the seeded showcase state.
+
+Seeded sign-in shortcuts:
+
+- Faculty: `faculty@umak.edu.ph` / `Faculty123`
+- Admin: `admin@umak.edu.ph` / `Admin123`
+
+Additional seeded faculty profiles use the same demo password for admin-review data:
+
+- `daniel.reyes@umak.edu.ph` / `Faculty123`
+- `liza.mercado@umak.edu.ph` / `Faculty123`
+
+Generated sample files in `public/demo-samples` cover certificate, transcript, diploma, CV, and research summary records. They are fictional and safe for public demo testing.
 
 ## Optional AI Behavior
 

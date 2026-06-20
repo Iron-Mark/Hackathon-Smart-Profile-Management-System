@@ -12,7 +12,7 @@ const formatBytes = (size?: number) => {
 
 export default function DemoStoragePreview() {
   const location = useLocation();
-  const file = getDemoStoredFileFromUrl(location.pathname);
+  const file = getDemoStoredFileFromUrl(location.pathname, location.search);
   const isImage = file?.type?.startsWith('image/');
 
   if (!file) {

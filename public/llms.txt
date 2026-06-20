@@ -2,7 +2,8 @@
 
 This is a restored public demo of the Team 2nd Choice UMak CCIS hackathon project.
 The app demonstrates a faculty credential workflow: sample document upload,
-browser-local account/session state, admin review, and approval feedback.
+browser-local account/session state, admin review, approval feedback, and
+profile proofing.
 
 ## Public demo behavior
 
@@ -11,6 +12,8 @@ browser-local account/session state, admin review, and approval feedback.
 - Concise answer source: /Hackathon-Smart-Profile-Management-System/answers.md
 - Demo data is browser-local. Accounts, submissions, audit logs, and uploaded file metadata stay in the visitor's browser storage.
 - Visitors should use only generated sample files from the public demo. Do not upload private IDs, transcripts, licenses, or real faculty records.
+- Generated sample files include certificate, transcript, diploma, CV, and research summary records.
+- The seeded Login screen exposes faculty and admin reviewer shortcuts for the main demo flow.
 - The public GitHub Pages build does not require private backend or OpenAI credentials.
 - The restored project is intentionally demo-only; no hosted backend integration is supported in this showcase branch.
 

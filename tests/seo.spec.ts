@@ -41,7 +41,7 @@ test('private and utility app routes are marked noindex after render', async ({ 
     '/auth/register',
     '/admin/dashboard',
     '/faculty/dashboard',
-    '/demo-storage/pictures-and-documents/missing/sample/',
+    '/demo-storage/?bucket=pictures-and-documents&path=demo-faculty-1%2FCertificates%2Fsample-certificate.svg',
   ]) {
     await page.goto(appRoute(path));
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex,nofollow');

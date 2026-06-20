@@ -11,6 +11,12 @@ interface LoginResponse {
   session?: DemoSession | null
 }
 
+export function getDashboardPathForAccountType(type?: string) {
+  if (type === 'faculty') return '/faculty/dashboard'
+  if (type === 'admin') return '/admin/dashboard'
+  return null
+}
+
 const loginUser = async (
   email: string,
   password: string,
@@ -42,8 +48,14 @@ const loginUser = async (
       throw new Error('User ID not found')
     }
 
+    const dashboardPath = getDashboardPathForAccountType(account[0].type)
+
+    if (!dashboardPath) {
+      throw new Error('Account role is not supported in demo mode')
+    }
+
     await logAudit('LOGIN', `User logged in from ${email}`, userId);
-    navigate(`/${account[0].type}/dashboard`)
+    navigate(dashboardPath)
 
     return { success: true, user: data.user, session: data.session }
   } catch (err: unknown) {

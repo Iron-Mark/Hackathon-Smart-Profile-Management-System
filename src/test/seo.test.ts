@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
+import { getRouteSeoMeta } from '../lib/seo';
 
 const siteUrl = 'https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/';
 const siteMapUrl = `${siteUrl}sitemap.xml`;
@@ -64,10 +65,12 @@ describe('static SEO metadata', () => {
     expect(JSON.stringify(faqPage)).toContain('sample files');
   });
 
-  test('publishes one indexable sitemap URL for the public landing page', () => {
+  test('publishes discoverable sitemap URLs for landing and answer sources', () => {
     const sitemap = readProjectFile('public/sitemap.xml');
 
     expect(sitemap).toContain(`<loc>${siteUrl}</loc>`);
+    expect(sitemap).toContain(`<loc>${siteUrl}answers.md</loc>`);
+    expect(sitemap).toContain(`<loc>${siteUrl}llms.txt</loc>`);
     expect(sitemap).not.toContain('/auth/');
     expect(sitemap).not.toContain('/admin/');
     expect(sitemap).not.toContain('/faculty/');
@@ -82,6 +85,21 @@ describe('static SEO metadata', () => {
     expect(robots).toContain('User-agent: OAI-SearchBot');
     expect(robots).toContain('User-agent: Google-Extended');
     expect(robots).toContain('Allow: /Hackathon-Smart-Profile-Management-System/answers.md');
+    for (const userAgent of [
+      'OAI-SearchBot',
+      'GPTBot',
+      'ChatGPT-User',
+      'ClaudeBot',
+      'PerplexityBot',
+      'CCBot',
+      'Google-Extended',
+    ]) {
+      const group = robots.match(new RegExp(`User-agent: ${userAgent}[\\s\\S]*?(?=\\nUser-agent:|\\nSitemap:|$)`))?.[0] ?? '';
+      expect(group).toContain('Disallow: /Hackathon-Smart-Profile-Management-System/auth/');
+      expect(group).toContain('Disallow: /Hackathon-Smart-Profile-Management-System/admin/');
+      expect(group).toContain('Disallow: /Hackathon-Smart-Profile-Management-System/faculty/');
+      expect(group).toContain('Disallow: /Hackathon-Smart-Profile-Management-System/demo-storage/');
+    }
     expect(robots).not.toContain('marksiazon.dev');
   });
 
@@ -97,5 +115,24 @@ describe('static SEO metadata', () => {
     expect(answers).toContain('# Answer Engine Summary');
     expect(answers).toContain('browser-local');
     expect(answers).toContain('sample files');
+  });
+
+  test('declares route metadata for public and private SPA routes', () => {
+    expect(getRouteSeoMeta('/')).toMatchObject({
+      title: 'Smart Profile Management System | Public Demo',
+      indexable: true,
+    });
+    expect(getRouteSeoMeta('/auth/register')).toMatchObject({
+      title: 'Register | Smart Profile Management System',
+      indexable: false,
+    });
+    expect(getRouteSeoMeta('/admin/dashboard')).toMatchObject({
+      title: 'Admin Workspace | Smart Profile Management System',
+      indexable: false,
+    });
+    expect(getRouteSeoMeta('/demo-storage')).toMatchObject({
+      title: 'Demo File Preview | Smart Profile Management System',
+      indexable: false,
+    });
   });
 });

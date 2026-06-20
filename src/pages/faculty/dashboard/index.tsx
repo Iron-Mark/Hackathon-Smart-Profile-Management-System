@@ -3,7 +3,8 @@ import type { ReactNode } from 'react'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 import { Separator } from '@/components/ui/separator'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from "@/components/ui/skeleton"
 import DropZone from '@/components/drop-zone'
 import { Toaster, toast } from 'sonner'
@@ -11,6 +12,7 @@ import determineDocumentTypeAndUpload from '@/tools/determineDocumentTypeAndUplo
 import getFromDatabase from '@/tools/database/getFromDatabase'
 import { useUserId } from '@/hooks/use-userId'
 import { useDocumentTitle } from '@/hooks/use-document-title'
+import { Bell, CalendarClock, CheckCircle2, Download, FileCheck2, FileStack, Sparkles } from 'lucide-react'
 
 interface FacultyDashboardProps {
   children?: ReactNode
@@ -29,6 +31,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
   const [notificationsCount, setNotificationsCount] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const samplePath = (fileName: string) => `${import.meta.env.BASE_URL}demo-samples/${fileName}`
 
   const handleFileUpload = (files: File[]) => {
     setUploadedFiles(files)
@@ -168,11 +171,30 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
             <Toaster position='top-right' />
             {children ?? (
               <>
-                <h1 className='text-3xl font-extrabold text-foreground mb-2'>
-                  {isLoading ? <Skeleton className="h-9 w-64" /> : `Welcome, ${name}`}
-                </h1>
-                <div className='text-muted-foreground mb-6'>
-                  {isLoading ? <Skeleton className="h-4 w-80" /> : 'Track your records and compliance status here.'}
+                <div className="mb-6 flex flex-col gap-4 rounded-lg border bg-card p-5 text-card-foreground shadow-sm lg:flex-row lg:items-center lg:justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Faculty workspace</p>
+                    <h1 className='text-3xl font-extrabold tracking-tight text-foreground'>
+                      {isLoading ? <Skeleton className="h-9 w-64" /> : `Welcome, ${name}`}
+                    </h1>
+                    <div className='mt-2 max-w-2xl text-sm text-muted-foreground'>
+                      {isLoading ? <Skeleton className="h-4 w-80" /> : 'Track your records, sample uploads, and profile readiness in one browser-local demo workspace.'}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <Button asChild variant="outline" size="sm">
+                      <a href={samplePath('sample-certificate.svg')}>
+                        <Download className="h-4 w-4" />
+                        Certificate
+                      </a>
+                    </Button>
+                    <Button asChild variant="outline" size="sm">
+                      <a href={samplePath('sample-transcript.svg')}>
+                        <Download className="h-4 w-4" />
+                        Transcript
+                      </a>
+                    </Button>
+                  </div>
                 </div>
                 <Separator className='mb-6' />
 
@@ -180,16 +202,20 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                   <div>
                     <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
                       {[
-                        { label: 'Profile Completion', val: `${completion}%`, color: 'text-emerald-700 dark:text-emerald-300' },
-                        { label: 'Pending Approvals', val: pendingCount, color: 'text-amber-700 dark:text-amber-300' },
-                        { label: 'Notifications', val: notificationsCount, color: 'text-foreground' },
-                        { label: 'Upcoming Deadlines', val: '3', color: 'text-red-700 dark:text-red-300' }
-                      ].map((item, i) => (
-                        <Card key={i} className='shadow-sm hover:shadow-md transition-shadow'>
+                        { label: 'Profile Completion', val: `${completion}%`, color: 'text-emerald-700 dark:text-emerald-300', icon: CheckCircle2, description: 'Profile sections with data' },
+                        { label: 'Pending Approvals', val: pendingCount, color: 'text-amber-700 dark:text-amber-300', icon: FileStack, description: 'Credentials awaiting admin review' },
+                        { label: 'Notifications', val: notificationsCount, color: 'text-sky-700 dark:text-sky-300', icon: Bell, description: 'Reviewed credential updates' },
+                        { label: 'Upcoming Deadlines', val: '3', color: 'text-red-700 dark:text-red-300', icon: CalendarClock, description: 'Demo compliance reminders' }
+                      ].map((item, i) => {
+                        const Icon = item.icon
+                        return (
+                        <Card key={i} className='rounded-lg shadow-sm transition-shadow hover:shadow-md'>
                           <CardHeader>
-                            <CardTitle className='text-sm text-muted-foreground'>
+                            <CardTitle className='flex items-center gap-2 text-sm text-muted-foreground'>
+                              <Icon className="h-4 w-4" />
                               {item.label}
                             </CardTitle>
+                            <CardDescription>{item.description}</CardDescription>
                           </CardHeader>
                           <CardContent>
                             <div className={`text-2xl font-bold ${item.color}`}>
@@ -197,18 +223,27 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                             </div>
                           </CardContent>
                         </Card>
-                      ))}
+                      )})}
                     </div>
                   </div>
 
                   <div>
-                    <p className='text-muted-foreground mb-3'>
-                      Use our AI-powered smart upload to automatically organize
-                      and process your documents effortlessly.
-                    </p>
-                    <p className='mb-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/50 dark:text-amber-200'>
-                      Use sample files only. Public demo uploads stay in this browser and are meant for showcase testing.
-                    </p>
+                    <div className="mb-4 rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+                      <div className="flex items-start gap-3">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-200">
+                          <Sparkles className="h-5 w-5" />
+                        </span>
+                        <div>
+                          <h2 className="font-semibold">Smart upload</h2>
+                          <p className='mt-1 text-sm text-muted-foreground'>
+                            Upload generated sample credentials and let the demo classify and queue them for review.
+                          </p>
+                        </div>
+                      </div>
+                      <p className='mt-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/50 dark:text-amber-200'>
+                        Use sample files only. Public demo uploads stay in this browser and are meant for showcase testing.
+                      </p>
+                    </div>
 
                     <DropZone
                       setData={handleFileUpload}
@@ -221,10 +256,11 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                         {uploadResults.map((result, index) => (
                           <Card
                             key={index}
-                            className='shadow-sm hover:shadow-md transition-shadow'
+                            className='rounded-lg shadow-sm transition-shadow hover:shadow-md'
                           >
                             <CardHeader>
-                              <CardTitle className='text-sm text-muted-foreground truncate'>
+                              <CardTitle className='flex items-center gap-2 truncate text-sm text-muted-foreground'>
+                                <FileCheck2 className="h-4 w-4" />
                                 {result.fileName}
                               </CardTitle>
                             </CardHeader>
