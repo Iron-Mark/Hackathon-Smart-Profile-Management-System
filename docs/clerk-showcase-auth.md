@@ -1,6 +1,6 @@
 # Clerk Showcase Auth
 
-Clerk is optional in this restored hackathon demo. The public GitHub Pages build works without Clerk, using seeded browser-local demo accounts.
+Clerk is optional in this restored 7th CCIS Hackathon demo. The public GitHub Pages build works without Clerk, using seeded browser-local demo accounts.
 
 ## Configure
 

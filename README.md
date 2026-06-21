@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎓 Hackathon Smart Profile Management System
+# 🎓 7th CCIS Hackathon Smart Profile Management System
 **Restored public demo for faculty credential uploads, admin review, and profile building**
 
 [![React Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
@@ -14,7 +14,7 @@
 ---
 
 ## 🌟 Restoration Status
-This repository contains the source code for the original UMak CCIS Hackathon entry. It has been restored so a developer can install it from a clean clone, run it locally, build it, and demonstrate the main faculty/admin credential workflow without needing private backend or OpenAI credentials.
+This repository contains the source code for the original 7th CCIS Hackathon entry. It has been restored so a developer can install it from a clean clone, run it locally, build it, and demonstrate the main faculty/admin credential workflow without needing private backend or OpenAI credentials.
 
 Public showcase URL: https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
 
@@ -199,17 +199,21 @@ npx playwright test
 - `npm run seo:check` validates the GitHub Pages canonical URL, crawler files, answer-engine FAQ data, social preview metadata, and 1200x630 Open Graph image.
 - Route-level code splitting keeps the public demo entry lighter than the full dashboard bundle.
 - `npm run security:scan` checks source files for common private key and token patterns.
-- Local and GitHub Pages demo mode preserve the hackathon workflow without requiring private accounts.
+- Local and GitHub Pages demo mode preserve the 7th CCIS Hackathon workflow without requiring private accounts.
 - The demo backend is local-only and is not production authentication, production authorization, or production document storage.
 
 ---
 
-## 👥 Meet the Team (Team 2nd Choice)
+## 👤 About the Author
+
+* **Sole maintainer:** Mark Siazon
+
+## 👥 Past Initial Hackathon Team (Team 2nd Choice)
 
 * **Mark Siazon** – Lead Frontend Developer & UI/UX
 * **Charles Nathaniel Togle** – Backend & Integration
 * **Alexa San Jose** – Systems & Architecture
 
 <div align="center">
-  <strong>Built with ❤️ by Team 2nd Choice for the UMak CCIS Hackathon</strong>
+  <strong>Maintained by Mark Siazon. Original 7th CCIS Hackathon entry by Team 2nd Choice.</strong>
 </div>

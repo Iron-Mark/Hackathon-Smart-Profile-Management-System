@@ -11,10 +11,10 @@
   <meta name="robots" content="index,follow,max-image-preview:large" />
   
   <title>Smart Profile Management System | Public Demo</title>
-  <meta name="description" content="Restored UMak CCIS hackathon demo for browser-local faculty credential uploads, admin review, sample document approvals, and profile proofing." />
+  <meta name="description" content="Restored 7th CCIS Hackathon demo for browser-local faculty credential uploads, admin review, sample document approvals, and profile proofing." />
   
   <meta property="og:title" content="Smart Profile Management System | Public Demo" />
-  <meta property="og:description" content="Restored UMak CCIS hackathon demo for browser-local faculty credential uploads, admin review, sample document approvals, and profile proofing." />
+  <meta property="og:description" content="Restored 7th CCIS Hackathon demo for browser-local faculty credential uploads, admin review, sample document approvals, and profile proofing." />
   <meta property="og:url" content="https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/" />
   <meta property="og:site_name" content="Smart Profile Management System" />
   <meta property="og:image" content="https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/og-image.png" />
@@ -26,11 +26,11 @@
   
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Smart Profile Management System | Public Demo" />
-  <meta name="twitter:description" content="Restored UMak CCIS hackathon demo for browser-local faculty credential uploads, admin review, sample document approvals, and profile proofing." />
+  <meta name="twitter:description" content="Restored 7th CCIS Hackathon demo for browser-local faculty credential uploads, admin review, sample document approvals, and profile proofing." />
   <meta name="twitter:image" content="https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/og-image.png" />
   <meta name="twitter:image:alt" content="Smart Profile Management System public demo preview" />
   
-  <meta name="author" content="Mark Siazon, Charles Nathaniel Togle, Alexa San Jose" />
+  <meta name="author" content="Mark Siazon" />
 
   <script type="application/ld+json">
     {
@@ -46,34 +46,22 @@
           "operatingSystem": "Any",
           "isAccessibleForFree": true,
           "creator": {
-            "@type": "Organization",
-            "name": "Team 2nd Choice"
+            "@id": "https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/#team"
           },
-          "author": [
-            {
-              "@type": "Person",
-              "name": "Mark Siazon",
-              "jobTitle": "Lead Frontend Developer and UI/UX"
-            },
-            {
-              "@type": "Person",
-              "name": "Charles Nathaniel Togle",
-              "jobTitle": "Backend and Integration"
-            },
-            {
-              "@type": "Person",
-              "name": "Alexa San Jose",
-              "jobTitle": "Systems and Architecture"
-            }
-          ],
-          "description": "A restored UMak CCIS hackathon demo for browser-local faculty credential uploads, admin review, sample document approvals, and profile proofing. Public demo data stays in the visitor's browser storage."
+          "author": {
+            "@id": "https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/#maintainer"
+          },
+          "maintainer": {
+            "@id": "https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/#maintainer"
+          },
+          "description": "A restored 7th CCIS Hackathon demo for browser-local faculty credential uploads, admin review, sample document approvals, and profile proofing. Public demo data stays in the visitor's browser storage."
         },
         {
           "@type": "WebSite",
           "@id": "https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/#website",
           "name": "Smart Profile Management System",
           "url": "https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/",
-          "description": "Public demo and answer source for the Smart Profile Management System hackathon showcase.",
+          "description": "Public demo and answer source for the Smart Profile Management System 7th CCIS Hackathon showcase.",
           "inLanguage": "en",
           "publisher": {
             "@id": "https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/#team"
@@ -86,12 +74,24 @@
           "url": "https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System"
         },
         {
+          "@type": "Person",
+          "@id": "https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/#maintainer",
+          "name": "Mark Siazon",
+          "jobTitle": "Sole maintainer"
+        },
+        {
           "@type": "SoftwareSourceCode",
           "@id": "https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System#source",
-          "name": "Hackathon Smart Profile Management System",
+          "name": "7th CCIS Hackathon Smart Profile Management System",
           "codeRepository": "https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System",
           "programmingLanguage": ["TypeScript", "React"],
           "runtimePlatform": "Web browser",
+          "maintainer": {
+            "@id": "https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/#maintainer"
+          },
+          "creator": {
+            "@id": "https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/#team"
+          },
           "isPartOf": {
             "@id": "https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/#app"
           }
@@ -105,7 +105,7 @@
               "name": "What is Smart Profile Management System?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "A restored UMak CCIS hackathon showcase for faculty credential uploads, admin review, and approval tracking."
+                "text": "A restored 7th CCIS Hackathon showcase for faculty credential uploads, admin review, and approval tracking."
               }
             },
             {
@@ -142,10 +142,18 @@
             },
             {
               "@type": "Question",
-              "name": "Who built the original hackathon project?",
+              "name": "Who maintains the restored public demo?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Team 2nd Choice: Mark Siazon, Charles Nathaniel Togle, and Alexa San Jose."
+                "text": "Mark Siazon is the sole maintainer of the restored public demo and repository."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Who built the original 7th CCIS Hackathon project?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The past initial hackathon team was Team 2nd Choice: Mark Siazon, Charles Nathaniel Togle, and Alexa San Jose."
               }
             }
           ]
@@ -160,7 +168,7 @@
     <main>
       <h1>Smart Profile Management System</h1>
       <p>
-        This restored UMak CCIS hackathon demo lets visitors try a browser-local
+        This restored 7th CCIS Hackathon demo lets visitors try a browser-local
         faculty credential upload and admin approval flow. The interactive demo
         requires JavaScript.
       </p>

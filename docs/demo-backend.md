@@ -1,6 +1,6 @@
 # Demo Backend
 
-This restored showcase uses a browser-local demo backend only. It is designed for GitHub Pages, portfolio review, and hackathon demonstration, not production persistence.
+This restored showcase uses a browser-local demo backend only. It is designed for GitHub Pages, portfolio review, and 7th CCIS Hackathon demonstration, not production persistence.
 
 Clerk can be enabled as an optional identity showcase by setting `VITE_CLERK_PUBLISHABLE_KEY`, but Clerk does not replace the demo backend. Clerk-authenticated visitors are mapped into a browser-local faculty demo profile.
 

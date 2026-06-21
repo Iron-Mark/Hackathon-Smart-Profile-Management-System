@@ -25,7 +25,8 @@ const ANSWER_QUESTIONS = [
   'Where is public demo data stored?',
   'Should visitors upload real faculty records?',
   'Does the GitHub Pages demo need backend or OpenAI secrets?',
-  'Who built the original hackathon project?',
+  'Who maintains the restored public demo?',
+  'Who built the original 7th CCIS Hackathon project?',
 ];
 
 function readText(filePath) {
