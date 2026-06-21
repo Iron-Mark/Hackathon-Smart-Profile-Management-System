@@ -124,6 +124,9 @@ test('demo reset removes visitor accounts and restores seeded access', async ({ 
   await expect(page).toHaveURL(appRoutePattern('/auth/login'));
   await page.getByRole('button', { name: 'Reset demo data' }).click();
   await expect(page.getByRole('status')).toContainText('Demo data reset');
+  await expect(page.getByLabel('Email')).toHaveValue('');
+  const resetPasswordInput = page.locator('input#password');
+  await expect(resetPasswordInput).toHaveValue('');
 
   const consoleErrors: string[] = [];
   page.on('console', (message) => {
@@ -134,7 +137,8 @@ test('demo reset removes visitor accounts and restores seeded access', async ({ 
 
   await page.getByLabel('Email').fill(email);
   await expect(page.getByLabel('Email')).toHaveValue(email);
-  await page.locator('input#password').fill(password);
+  await resetPasswordInput.fill(password);
+  await expect(resetPasswordInput).toHaveValue(password);
   await page.getByRole('button', { name: 'Login' }).click();
   await expect(page.getByText(/Invalid demo credentials/i)).toBeVisible();
   expect(consoleErrors).toEqual([]);
@@ -207,6 +211,7 @@ test('admin account deletion is guarded and removes demo file previews', async (
       buffer: Buffer.from('delete me'),
     });
   await page.getByRole('button', { name: 'Submit files' }).click();
+  await expect(page.getByText('Type: Certificates')).toBeVisible();
 
   await page.goto(appRoute('/auth/login'));
   await page.getByRole('button', { name: 'Admin demo' }).click();
