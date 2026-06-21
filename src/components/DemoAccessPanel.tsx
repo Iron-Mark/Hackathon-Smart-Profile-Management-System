@@ -48,6 +48,8 @@ export function DemoAccessPanel ({
   }
 
   const handleReset = () => {
+    window.sessionStorage.removeItem('smart-profile-demo-login-email')
+    window.sessionStorage.removeItem('smart-profile-demo-reset-message')
     resetDemoBackendState()
     onReset?.()
   }
