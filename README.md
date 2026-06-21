@@ -18,6 +18,10 @@ This repository contains the source code for the original UMak CCIS Hackathon en
 
 Public showcase URL: https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
 
+Release checkpoint: [`v2.1.1`](https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System/releases/tag/v2.1.1)
+
+Release evidence: [`docs/release-evidence-v2.1.1.md`](docs/release-evidence-v2.1.1.md)
+
 The public build is intentionally demo-only. It uses seeded reviewer accounts, browser-local demo storage, generated sample files, and deterministic AI/OCR fallbacks when private API keys are not configured. There is no supported hosted persistence path in this showcase branch.
 
 <div align="center">
@@ -122,6 +126,8 @@ For a concise showcase script, see `docs/demo-checklist.md`.
 For public reviewer notes, see `docs/PUBLIC_DEMO.md`.
 For demo backend limitations, see `docs/demo-backend.md`.
 For optional Clerk identity and Organization controls, see `docs/clerk-showcase-auth.md`.
+For the verified release checkpoint, see `docs/release-evidence-v2.1.1.md`.
+The README screenshots are maintained in `docs/images/login.png`, `docs/images/profile.png`, and `docs/images/dashboard.png`.
 
 ### Performance And Web Vitals
 
