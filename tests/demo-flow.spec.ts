@@ -72,10 +72,14 @@ test('public demo allows non-UMak visitors to register and sign in', async ({ pa
   await page.getByRole('button', { name: 'Register' }).click();
 
   await expect(page).toHaveURL(appRoutePattern('/auth/login'));
+  await expect(page.getByRole('heading', { name: 'Welcome Back' })).toBeVisible();
+  await expect(page.getByRole('status')).toContainText(`${email} is ready to sign in.`);
 
   await page.getByLabel('Email').fill(email);
   await expect(page.getByLabel('Email')).toHaveValue(email);
-  await page.locator('input#password').fill(password);
+  const loginPasswordInput = page.locator('input#password');
+  await loginPasswordInput.fill(password);
+  await expect(loginPasswordInput).toHaveValue(password);
   await page.getByRole('button', { name: 'Login' }).click();
 
   await expect(page).toHaveURL(appRoutePattern('/faculty/dashboard'));

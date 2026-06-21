@@ -33,3 +33,11 @@ jobs:
         VITE_CLERK_PUBLISHABLE_KEY: ${{ vars.VITE_CLERK_PUBLISHABLE_KEY }}
     - run: npm run links:check
     - run: npm test -- --run
+    - run: npx playwright install --with-deps chromium
+    - name: Run Pages-style Playwright tests
+      env:
+        PLAYWRIGHT_BASE_URL: http://127.0.0.1:4173/Hackathon-Smart-Profile-Management-System
+        PLAYWRIGHT_WEB_SERVER_URL: http://127.0.0.1:4173/Hackathon-Smart-Profile-Management-System/
+        PLAYWRIGHT_WEB_SERVER_COMMAND: npm run preview:pages
+        PLAYWRIGHT_BASE_PATH: /Hackathon-Smart-Profile-Management-System/
+      run: npx playwright test --reporter=line

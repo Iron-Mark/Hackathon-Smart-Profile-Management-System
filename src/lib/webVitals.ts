@@ -11,6 +11,9 @@ export interface VitalSnapshot {
   rating: VitalRating;
 }
 
+type WebVitalsSubscription = (metric: VitalSnapshot) => void;
+type StopWebVitalsReporting = () => void;
+
 const thresholds: Record<VitalName, [number, number]> = {
   CLS: [0.1, 0.25],
   FCP: [1800, 3000],
@@ -18,6 +21,10 @@ const thresholds: Record<VitalName, [number, number]> = {
   LCP: [2500, 4000],
   TTFB: [800, 1800],
 };
+
+const subscribers = new Set<WebVitalsSubscription>();
+const latestMetrics = new Map<VitalName, VitalSnapshot>();
+let reportingStart: Promise<void> | null = null;
 
 export function getVitalRating(name: VitalName, value: number): VitalRating {
   const [good, poor] = thresholds[name];
@@ -44,13 +51,45 @@ export function toVitalSnapshot(metric: Metric): VitalSnapshot {
   };
 }
 
-export async function startWebVitalsReporting(onMetric: (metric: VitalSnapshot) => void) {
-  const { onCLS, onFCP, onINP, onLCP, onTTFB } = await import('web-vitals');
-  const report = (metric: Metric) => onMetric(toVitalSnapshot(metric));
+function reportMetric(metric: Metric) {
+  const snapshot = toVitalSnapshot(metric);
+  latestMetrics.set(snapshot.name, snapshot);
+  subscribers.forEach((subscriber) => subscriber(snapshot));
+}
 
-  onCLS(report);
-  onFCP(report);
-  onINP(report);
-  onLCP(report);
-  onTTFB(report);
+function ensureWebVitalsReportingStarted() {
+  if (!reportingStart) {
+    reportingStart = import('web-vitals')
+      .then(({ onCLS, onFCP, onINP, onLCP, onTTFB }) => {
+        onCLS(reportMetric);
+        onFCP(reportMetric);
+        onINP(reportMetric);
+        onLCP(reportMetric);
+        onTTFB(reportMetric);
+      })
+      .catch((error: unknown) => {
+        reportingStart = null;
+        throw error;
+      });
+  }
+
+  return reportingStart;
+}
+
+export async function startWebVitalsReporting(
+  onMetric: WebVitalsSubscription
+): Promise<StopWebVitalsReporting> {
+  latestMetrics.forEach(onMetric);
+  subscribers.add(onMetric);
+
+  try {
+    await ensureWebVitalsReportingStarted();
+  } catch (error) {
+    subscribers.delete(onMetric);
+    throw error;
+  }
+
+  return () => {
+    subscribers.delete(onMetric);
+  };
 }

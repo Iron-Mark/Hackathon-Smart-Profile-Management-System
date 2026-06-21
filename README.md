@@ -125,7 +125,7 @@ For optional Clerk identity and Organization controls, see `docs/clerk-showcase-
 
 ### Performance And Web Vitals
 
-Route screens are lazy-loaded so the landing/auth experience does not load every admin and faculty page up front. Demo mode also shows a local Web Vitals panel for LCP, INP, CLS, FCP, and TTFB. The panel uses the official `web-vitals` package and does not send metrics to a backend.
+Route screens are lazy-loaded so the landing/auth experience does not load every admin and faculty page up front. Demo mode also shows a local Web Vitals button and panel for LCP, INP, CLS, FCP, and TTFB. The button shows the live collected-metric count for the current browser session, and the panel uses the official `web-vitals` package without sending metrics to a backend.
 
 ### Demo-Only Backend
 
