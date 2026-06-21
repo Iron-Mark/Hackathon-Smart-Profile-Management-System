@@ -119,7 +119,7 @@ Main demo flow:
 Public visitors can also register with any valid email address in demo mode. Registration creates a local faculty account in that browser only. Do not upload sensitive real documents to a public showcase build; demo data is browser-local and meant for generated sample files. The included sample set covers certificate, transcript, diploma, CV, and research summary records.
 
 For a concise showcase script, see `docs/demo-checklist.md`.
-For public reviewer notes, see `PUBLIC_DEMO.md`.
+For public reviewer notes, see `docs/PUBLIC_DEMO.md`.
 For demo backend limitations, see `docs/demo-backend.md`.
 For optional Clerk identity and Organization controls, see `docs/clerk-showcase-auth.md`.
 

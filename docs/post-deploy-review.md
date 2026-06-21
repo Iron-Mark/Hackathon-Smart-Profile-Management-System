@@ -1,6 +1,6 @@
 # Post-Deploy Review
 
-Date: 2026-06-15
+Date: 2026-06-21
 
 Public URL:
 
@@ -8,10 +8,11 @@ https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
 
 ## Current Public Status
 
-- GitHub Pages deployment is live.
+- GitHub Pages deployment is live from PR #4 merge commit `b36ef57dcdba78de7f3949d958ed2f2d0f6c166d`.
 - Landing page, static SEO assets, generated sample files, and static SPA deep links return HTTP 200.
 - Auth, admin, faculty, and demo-storage app routes render through the restored static fallback strategy.
 - Full Playwright demo coverage passed against the live GitHub Pages site.
+- Latest detailed evidence: `docs/post-merge-live-evidence-2026-06-21.md`.
 
 ## Showcase Notes
 
@@ -32,3 +33,4 @@ https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
 - Mobile landing and faculty dashboard were checked with Playwright screenshots at 390px width.
 - The Web Vitals trigger is icon-only on mobile to avoid covering landing-page sample links.
 - The faculty dashboard upload area remains reachable on mobile.
+- The live Web Vitals button reports the current collected-metric count and opens a panel with real LCP, FCP, and TTFB values when available.
