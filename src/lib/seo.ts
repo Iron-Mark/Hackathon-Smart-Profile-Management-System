@@ -2,7 +2,7 @@ export const DEFAULT_SITE_URL = 'https://iron-mark.github.io/Hackathon-Smart-Pro
 
 export const SITE_TITLE = 'Smart Profile Management System | Public Demo';
 export const SITE_DESCRIPTION =
-  'Restored UMak CCIS hackathon demo for browser-local faculty credential uploads, admin review, sample document approvals, and profile proofing.';
+  'Restored 7th CCIS Hackathon demo for browser-local faculty credential uploads, admin review, sample document approvals, and profile proofing.';
 
 export function normalizeSiteUrl(value?: string) {
   const siteUrl = value?.trim() || DEFAULT_SITE_URL;

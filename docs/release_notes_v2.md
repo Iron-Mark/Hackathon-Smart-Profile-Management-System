@@ -1,6 +1,6 @@
 # v2.1 Public Demo Handoff Release
 
-This release closes the restoration pass for the Smart Profile Management System hackathon project. The app is now positioned as a GitHub Pages-friendly public showcase that can be cloned, installed, run locally, and demonstrated without a hosted backend.
+This release closes the restoration pass for the Smart Profile Management System 7th CCIS Hackathon project. The app is now positioned as a GitHub Pages-friendly public showcase that can be cloned, installed, run locally, and demonstrated without a hosted backend.
 
 ## Highlights
 

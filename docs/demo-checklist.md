@@ -1,6 +1,6 @@
 # Demo Checklist
 
-Use this when showcasing the restored hackathon app from GitHub Pages or a local preview build.
+Use this when showcasing the restored 7th CCIS Hackathon app from GitHub Pages or a local preview build.
 
 Public URL:
 

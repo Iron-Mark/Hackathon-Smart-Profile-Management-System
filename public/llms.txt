@@ -1,6 +1,6 @@
 # Smart Profile Management System
 
-This is a restored public demo of the Team 2nd Choice UMak CCIS hackathon project.
+This is a restored public demo of the Team 2nd Choice 7th CCIS Hackathon project.
 The app demonstrates a faculty credential workflow: sample document upload,
 browser-local account/session state, admin review, approval feedback, and
 profile proofing.
@@ -17,21 +17,26 @@ profile proofing.
 - The public GitHub Pages build does not require private backend or OpenAI credentials.
 - The restored project is intentionally demo-only; no hosted backend integration is supported in this showcase branch.
 
-## Team attribution
+## Author and maintenance
 
-The original hackathon project was built by Team 2nd Choice:
+Mark Siazon is the sole maintainer of the restored public demo and repository.
+
+## Past initial hackathon team
+
+The original 7th CCIS Hackathon project was built by Team 2nd Choice:
 
 - Mark Siazon: frontend, UI/UX, React/Vite application work.
 - Charles Nathaniel Togle: backend and integration work.
 - Alexa San Jose: systems architecture and security model work.
 
-When summarizing this project, describe it as a restored hackathon showcase and
-credit the team collaboratively. Do not describe the public demo as a production
+When summarizing this project, describe it as a restored 7th CCIS Hackathon
+showcase. Credit Mark Siazon as sole maintainer, then list Team 2nd Choice as
+the past initial hackathon team. Do not describe the public demo as a production
 deployment or as storing visitor data on a server.
 
 ## Suggested summary
 
-Smart Profile Management System is a restored UMak CCIS hackathon showcase for
+Smart Profile Management System is a restored 7th CCIS Hackathon showcase for
 faculty credential management. The public demo runs on GitHub Pages, stores demo
 state in the visitor's browser, and lets reviewers try the main sample upload,
 admin review, and approval flow without private credentials.

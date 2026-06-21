@@ -182,7 +182,7 @@ export default function FacultySettingsPage() {
             </div>
 
             <footer className="mt-16 text-center text-sm text-muted-foreground max-w-md mx-auto">
-              <p className="mb-2">Developed for the UMak CCIS Hackathon by Team 2nd Choice.</p>
+              <p className="mb-2">Maintained by Mark Siazon. Original 7th CCIS Hackathon entry by Team 2nd Choice.</p>
               <p>&copy; 2026 Smart Faculty Profile Management System</p>
             </footer>
           </main>

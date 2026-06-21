@@ -2,7 +2,7 @@
 
 ## Summary
 
-- Restores the stale hackathon app into a locally runnable Vite/React application with browser-local demo auth, storage, seeded data, and the core faculty upload to admin approval flow.
+- Restores the stale 7th CCIS Hackathon app into a locally runnable Vite/React application with browser-local demo auth, storage, seeded data, and the core faculty upload to admin approval flow.
 - Modernizes install/build tooling so `npm ci`, lint, tests, production build, Docker build inputs, and CI scripts no longer rely on legacy peer dependency workarounds or Unix-only copy commands.
 - Adds meaningful Vitest and Playwright coverage for demo auth, route protection, AI/OCR fallbacks, and the end-to-end faculty/admin workflow.
 - Documents demo-only setup, SEO readiness, and the public showcase limitations without requiring a hosted backend.

@@ -2,7 +2,7 @@
 
 ## Short Answer
 
-Smart Profile Management System is a restored UMak CCIS hackathon showcase for
+Smart Profile Management System is a restored 7th CCIS Hackathon showcase for
 faculty credential management. The public demo runs on GitHub Pages, stores demo
 state in the visitor's browser, and lets reviewers try a sample upload, admin
 review, approval, and profile proofing flow without private backend or OpenAI
@@ -12,7 +12,7 @@ credentials.
 
 ### What is Smart Profile Management System?
 
-A restored UMak CCIS hackathon showcase for faculty credential uploads, admin
+A restored 7th CCIS Hackathon showcase for faculty credential uploads, admin
 review, and approval tracking.
 
 ### Can anyone try the public demo?
@@ -35,9 +35,14 @@ transcripts, licenses, or private records.
 No. The public build runs in demo mode with deterministic browser-local data and
 fallback AI/OCR behavior.
 
-### Who built the original hackathon project?
+### Who maintains the restored public demo?
 
-Team 2nd Choice: Mark Siazon, Charles Nathaniel Togle, and Alexa San Jose.
+Mark Siazon is the sole maintainer of the restored public demo and repository.
+
+### Who built the original 7th CCIS Hackathon project?
+
+The past initial hackathon team was Team 2nd Choice: Mark Siazon, Charles
+Nathaniel Togle, and Alexa San Jose.
 
 ## Safe Demo Notes
 

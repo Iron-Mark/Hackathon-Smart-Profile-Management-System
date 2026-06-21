@@ -25,7 +25,7 @@ const publicDemoFacts = [
   {
     question: 'What is Smart Profile Management System?',
     answer:
-      'A restored UMak CCIS hackathon showcase for faculty credential uploads, admin review, and approval tracking.',
+      'A restored 7th CCIS Hackathon showcase for faculty credential uploads, admin review, and approval tracking.',
   },
   {
     question: 'Can anyone try the public demo?',
@@ -48,9 +48,14 @@ const publicDemoFacts = [
       'No. The public build runs in demo mode with deterministic browser-local data and fallback AI/OCR behavior.',
   },
   {
-    question: 'Who built the original hackathon project?',
+    question: 'Who maintains the restored public demo?',
     answer:
-      'Team 2nd Choice: Mark Siazon, Charles Nathaniel Togle, and Alexa San Jose.',
+      'Mark Siazon is the sole maintainer of the restored public demo and repository.',
+  },
+  {
+    question: 'Who built the original 7th CCIS Hackathon project?',
+    answer:
+      'The past initial hackathon team was Team 2nd Choice: Mark Siazon, Charles Nathaniel Togle, and Alexa San Jose.',
   },
 ]
 
@@ -145,7 +150,7 @@ export default function Landing() {
               CCIS Smart Faculty Profile Management System
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg">
-              A restored UMak CCIS hackathon demo for faculty credential intake,
+              A restored 7th CCIS Hackathon demo for faculty credential intake,
               admin review, and profile proofing. Reviewers can use seeded accounts
               and generated sample files without private backend or OpenAI credentials.
             </p>
@@ -314,7 +319,7 @@ export default function Landing() {
             <img src={assetPath('fav-icon.png')} alt="Smart Profile logo" className="h-10 w-10 rounded-md object-contain" />
             <div>
               <p className="font-semibold text-slate-950">Smart Profile Management System</p>
-              <p>Team 2nd Choice for the UMak CCIS Hackathon.</p>
+              <p>Maintained by Mark Siazon. Original 7th CCIS Hackathon entry by Team 2nd Choice.</p>
             </div>
           </div>
           <div className="flex flex-wrap gap-4">

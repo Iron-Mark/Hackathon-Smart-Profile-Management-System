@@ -1,4 +1,4 @@
-# Legacy Vault: The Original Hackathon Base 🏛️
+# Legacy Vault: The Original 7th CCIS Hackathon Base 🏛️
 
 This release archives the **Original Version** (from a year ago) of the Smart Profile Management System, prior to the massive modern infrastructure overhaul. 
 
