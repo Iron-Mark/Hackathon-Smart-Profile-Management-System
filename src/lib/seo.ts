@@ -1,10 +1,10 @@
-export const DEFAULT_SITE_URL = 'https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/';
+const DEFAULT_SITE_URL = 'https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/';
 
-export const SITE_TITLE = 'Smart Profile Management System | Public Demo';
-export const SITE_DESCRIPTION =
+const SITE_TITLE = 'Smart Profile Management System | Public Demo';
+const SITE_DESCRIPTION =
   'Restored 7th CCIS Hackathon demo for browser-local faculty credential uploads, admin review, sample document approvals, and profile proofing.';
 
-export function normalizeSiteUrl(value?: string) {
+function normalizeSiteUrl(value?: string) {
   const siteUrl = value?.trim() || DEFAULT_SITE_URL;
   return siteUrl.endsWith('/') ? siteUrl : `${siteUrl}/`;
 }
@@ -19,7 +19,7 @@ export type RouteSeoMeta = {
   indexable: boolean;
 };
 
-export const ROUTE_SEO_META: RouteSeoMeta[] = [
+const ROUTE_SEO_META: RouteSeoMeta[] = [
   {
     pattern: /^\/?$/,
     title: SITE_TITLE,

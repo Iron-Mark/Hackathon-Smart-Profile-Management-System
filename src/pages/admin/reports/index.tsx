@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { DatePickerWithRange } from "@/components/ui/date-picker";
 import getFromDatabase from "@/tools/database/getFromDatabase";
+import { filterRowsByDateRange, type DateRangeFilter } from "@/lib/reportExport";
 import Papa from 'papaparse';
 import { toast, Toaster } from "sonner";
 
@@ -25,6 +26,7 @@ const reportTypes = [
 
 export default function AdminReportsPage() {
   const [selectedReport, setSelectedReport] = useState<string>("");
+  const [dateRange, setDateRange] = useState<DateRangeFilter | undefined>();
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerateReport = async () => {
@@ -49,7 +51,14 @@ export default function AdminReportsPage() {
         return;
       }
 
-      const csv = Papa.unparse(data);
+      const filteredData = filterRowsByDateRange(data, dateRange);
+
+      if (filteredData.length === 0) {
+        toast.info("No rows matched the selected date range");
+        return;
+      }
+
+      const csv = Papa.unparse(filteredData);
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
@@ -116,7 +125,7 @@ export default function AdminReportsPage() {
                       Date Range (Optional)
                     </label>
                     <DatePickerWithRange
-                      onDateChange={() => undefined}
+                      onDateChange={setDateRange}
                     />
                   </div>
                 </div>

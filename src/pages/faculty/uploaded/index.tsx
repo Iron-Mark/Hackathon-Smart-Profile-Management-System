@@ -24,6 +24,7 @@ import {
   DialogTrigger,
   DialogContent,
   DialogHeader,
+  DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
@@ -44,10 +45,13 @@ import { analyzeDocument } from '@/tools/ai/analyzeDocument'
 import uploadToUserFolder from '@/tools/buckets/uploadToUserFolder'
 import insertToDatabase from '@/tools/database/insertToDatabase'
 import getFromDatabase from '@/tools/database/getFromDatabase'
+import removeFromDatabase from '@/tools/database/removeFromDatabase'
+import updateDatabase from '@/tools/database/updateDatabase'
 import backend from '@/client/backend'
 
 type UploadedFile = {
-  id: number;
+  id: string;
+  submissionId: string;
   name: string;
   uploadedAt: string;
   status: string;
@@ -78,13 +82,13 @@ export default function UploadedFilesPage() {
         match: { user_id: userId }
       });
 
-      const files = submissions.map((s: { file_name: string; created_at: string; status: string; document_type: string; id: number }, index: number) => ({
-        id: index + 1,
+      const files = submissions.map((s: { file_name: string; created_at: string; status: string; document_type: string; id: string }) => ({
+        id: s.id,
+        submissionId: s.id,
         name: s.file_name,
         uploadedAt: s.created_at ? new Date(s.created_at).toLocaleString() : 'N/A',
         status: s.status,
         category: s.document_type,
-        submissionId: s.id // Optional if needed
       }));
       setEditableFiles(files);
     } catch (err) {
@@ -119,7 +123,7 @@ export default function UploadedFilesPage() {
   };
 
   const handleInputChange = (
-    id: number,
+    id: string,
     field: keyof UploadedFile,
     value: string
   ) => {
@@ -415,6 +419,9 @@ export default function UploadedFilesPage() {
                         <DialogContent>
                           <DialogHeader>
                             <DialogTitle>Edit File</DialogTitle>
+                            <DialogDescription>
+                              Review the selected upload and move it to a different document category.
+                            </DialogDescription>
                           </DialogHeader>
                           <div className="space-y-4">
                             <div>
@@ -442,33 +449,56 @@ export default function UploadedFilesPage() {
                                 value={selectedFile?.category || ""}
                                 onValueChange={async (newCategory) => {
                                   if (selectedFile) {
-                                    toast.success("File moved successfully.");
-                                    setSelectedFile((prevFile) =>
-                                      prevFile
-                                        ? {
-                                            ...prevFile,
-                                            category: newCategory,
-                                          }
-                                        : null
-                                    );
-                                    handleInputChange(
-                                      selectedFile.id,
-                                      "category",
-                                      newCategory
-                                    );
-                                    handleInputChange(
-                                      selectedFile.id,
-                                      "status",
-                                      "unverified"
-                                    );
+                                    try {
+                                      const previousCategory = selectedFile.category;
+                                      if (newCategory === previousCategory) return;
 
-                                    await moveFile({
-                                      bucketName: "pictures-and-documents",
-                                      oldType: selectedFile.category,
-                                      newType: newCategory,
-                                      filename: selectedFile.name,
-                                      userId: userId || "",
-                                    });
+                                      const moved = await moveFile({
+                                        bucketName: "pictures-and-documents",
+                                        oldType: previousCategory,
+                                        newType: newCategory,
+                                        filename: selectedFile.name,
+                                        userId: userId || "",
+                                      });
+
+                                      if (!moved) {
+                                        toast.error("Could not move file to the selected category.");
+                                        return;
+                                      }
+
+                                      await updateDatabase({
+                                        table: "submissions",
+                                        data: {
+                                          document_type: newCategory,
+                                          status: "Pending",
+                                        },
+                                        match: { id: selectedFile.submissionId },
+                                      });
+
+                                      setSelectedFile((prevFile) =>
+                                        prevFile
+                                          ? {
+                                              ...prevFile,
+                                              category: newCategory,
+                                              status: "Pending",
+                                            }
+                                          : null
+                                      );
+                                      handleInputChange(
+                                        selectedFile.id,
+                                        "category",
+                                        newCategory
+                                      );
+                                      handleInputChange(
+                                        selectedFile.id,
+                                        "status",
+                                        "Pending"
+                                      );
+                                      toast.success("File moved successfully.");
+                                    } catch (error) {
+                                      console.error("File category update failed", error);
+                                      toast.error("Could not update file category.");
+                                    }
                                   }
                                 }}
                               >
@@ -510,19 +540,36 @@ export default function UploadedFilesPage() {
                         size="sm"
                         className="cursor-pointer"
                         onClick={async () => {
-                          await removeItemFromBucket({
-                            bucketName: "pictures-and-documents",
-                            filename: file.name,
-                            type: file.category,
-                            userId: userId || "",
-                          });
-                          setEditableFiles((prevFiles) =>
-                            prevFiles
-                              ? prevFiles.filter(
-                                  (prevFile) => prevFile.id !== file.id
-                                )
-                              : []
-                          );
+                          try {
+                            const removed = await removeItemFromBucket({
+                              bucketName: "pictures-and-documents",
+                              filename: file.name,
+                              type: file.category,
+                              userId: userId || "",
+                            });
+
+                            if (!removed) {
+                              toast.error("Could not remove file from demo storage.");
+                              return;
+                            }
+
+                            await removeFromDatabase({
+                              table: "submissions",
+                              match: { id: file.submissionId },
+                            });
+
+                            setEditableFiles((prevFiles) =>
+                              prevFiles
+                                ? prevFiles.filter(
+                                    (prevFile) => prevFile.id !== file.id
+                                  )
+                                : []
+                            );
+                            toast.success("File removed successfully.");
+                          } catch (error) {
+                            console.error("File removal failed", error);
+                            toast.error("Could not remove file.");
+                          }
                         }}
                       >
                         Remove

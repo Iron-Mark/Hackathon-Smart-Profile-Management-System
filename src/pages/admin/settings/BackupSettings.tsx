@@ -76,12 +76,15 @@ export default function BackupSettings() {
             </Button>
           </div>
 
-          <div className="flex items-center justify-between p-4 border rounded-lg opacity-50">
+          <div className="flex items-center justify-between p-4 border rounded-lg">
             <div>
-              <p className="font-medium">Automatic Cloud Backup</p>
+              <p className="font-medium">Reset-Safe Local Backup</p>
               <p className="text-sm text-muted-foreground">Export browser-local demo data before resetting the showcase.</p>
             </div>
-            <Button disabled variant="outline">Coming Soon</Button>
+            <Button onClick={handleExportAll} disabled={isExporting} variant="outline">
+              <Download className="w-4 h-4 mr-2" />
+              {isExporting ? "Exporting..." : "Export Backup"}
+            </Button>
           </div>
         </div>
       </CardContent>

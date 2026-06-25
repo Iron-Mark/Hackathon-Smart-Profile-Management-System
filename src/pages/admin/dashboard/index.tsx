@@ -7,11 +7,41 @@ import { Input } from "@/components/ui/input";
 
 import { Link } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import getFromDatabase from "@/tools/database/getFromDatabase";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDocumentTitle } from "@/hooks/use-document-title";
 import { ClipboardCheck, Download, FileStack, Search, UsersRound, Activity } from "lucide-react";
+
+interface AccountRow extends Record<string, unknown> {
+  id: string;
+}
+
+interface AuditLogRow extends Record<string, unknown> {
+  user_id: string;
+  timestamp: string;
+}
+
+interface SubmissionRow extends Record<string, unknown> {
+  id: string;
+  user_id: string;
+  document_type?: string;
+  file_name?: string;
+  status?: string;
+  submitted_at?: string;
+}
+
+interface UploadTrend {
+  name: string;
+  date: string;
+  uploads: number;
+}
+
+interface CategoryDatum {
+  name: string;
+  value: number;
+}
+
 const COLORS = ['#2563eb', '#059669', '#d97706', '#dc2626', '#7c3aed', '#0891b2', '#ca8a04', '#be123c'];
 const chartTooltipStyle = {
   backgroundColor: 'var(--popover)',
@@ -24,21 +54,31 @@ export default function AdminDashboard() {
   const [usersCount, setUsersCount] = useState(0);
   const [activeSessions, setActiveSessions] = useState(0);
   const [pendingApprovals, setPendingApprovals] = useState(0);
-  const [uploadData, setUploadData] = useState<any[]>([]);
-  const [categoryData, setCategoryData] = useState<any[]>([]);
-  const [recentSubmissions, setRecentSubmissions] = useState<any[]>([]);
+  const [uploadData, setUploadData] = useState<UploadTrend[]>([]);
+  const [categoryData, setCategoryData] = useState<CategoryDatum[]>([]);
+  const [recentSubmissions, setRecentSubmissions] = useState<SubmissionRow[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  const filteredRecentSubmissions = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return recentSubmissions;
+
+    return recentSubmissions.filter((submission) =>
+      [submission.file_name, submission.document_type]
+        .some((value) => String(value || '').toLowerCase().includes(query))
+    );
+  }, [recentSubmissions, searchQuery]);
+
   const handleExportCSV = async () => {
     try {
-      const submissions = await getFromDatabase({ table: 'submissions', getAll: true, match: {} });
+      const submissions = await getFromDatabase<SubmissionRow>({ table: 'submissions', getAll: true, match: {} });
       if (!submissions || submissions.length === 0) return;
       
       const keys = Object.keys(submissions[0]);
       const csv = [
         keys.join(','),
-        ...submissions.map((row: any) => keys.map(k => `"${String(row[k] || '').replace(/"/g, '""')}"`).join(','))
+        ...submissions.map((row) => keys.map((key) => `"${String(row[key] ?? '').replace(/"/g, '""')}"`).join(','))
       ].join('\n');
       
       const blob = new Blob([csv], { type: 'text/csv' });
@@ -59,27 +99,27 @@ export default function AdminDashboard() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const accounts = await getFromDatabase({ table: 'account_details', getAll: true, match: {} });
+        const accounts = await getFromDatabase<AccountRow>({ table: 'account_details', getAll: true, match: {} });
         setUsersCount(accounts.length);
 
-        const submissions = await getFromDatabase({ table: 'submissions', getAll: true, match: {} });
+        const submissions = await getFromDatabase<SubmissionRow>({ table: 'submissions', getAll: true, match: {} });
         
-        const pending = submissions.filter((sub: any) => sub.status === "Pending");
+        const pending = submissions.filter((submission) => submission.status === "Pending");
         setPendingApprovals(pending.length);
         setRecentSubmissions(pending.slice(0, 5));
 
-        const logs = await getFromDatabase({ table: 'audit_logs', getAll: true, match: { action: 'LOGIN' } });
+        const logs = await getFromDatabase<AuditLogRow>({ table: 'audit_logs', getAll: true, match: { action: 'LOGIN' } });
         const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
         const activeUsers = new Set(
           logs
-            .filter((log: any) => new Date(log.timestamp) > oneDayAgo)
-            .map((log: any) => log.user_id)
+            .filter((log) => new Date(log.timestamp) > oneDayAgo)
+            .map((log) => log.user_id)
         );
         setActiveSessions(activeUsers.size);
 
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const today = new Date();
-        const last7Days: any[] = [];
+        const last7Days: UploadTrend[] = [];
         for (let i = 6; i >= 0; i--) {
           const d = new Date();
           d.setDate(today.getDate() - i);
@@ -90,7 +130,7 @@ export default function AdminDashboard() {
           });
         }
 
-        submissions.forEach((sub: any) => {
+        submissions.forEach((sub) => {
           if (sub.submitted_at) {
             const subDate = new Date(sub.submitted_at);
             const diffTime = today.getTime() - subDate.getTime();
@@ -104,10 +144,10 @@ export default function AdminDashboard() {
             }
           }
         });
-        setUploadData(last7Days.map(d => ({ name: d.name, uploads: d.uploads })));
+        setUploadData(last7Days);
 
         const categories: Record<string, number> = {};
-        submissions.forEach((sub: any) => {
+        submissions.forEach((sub) => {
           const type = sub.document_type || 'Other';
           categories[type] = (categories[type] || 0) + 1;
         });
@@ -273,10 +313,8 @@ export default function AdminDashboard() {
                         <Skeleton className="h-8 w-20" />
                       </li>
                     ))
-                  ) : recentSubmissions.filter(s => (s.file_name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) || (s.document_type?.toLowerCase() || '').includes(searchQuery.toLowerCase())).length > 0 ? (
-                    recentSubmissions
-                      .filter(s => (s.file_name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) || (s.document_type?.toLowerCase() || '').includes(searchQuery.toLowerCase()))
-                      .map((sub) => (
+                  ) : filteredRecentSubmissions.length > 0 ? (
+                    filteredRecentSubmissions.map((sub) => (
                       <li key={sub.id} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
                         <span className="text-sm text-muted-foreground">
                           {sub.document_type} upload: <span className="font-medium text-foreground">{sub.file_name}</span>

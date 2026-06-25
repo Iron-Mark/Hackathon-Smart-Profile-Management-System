@@ -35,7 +35,7 @@ export default function FormSettings() {
           <h3 className="text-sm font-semibold mb-2">Submission Rules</h3>
           <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
             <li>OCR text extraction is mandatory for all image uploads.</li>
-            <li>AI classification is powered by GPT-3.5 and Tesseract.js.</li>
+            <li>AI classification uses the optional configured AI service or deterministic demo fallbacks.</li>
             <li>Administrators must review all "Pending" submissions.</li>
           </ul>
         </div>

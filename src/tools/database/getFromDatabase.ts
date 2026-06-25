@@ -1,6 +1,8 @@
 import backend from '@/client/backend'
 
-export default async function getFromDatabase ({
+export type DatabaseRow = Record<string, any>
+
+export default async function getFromDatabase<T extends DatabaseRow = any> ({
   table,
   column,
   getAll = false,
@@ -10,7 +12,7 @@ export default async function getFromDatabase ({
   column?: string
   getAll: boolean
   match: object
-}): Promise<any[]> {
+}): Promise<T[]> {
   const query = getAll
     ? backend.from(table).select().match(match)
     : backend.from(table).select(column).match(match)
@@ -22,5 +24,5 @@ export default async function getFromDatabase ({
     throw new Error(error.message)
   }
 
-  return data || []
+  return (data || []) as T[]
 }

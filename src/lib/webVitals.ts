@@ -39,7 +39,7 @@ export function formatVitalValue(name: VitalName, value: number) {
   return `${Math.round(value)} ms`;
 }
 
-export function toVitalSnapshot(metric: Metric): VitalSnapshot {
+function toVitalSnapshot(metric: Metric): VitalSnapshot {
   const name = metric.name as VitalName;
 
   return {

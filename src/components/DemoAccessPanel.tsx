@@ -3,30 +3,24 @@ import {
   isDemoBackendEnabled,
   resetDemoBackendState
 } from '@/client/demoBackend'
+import {
+  PUBLIC_DEMO_ACCOUNTS,
+  type SeededDemoAccount
+} from '@/lib/demoAuth'
 import { Info, RotateCcw, ShieldCheck, UserRound, X } from 'lucide-react'
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 
-const demoAccounts = [
-  {
-    label: 'Faculty demo',
-    email: 'faculty@umak.edu.ph',
-    password: 'Faculty123',
-    icon: UserRound
-  },
-  {
-    label: 'Admin demo',
-    email: 'admin@umak.edu.ph',
-    password: 'Admin123',
-    icon: ShieldCheck
-  }
-]
+const demoAccountIcon = {
+  admin: ShieldCheck,
+  faculty: UserRound
+} as const
 
 interface DemoAccessPanelProps {
   className?: string
   message?: string
   showSeedAccounts?: boolean
-  onUseAccount?: (account: { email: string; password: string }) => void
+  onUseAccount?: (account: SeededDemoAccount) => void
   onReset?: () => void
 }
 
@@ -81,8 +75,8 @@ export function DemoAccessPanel ({
 
         {showSeedAccounts && (
           <div className='grid gap-2 sm:grid-cols-2'>
-            {demoAccounts.map(account => {
-              const Icon = account.icon
+            {PUBLIC_DEMO_ACCOUNTS.map(account => {
+              const Icon = demoAccountIcon[account.role]
               return (
                 <Button
                   key={account.email}

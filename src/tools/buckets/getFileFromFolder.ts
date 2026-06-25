@@ -30,6 +30,10 @@ const getFileFromFolder = async ({
     return data.signedUrl
   }
 
+  if (error?.message === 'File not found') {
+    return null
+  }
+
   console.error(
     `Error retrieving signed file URL for ${filePath}:`,
     error?.message || 'No signed URL returned'

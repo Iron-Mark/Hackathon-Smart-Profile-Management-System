@@ -1,6 +1,7 @@
 // loginUser.ts
 import backend from '@/client/backend'
 import type { DemoSession, DemoUser } from '@/client/demoBackend'
+import { getDashboardPathForRole } from '@/lib/demoAuth'
 import getFromDatabase from '../database/getFromDatabase'
 import { logAudit } from '../database/logAudit'
 
@@ -12,9 +13,7 @@ interface LoginResponse {
 }
 
 export function getDashboardPathForAccountType(type?: string) {
-  if (type === 'faculty') return '/faculty/dashboard'
-  if (type === 'admin') return '/admin/dashboard'
-  return null
+  return getDashboardPathForRole(type)
 }
 
 const loginUser = async (

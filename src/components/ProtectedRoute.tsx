@@ -4,12 +4,17 @@ import backend from "@/client/backend";
 import { getClerkDemoIdentity } from "@/client/clerkDemoIdentity";
 import { isClerkEnabled } from "@/client/clerkConfig";
 import { syncClerkDemoUser } from "@/client/demoBackend";
+import {
+  getFallbackPathForRequiredRole,
+  isAccountRole,
+  type AccountRole
+} from "@/lib/demoAuth";
 import { Loader2 } from "lucide-react";
 import { useUser } from "@clerk/react";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: "admin" | "faculty";
+  requiredRole?: AccountRole;
 }
 
 const loadingScreen = (
@@ -98,8 +103,8 @@ function DemoProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
             .eq("id", user.id)
             .single();
 
-          if (error || !data || data.type !== requiredRole) {
-            setRedirect(requiredRole === "admin" ? "/faculty/dashboard" : "/admin/dashboard");
+          if (error || !data || !isAccountRole(data.type) || data.type !== requiredRole) {
+            setRedirect(getFallbackPathForRequiredRole(requiredRole));
             setLoading(false);
             return;
           }
