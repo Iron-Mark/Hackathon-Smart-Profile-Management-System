@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import demoAccountActions from "@/tools/accounts/demoAccountActions";
 import { useState } from "react";
+import { useTheme } from "next-themes";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "sonner";
 import { logAudit } from "@/tools/database/logAudit";
@@ -23,10 +24,17 @@ import { Lock, LogOut, Bell, Shield } from "lucide-react";
 
 function Preferences() {
   const [notifications, setNotifications] = useState(true);
+  const { resolvedTheme, setTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
   
   const handleToggle = (checked: boolean) => {
     setNotifications(checked);
     toast.success(`Notifications ${checked ? 'enabled' : 'disabled'}`);
+  };
+
+  const handleThemeToggle = (checked: boolean) => {
+    setTheme(checked ? "dark" : "light");
+    toast.success(`${checked ? 'Dark' : 'Light'} mode enabled`);
   };
 
   return (
@@ -50,12 +58,16 @@ function Preferences() {
           />
         </div>
         
-        <div className="flex items-center justify-between p-3 border rounded-lg opacity-50">
+        <div className="flex items-center justify-between p-3 border rounded-lg">
           <div className="space-y-0.5">
             <Label htmlFor="dark-mode" className="text-base">Dark Mode</Label>
             <p className="text-sm text-muted-foreground">Switch to a darker interface theme.</p>
           </div>
-          <Switch id="dark-mode" disabled />
+          <Switch
+            id="dark-mode"
+            checked={isDarkMode}
+            onCheckedChange={handleThemeToggle}
+          />
         </div>
       </CardContent>
     </Card>

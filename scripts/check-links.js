@@ -18,11 +18,10 @@ const REQUIRED_PUBLIC_ASSETS = [
   'sitemap.xml',
 ];
 const DOC_FILES = [
-  'PUBLIC_DEMO.md',
   'README.md',
   'docs/demo-checklist.md',
   'docs/PUBLIC_DEMO.md',
-  'docs/post-deploy-review.md',
+  'docs/release-status.md',
   'docs/seo-readiness.md',
 ];
 const REQUIRED_DIST_FALLBACKS = [

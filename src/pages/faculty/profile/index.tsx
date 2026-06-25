@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger
@@ -468,13 +469,16 @@ export default function ProfilePage () {
                     </Button>
                     <Dialog>
                       <DialogTrigger asChild>
-                        <button className='text-muted-foreground hover:text-foreground p-2'>
+                        <button aria-label="Edit profile description" className='text-muted-foreground hover:text-foreground p-2'>
                           <Edit3Icon className='w-5 h-5' />
                         </button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
                           <DialogTitle>Edit Description</DialogTitle>
+                          <DialogDescription>
+                            Update the public profile summary and submit it for approval.
+                          </DialogDescription>
                         </DialogHeader>
                         <div className='space-y-4'>
                           <textarea
@@ -524,31 +528,54 @@ export default function ProfilePage () {
                           <p className='text-xs sm:text-sm text-muted-foreground'>{ed.institution} • {ed.startDate} - {ed.endDate}</p>
                         </div>
                         <div className="flex space-x-2">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <button className='text-muted-foreground hover:text-green-700 dark:hover:text-green-300' onClick={() => { setEditingEducation(ed); setIsAddingEdu(false); }}>
+                    <Dialog
+                      open={editingEducation?.id === ed.id && !isAddingEdu}
+                      onOpenChange={(open) => {
+                        if (!open) setEditingEducation(null)
+                      }}
+                    >
+                      <DialogTrigger asChild>
+                              <button aria-label={`Edit education ${ed.degree}`} className='text-muted-foreground hover:text-green-700 dark:hover:text-green-300' onClick={() => { setEditingEducation(ed); setIsAddingEdu(false); }}>
                                 <Edit3Icon className='w-4 h-4' />
                               </button>
                             </DialogTrigger>
                             <DialogContent>
-                              <DialogHeader><DialogTitle>Edit Education</DialogTitle></DialogHeader>
+                              <DialogHeader>
+                                <DialogTitle>Edit Education</DialogTitle>
+                                <DialogDescription>
+                                  Update this education entry on your faculty profile.
+                                </DialogDescription>
+                              </DialogHeader>
                               <EducationForm data={editingEducation} onChange={setEditingEducation} onSave={handleSaveEducation} onCancel={() => setEditingEducation(null)} />
                             </DialogContent>
                           </Dialog>
-                          <button className='text-muted-foreground hover:text-red-700 dark:hover:text-red-300' onClick={() => handleDelete('educational_background', ed.id)}>
+                          <button aria-label={`Delete education ${ed.degree}`} className='text-muted-foreground hover:text-red-700 dark:hover:text-red-300' onClick={() => handleDelete('educational_background', ed.id)}>
                             <Trash2Icon className='w-4 h-4' />
                           </button>
                         </div>
                       </div>
                     ))}
-                    <Dialog>
+                    <Dialog
+                      open={isAddingEdu && Boolean(editingEducation)}
+                      onOpenChange={(open) => {
+                        if (!open) {
+                          setEditingEducation(null)
+                          setIsAddingEdu(false)
+                        }
+                      }}
+                    >
                       <DialogTrigger asChild>
                         <Button variant="outline" className="w-full border-dashed" onClick={() => { setEditingEducation({ id: '', degree: '', institution: '', startDate: '', endDate: '' }); setIsAddingEdu(true); }}>
                           <PlusIcon className="w-4 h-4 mr-2" /> Add Education
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
-                        <DialogHeader><DialogTitle>Add Education</DialogTitle></DialogHeader>
+                        <DialogHeader>
+                          <DialogTitle>Add Education</DialogTitle>
+                          <DialogDescription>
+                            Add an education entry to your faculty profile.
+                          </DialogDescription>
+                        </DialogHeader>
                         <EducationForm data={editingEducation} onChange={setEditingEducation} onSave={handleSaveEducation} onCancel={() => setEditingEducation(null)} />
                       </DialogContent>
                     </Dialog>
@@ -576,31 +603,54 @@ export default function ProfilePage () {
                           {we.details && <p className='mt-1 text-xs sm:text-sm text-card-foreground'>{we.details}</p>}
                         </div>
                         <div className="flex space-x-2">
-                          <Dialog>
+                          <Dialog
+                            open={editingWork?.id === we.id && !isAddingWork}
+                            onOpenChange={(open) => {
+                              if (!open) setEditingWork(null)
+                            }}
+                          >
                             <DialogTrigger asChild>
-                              <button className='text-muted-foreground hover:text-green-700 dark:hover:text-green-300' onClick={() => { setEditingWork(we); setIsAddingWork(false); }}>
+                              <button aria-label={`Edit work experience ${we.role}`} className='text-muted-foreground hover:text-green-700 dark:hover:text-green-300' onClick={() => { setEditingWork(we); setIsAddingWork(false); }}>
                                 <Edit3Icon className='w-4 h-4' />
                               </button>
                             </DialogTrigger>
                             <DialogContent>
-                              <DialogHeader><DialogTitle>Edit Work Experience</DialogTitle></DialogHeader>
+                              <DialogHeader>
+                                <DialogTitle>Edit Work Experience</DialogTitle>
+                                <DialogDescription>
+                                  Update this work experience entry on your faculty profile.
+                                </DialogDescription>
+                              </DialogHeader>
                               <WorkForm data={editingWork} onChange={setEditingWork} onSave={handleSaveWork} onCancel={() => setEditingWork(null)} />
                             </DialogContent>
                           </Dialog>
-                          <button className='text-muted-foreground hover:text-red-700 dark:hover:text-red-300' onClick={() => handleDelete('work_experiences', we.id)}>
+                          <button aria-label={`Delete work experience ${we.role}`} className='text-muted-foreground hover:text-red-700 dark:hover:text-red-300' onClick={() => handleDelete('work_experiences', we.id)}>
                             <Trash2Icon className='w-4 h-4' />
                           </button>
                         </div>
                       </div>
                     ))}
-                    <Dialog>
+                    <Dialog
+                      open={isAddingWork && Boolean(editingWork)}
+                      onOpenChange={(open) => {
+                        if (!open) {
+                          setEditingWork(null)
+                          setIsAddingWork(false)
+                        }
+                      }}
+                    >
                       <DialogTrigger asChild>
                         <Button variant="outline" className="w-full border-dashed" onClick={() => { setEditingWork({ id: '', role: '', organization: '', period: '', details: '' }); setIsAddingWork(true); }}>
                           <PlusIcon className="w-4 h-4 mr-2" /> Add Work Experience
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
-                        <DialogHeader><DialogTitle>Add Work Experience</DialogTitle></DialogHeader>
+                        <DialogHeader>
+                          <DialogTitle>Add Work Experience</DialogTitle>
+                          <DialogDescription>
+                            Add a work experience entry to your faculty profile.
+                          </DialogDescription>
+                        </DialogHeader>
                         <WorkForm data={editingWork} onChange={setEditingWork} onSave={handleSaveWork} onCancel={() => setEditingWork(null)} />
                       </DialogContent>
                     </Dialog>
@@ -628,31 +678,54 @@ export default function ProfilePage () {
                           {item.details && <p className='mt-1 text-xs sm:text-sm text-card-foreground'>{item.details}</p>}
                         </div>
                         <div className="flex space-x-2">
-                          <Dialog>
+                          <Dialog
+                            open={editingDevelopment?.id === item.id && !isAddingDev}
+                            onOpenChange={(open) => {
+                              if (!open) setEditingDevelopment(null)
+                            }}
+                          >
                             <DialogTrigger asChild>
-                              <button className='text-muted-foreground hover:text-green-700 dark:hover:text-green-300' onClick={() => { setEditingDevelopment(item); setIsAddingDev(false); }}>
+                              <button aria-label={`Edit development ${item.role}`} className='text-muted-foreground hover:text-green-700 dark:hover:text-green-300' onClick={() => { setEditingDevelopment(item); setIsAddingDev(false); }}>
                                 <Edit3Icon className='w-4 h-4' />
                               </button>
                             </DialogTrigger>
                             <DialogContent>
-                              <DialogHeader><DialogTitle>Edit Development</DialogTitle></DialogHeader>
+                              <DialogHeader>
+                                <DialogTitle>Edit Development</DialogTitle>
+                                <DialogDescription>
+                                  Update this professional development entry on your faculty profile.
+                                </DialogDescription>
+                              </DialogHeader>
                               <DevForm data={editingDevelopment} onChange={setEditingDevelopment} onSave={handleSaveDevelopment} onCancel={() => setEditingDevelopment(null)} />
                             </DialogContent>
                           </Dialog>
-                          <button className='text-muted-foreground hover:text-red-700 dark:hover:text-red-300' onClick={() => handleDelete('professional_development', item.id)}>
+                          <button aria-label={`Delete development ${item.role}`} className='text-muted-foreground hover:text-red-700 dark:hover:text-red-300' onClick={() => handleDelete('professional_development', item.id)}>
                             <Trash2Icon className='w-4 h-4' />
                           </button>
                         </div>
                       </div>
                     ))}
-                    <Dialog>
+                    <Dialog
+                      open={isAddingDev && Boolean(editingDevelopment)}
+                      onOpenChange={(open) => {
+                        if (!open) {
+                          setEditingDevelopment(null)
+                          setIsAddingDev(false)
+                        }
+                      }}
+                    >
                       <DialogTrigger asChild>
                         <Button variant="outline" className="w-full border-dashed" onClick={() => { setEditingDevelopment({ id: '', role: '', organization: '', period: '', details: '' }); setIsAddingDev(true); }}>
                           <PlusIcon className="w-4 h-4 mr-2" /> Add Professional Development
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
-                        <DialogHeader><DialogTitle>Add Professional Development</DialogTitle></DialogHeader>
+                        <DialogHeader>
+                          <DialogTitle>Add Professional Development</DialogTitle>
+                          <DialogDescription>
+                            Add a professional development entry to your faculty profile.
+                          </DialogDescription>
+                        </DialogHeader>
                         <DevForm data={editingDevelopment} onChange={setEditingDevelopment} onSave={handleSaveDevelopment} onCancel={() => setEditingDevelopment(null)} />
                       </DialogContent>
                     </Dialog>

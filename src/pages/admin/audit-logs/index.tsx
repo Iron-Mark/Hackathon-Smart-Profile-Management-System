@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -25,6 +25,20 @@ interface AuditLog {
 export default function AdminAuditLogsPage() {
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [emailFilter, setEmailFilter] = useState("");
+  const [actionFilter, setActionFilter] = useState("all");
+
+  const filteredLogs = useMemo(() => {
+    const normalizedEmail = emailFilter.trim().toLowerCase();
+
+    return logs.filter((log) => {
+      const matchesEmail =
+        !normalizedEmail || log.user_email.toLowerCase().includes(normalizedEmail);
+      const matchesAction = actionFilter === "all" || log.action === actionFilter;
+
+      return matchesEmail && matchesAction;
+    });
+  }, [actionFilter, emailFilter, logs]);
 
   const fetchLogs = async () => {
     try {
@@ -88,12 +102,15 @@ export default function AdminAuditLogsPage() {
                 <Input
                   placeholder="Filter by User Email..."
                   className="max-w-xs"
+                  value={emailFilter}
+                  onChange={(event) => setEmailFilter(event.target.value)}
                 />
-                <Select>
+                <Select value={actionFilter} onValueChange={setActionFilter}>
                   <SelectTrigger className="max-w-xs">
                     <SelectValue placeholder="Filter by Action..." />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="all">All actions</SelectItem>
                     <SelectItem value="LOGIN">LOGIN</SelectItem>
                     <SelectItem value="PROFILE_UPDATE">
                       PROFILE_UPDATE
@@ -136,7 +153,7 @@ export default function AdminAuditLogsPage() {
                             </tr>
                           ))
                         ) : (
-                          logs.map((log) => (
+                          filteredLogs.map((log) => (
                             <tr key={log.id} className="border-b hover:bg-muted/60">
                               <td className="px-4 py-2 whitespace-nowrap">
                                 {new Date(log.timestamp).toLocaleString()}
@@ -150,7 +167,7 @@ export default function AdminAuditLogsPage() {
                       </tbody>
                     </table>
                 </div>
-                {!isLoading && logs.length === 0 && (
+                {!isLoading && filteredLogs.length === 0 && (
                   <p className="text-center text-muted-foreground py-4">
                     No audit logs found.
                   </p>

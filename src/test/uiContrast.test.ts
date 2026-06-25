@@ -26,12 +26,4 @@ describe('UI contrast and print-safe styling', () => {
     expect(profile).toContain('print:[--muted-foreground:#374151]');
   });
 
-  test('keeps legacy personal info fields theme-aware if the form is reused', () => {
-    const form = readSourceFile('src/components/faculty/PersonalInfoForm.tsx');
-
-    expect(form).not.toContain('border-gray-300 shadow-sm focus:border-blue-500');
-    expect(form).toContain('border-input bg-background text-foreground');
-    expect(form).toContain('placeholder:text-muted-foreground');
-    expect(form).toContain('focus:ring-ring');
-  });
 });

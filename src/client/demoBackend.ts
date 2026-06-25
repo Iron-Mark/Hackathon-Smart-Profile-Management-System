@@ -1,3 +1,5 @@
+import { SEEDED_DEMO_ACCOUNTS } from '@/lib/demoAuth';
+
 type DemoRow = Record<string, any>;
 type DemoError = { message: string };
 type DemoResult<T> = { data: T; error: DemoError | null };
@@ -157,39 +159,18 @@ const blobToDataUrl = (file: Blob) =>
 const seedState = (): DemoState => ({
   currentUserId: null,
   nextId: 100,
-  authUsers: [
-    { id: 'demo-admin-1', email: 'admin@umak.edu.ph', password: 'Admin123' },
-    { id: 'demo-faculty-1', email: 'faculty@umak.edu.ph', password: 'Faculty123' },
-    { id: 'demo-faculty-2', email: 'daniel.reyes@umak.edu.ph', password: 'Faculty123' },
-    { id: 'demo-faculty-3', email: 'liza.mercado@umak.edu.ph', password: 'Faculty123' },
-  ],
+  authUsers: SEEDED_DEMO_ACCOUNTS.map(({ id, email, password }) => ({
+    id,
+    email,
+    password,
+  })),
   tables: {
-    account_details: [
-      {
-        id: 'demo-admin-1',
-        type: 'admin',
-        name: 'Admin Reviewer',
-        email: 'admin@umak.edu.ph',
-      },
-      {
-        id: 'demo-faculty-1',
-        type: 'faculty',
-        name: 'Dr. Maria Santos',
-        email: 'faculty@umak.edu.ph',
-      },
-      {
-        id: 'demo-faculty-2',
-        type: 'faculty',
-        name: 'Prof. Daniel Reyes',
-        email: 'daniel.reyes@umak.edu.ph',
-      },
-      {
-        id: 'demo-faculty-3',
-        type: 'faculty',
-        name: 'Dr. Liza Mercado',
-        email: 'liza.mercado@umak.edu.ph',
-      },
-    ],
+    account_details: SEEDED_DEMO_ACCOUNTS.map(({ id, role, name, email }) => ({
+      id,
+      type: role,
+      name,
+      email,
+    })),
     profile_details: [
       {
         id: 'demo-faculty-1',

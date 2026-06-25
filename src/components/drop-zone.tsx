@@ -3,7 +3,7 @@ import { UploadCloud, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { ALLOWED_UPLOAD_TYPES, validateUploadFiles } from '@/lib/uploadValidation'
 
-export interface DropZoneProps {
+interface DropZoneProps {
   setData: (files: File[]) => void
   handleSubmit: () => void
   isSubmitting?: boolean

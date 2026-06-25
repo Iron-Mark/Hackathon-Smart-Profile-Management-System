@@ -9,6 +9,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useDocumentTitle } from '@/hooks/use-document-title'
 import { DemoAccessPanel } from '@/components/DemoAccessPanel'
 import { ClerkAuthPanel } from '@/components/ClerkShowcaseControls'
+import { PRIMARY_FACULTY_DEMO_ACCOUNT } from '@/lib/demoAuth'
 
 export default function LoginPage () {
   useDocumentTitle('Login')
@@ -42,10 +43,10 @@ export default function LoginPage () {
     }
 
     if (searchParams.get('demo') === 'faculty') {
-      setEmail('faculty@umak.edu.ph')
-      setPassword('Faculty123')
+      setEmail(PRIMARY_FACULTY_DEMO_ACCOUNT.email)
+      setPassword(PRIMARY_FACULTY_DEMO_ACCOUNT.password)
       setLoginError('')
-      setDemoMessage('faculty@umak.edu.ph is ready to sign in.')
+      setDemoMessage(`${PRIMARY_FACULTY_DEMO_ACCOUNT.email} is ready to sign in.`)
     }
   }, [searchParams])
 
