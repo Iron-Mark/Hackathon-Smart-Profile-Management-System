@@ -1,0 +1,33 @@
+name: PR Route Policy
+
+on:
+  pull_request:
+    branches: [main, dev]
+
+permissions:
+  contents: read
+
+jobs:
+  route-policy:
+    name: route-policy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce PR branch flow
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          echo "Validating PR route: ${HEAD_REF} -> ${BASE_REF}"
+
+          if [ "${BASE_REF}" = "main" ] && [ "${HEAD_REF}" != "dev" ]; then
+            echo "::error::Only dev can open pull requests into main."
+            exit 1
+          fi
+
+          if [ "${BASE_REF}" = "dev" ] && [ "${HEAD_REF}" = "main" ]; then
+            echo "::error::main must not be used as a development branch into dev."
+            exit 1
+          fi
+
+          echo "PR route is allowed."
+
