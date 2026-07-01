@@ -205,7 +205,7 @@ export default function AdminDashboard() {
                     <Activity className="h-4 w-4" />
                     Active Sessions (24h)
                   </CardTitle>
-                  <CardDescription className="text-green-800/80 dark:text-green-100/75">Recent seeded login activity</CardDescription>
+                  <CardDescription className="text-green-900 dark:text-green-100">Recent seeded login activity</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : activeSessions}</div>
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
                     <ClipboardCheck className="h-4 w-4" />
                     Pending Approvals
                   </CardTitle>
-                  <CardDescription className="text-amber-800/80 dark:text-amber-100/75">Credentials waiting for review</CardDescription>
+                  <CardDescription className="text-amber-900 dark:text-amber-100">Credentials waiting for review</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : pendingApprovals}</div>
@@ -276,7 +276,11 @@ export default function AdminDashboard() {
                           ))}
                         </Pie>
                         <RechartsTooltip contentStyle={chartTooltipStyle} labelStyle={{ color: 'var(--popover-foreground)' }} />
-                        <Legend wrapperStyle={{ color: 'currentColor' }} />
+                        <Legend
+                          formatter={(value) => (
+                            <span className="text-foreground">{value}</span>
+                          )}
+                        />
                       </PieChart>
                     </ResponsiveContainer>
                   )}
