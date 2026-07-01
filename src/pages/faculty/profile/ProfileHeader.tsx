@@ -123,7 +123,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           />
         ) : (
           <div className='absolute inset-0 flex items-center justify-center bg-muted/70 rounded-t-md'>
-            <span className='text-sm text-muted-foreground'>Upload Cover Photo</span>
+            <span className='text-sm text-foreground'>Upload Cover Photo</span>
           </div>
         )}
         <div className='absolute inset-0 bg-black/25 bg-opacity-0 group-hover:bg-opacity-30 flex items-center justify-center transition-opacity duration-300 rounded-t-md'>
@@ -154,7 +154,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 className='object-cover w-full h-full'
               />
             ) : (
-              <div className='absolute inset-0 flex items-center justify-center bg-muted text-muted-foreground'>
+              <div className='absolute inset-0 flex items-center justify-center bg-muted text-foreground'>
                 <span className='text-xs'>No Image</span>
               </div>
             )}
