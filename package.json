@@ -10,6 +10,7 @@
     "security:scan": "node scripts/check-secrets.js",
     "seo:check": "node scripts/check-seo.js",
     "links:check": "node scripts/check-links.js",
+    "smoke:live": "node scripts/run-live-smoke.js",
     "preview": "vite preview",
     "preview:pages": "node scripts/serve-pages-preview.js",
     "test": "vitest --config vitest.config.ts"
