@@ -24,6 +24,13 @@ Release status: [`docs/release-status.md`](docs/release-status.md)
 
 The public build is intentionally demo-only. It uses seeded reviewer accounts, browser-local demo storage, generated sample files, and deterministic AI/OCR fallbacks when private API keys are not configured. There is no supported hosted persistence path in this showcase branch.
 
+Pull-request CI is read-only and receives no repository secrets. Owners,
+collaborators, Dependabot, and Imgbot can be readied and queued for squash
+auto-merge only after all required checks succeed; other forks stay manual.
+Workflow dependencies are pinned to full commit SHAs. See
+[`.github/CI_SECURITY.md`](.github/CI_SECURITY.md) for the maintained branch,
+fork, and workflow trust policy.
+
 <div align="center">
   <img src="docs/images/login.png" alt="Login Page" width="80%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
   <br>
