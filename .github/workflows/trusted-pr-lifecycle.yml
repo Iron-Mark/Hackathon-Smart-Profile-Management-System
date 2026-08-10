@@ -30,9 +30,9 @@ jobs:
         run: |
           set -euo pipefail
 
-          read -r state draft author association head_owner current_head_sha < <(
+          read -r state draft author association head_owner current_head_sha base_ref head_ref < <(
             gh api "repos/${REPOSITORY}/pulls/${PR_NUMBER}" \
-              --jq '[.state, (.draft | tostring), .user.login, .author_association, .head.repo.owner.login, .head.sha] | @tsv'
+              --jq '[.state, (.draft | tostring), .user.login, .author_association, .head.repo.owner.login, .head.sha, .base.ref, .head.ref] | @tsv'
           )
 
           trusted=false
@@ -55,4 +55,8 @@ jobs:
           if [[ "${draft}" == "true" ]]; then
             gh pr ready "${pr_url}"
           fi
-          gh pr merge "${pr_url}" --auto --squash
+          if [[ "${base_ref}" == "main" && "${head_ref}" == "dev" ]]; then
+            gh pr merge "${pr_url}" --auto --merge
+          else
+            gh pr merge "${pr_url}" --auto --squash
+          fi
