@@ -1,0 +1,54 @@
+name: Trusted Fork Approval
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  pull-requests: read
+
+jobs:
+  approve-trusted-runs:
+    name: approve-trusted-runs
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Approve pending runs for trusted pull requests
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          gh api --paginate "repos/${REPOSITORY}/actions/runs?status=action_required&per_page=100" \
+            --jq '.workflow_runs[] | select(.event == "pull_request" and .pull_requests[0] != null) | [.id, .head_sha, .pull_requests[0].number] | @tsv' |
+          while IFS=$'\t' read -r run_id run_head_sha pr_number; do
+            [[ -n "${run_id}" && -n "${pr_number}" ]] || continue
+
+            read -r state author association head_owner current_head_sha < <(
+              gh api "repos/${REPOSITORY}/pulls/${pr_number}" \
+                --jq '[.state, .user.login, .author_association, .head.repo.owner.login, .head.sha] | @tsv'
+            )
+
+            trusted=false
+            case "${association}" in
+              OWNER|MEMBER|COLLABORATOR) trusted=true ;;
+            esac
+            case "${head_owner}" in
+            "${REPOSITORY_OWNER}"|Iron-Mark|MarkSiazon|MarkS-Trampettimg) trusted=true ;;
+            esac
+            case "${author}" in
+              "dependabot[bot]"|"imgbot[bot]") trusted=true ;;
+            esac
+
+            if [[ "${state}" == "open" && "${trusted}" == "true" && "${current_head_sha}" == "${run_head_sha}" ]]; then
+              gh api --method POST "repos/${REPOSITORY}/actions/runs/${run_id}/approve"
+              echo "Approved trusted workflow run ${run_id} for PR #${pr_number}."
+            else
+              echo "Left workflow run ${run_id} for PR #${pr_number} awaiting manual approval."
+            fi
+          done
