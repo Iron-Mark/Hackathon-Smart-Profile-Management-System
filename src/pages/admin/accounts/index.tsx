@@ -23,6 +23,14 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   deleteDemoAuthUser,
   deleteDemoStoredFilesForUser,
   setDemoCurrentUserId,
@@ -385,42 +393,44 @@ export default function AdminAccountsPage() {
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left table-auto">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="px-4 py-2">Name</th>
-                        <th className="px-4 py-2">Email</th>
-                        <th className="px-4 py-2">Role</th>
-                        <th className="px-4 py-2">Status</th>
-                        <th className="px-4 py-2 text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
                       {isLoading ? (
                         Array.from({ length: 3 }).map((_, i) => (
-                          <tr key={i} className="border-b">
-                            <td className="px-4 py-4"><Skeleton className="h-4 w-32" /></td>
-                            <td className="px-4 py-4"><Skeleton className="h-4 w-40" /></td>
-                            <td className="px-4 py-4"><Skeleton className="h-4 w-24" /></td>
-                            <td className="px-4 py-4"><Skeleton className="h-6 w-16 rounded-full" /></td>
-                            <td className="px-4 py-4 text-right"><Skeleton className="h-8 w-24 ml-auto" /></td>
-                          </tr>
+                          <TableRow key={i}>
+                            <TableCell className="py-4"><Skeleton className="h-4 w-32" /></TableCell>
+                            <TableCell className="py-4"><Skeleton className="h-4 w-40" /></TableCell>
+                            <TableCell className="py-4"><Skeleton className="h-4 w-24" /></TableCell>
+                            <TableCell className="py-4"><Skeleton className="h-6 w-16 rounded-full" /></TableCell>
+                            <TableCell className="py-4 text-right">
+                              <Skeleton className="ml-auto h-8 w-24" />
+                            </TableCell>
+                          </TableRow>
                         ))
                       ) : (
                         users.map((user) => {
                           const deleteBlockReason = getDeleteBlockReason(user);
 
                           return (
-                          <tr key={user.id} className="border-b hover:bg-muted/60">
-                            <td className="px-4 py-2 font-medium">{user.name}</td>
-                            <td className="px-4 py-2">{user.email}</td>
-                            <td className="px-4 py-2 capitalize">{user.type || "faculty"}</td>
-                            <td className="px-4 py-2">
+                          <TableRow key={user.id}>
+                            <TableCell className="font-medium">{user.name}</TableCell>
+                            <TableCell>{user.email}</TableCell>
+                            <TableCell className="capitalize">{user.type || "faculty"}</TableCell>
+                            <TableCell>
                               <Badge variant="outline" className="bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-200">
                                 Active
                               </Badge>
-                            </td>
-                            <td className="px-4 py-2 text-right">
+                            </TableCell>
+                            <TableCell className="text-right">
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -438,13 +448,13 @@ export default function AdminAccountsPage() {
                               >
                                 Delete
                               </Button>
-                            </td>
-                          </tr>
+                            </TableCell>
+                          </TableRow>
                           );
                         })
                       )}
-                    </tbody>
-                  </table>
+                    </TableBody>
+                  </Table>
                 </div>
                 {!isLoading && users.length === 0 && (
                   <p className="text-center text-muted-foreground py-4">

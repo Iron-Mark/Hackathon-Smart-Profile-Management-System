@@ -39,6 +39,14 @@ npx playwright test
 
 For GitHub Pages-style local QA, use the build preview commands in `docs/demo-checklist.md`.
 
+## 2026-08-10 Local Dependency Checkpoint
+
+- Branch: `agent/dependency-security`, based on `dev`.
+- Refreshed the lockfile to resolve `nanoid` 3.3.18 and `undici` 7.29.0, removing the two high-severity findings present in the development snapshot.
+- `npm audit` reports zero vulnerabilities.
+- The full local gate passed: 21 Vitest files with 52 tests, ESLint, secret scanning, SEO and link checks, the GitHub Pages production build, and 26 Chromium Playwright tests.
+- This is local verification evidence only. It does not replace the documented `v2.1.1` public release or claim a new deployment.
+
 ## Last Recorded Live Evidence
 
 The `v2.1.1` checkpoint was previously verified against GitHub Pages with:

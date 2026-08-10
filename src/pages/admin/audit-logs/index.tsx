@@ -12,6 +12,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import getFromDatabase from "@/tools/database/getFromDatabase";
 
 interface AuditLog {
@@ -133,39 +141,39 @@ export default function AdminAuditLogsPage() {
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left table-auto">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="px-4 py-2">Timestamp</th>
-                          <th className="px-4 py-2">User</th>
-                          <th className="px-4 py-2">Action</th>
-                          <th className="px-4 py-2">Details</th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Timestamp</TableHead>
+                          <TableHead>User</TableHead>
+                          <TableHead>Action</TableHead>
+                          <TableHead>Details</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
                         {isLoading ? (
                           Array.from({ length: 5 }).map((_, i) => (
-                            <tr key={i} className="border-b">
-                              <td className="px-4 py-4"><Skeleton className="h-4 w-32" /></td>
-                              <td className="px-4 py-4"><Skeleton className="h-4 w-40" /></td>
-                              <td className="px-4 py-4"><Skeleton className="h-4 w-24" /></td>
-                              <td className="px-4 py-4"><Skeleton className="h-4 w-full" /></td>
-                            </tr>
+                            <TableRow key={i}>
+                              <TableCell className="py-4"><Skeleton className="h-4 w-32" /></TableCell>
+                              <TableCell className="py-4"><Skeleton className="h-4 w-40" /></TableCell>
+                              <TableCell className="py-4"><Skeleton className="h-4 w-24" /></TableCell>
+                              <TableCell className="py-4"><Skeleton className="h-4 w-full" /></TableCell>
+                            </TableRow>
                           ))
                         ) : (
                           filteredLogs.map((log) => (
-                            <tr key={log.id} className="border-b hover:bg-muted/60">
-                              <td className="px-4 py-2 whitespace-nowrap">
+                            <TableRow key={log.id}>
+                              <TableCell>
                                 {new Date(log.timestamp).toLocaleString()}
-                              </td>
-                              <td className="px-4 py-2">{log.user_email}</td>
-                              <td className="px-4 py-2 font-mono text-xs">{log.action}</td>
-                              <td className="px-4 py-2">{log.details}</td>
-                            </tr>
+                              </TableCell>
+                              <TableCell>{log.user_email}</TableCell>
+                              <TableCell className="font-mono text-xs">{log.action}</TableCell>
+                              <TableCell className="whitespace-normal">{log.details}</TableCell>
+                            </TableRow>
                           ))
                         )}
-                      </tbody>
-                    </table>
+                      </TableBody>
+                    </Table>
                 </div>
                 {!isLoading && filteredLogs.length === 0 && (
                   <p className="text-center text-muted-foreground py-4">

@@ -311,7 +311,7 @@ export default function UploadedFilesPage() {
               />
               <label
                 htmlFor="file-upload"
-                className="mt-4 px-4 py-2 bg-blue-700 text-white rounded-md cursor-pointer hover:bg-blue-800 transition-colors dark:bg-blue-500 dark:text-blue-950 dark:hover:bg-blue-400"
+                className="mt-4 px-4 py-2 bg-blue-700 text-white rounded-md cursor-pointer hover:bg-blue-800 transition-colors dark:bg-blue-700 dark:text-white dark:hover:bg-blue-800"
               >
                 Select File
               </label>

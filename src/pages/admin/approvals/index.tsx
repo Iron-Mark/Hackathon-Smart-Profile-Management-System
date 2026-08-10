@@ -5,6 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import getFromDatabase from "@/tools/database/getFromDatabase";
 import updateDatabase from "@/tools/database/updateDatabase";
 import getFileFromFolder from "@/tools/buckets/getFileFromFolder";
@@ -101,42 +109,43 @@ export default function AdminApprovalsPage() {
                 <CardTitle>Faculty Submissions</CardTitle>
               </CardHeader>
               <CardContent>
-                  <table className="w-full text-left table-auto">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="px-4 py-2">Faculty Name</th>
-                        <th className="px-4 py-2">Document Type</th>
-                        <th className="px-4 py-2">File Name</th>
-                        <th className="px-4 py-2">Date Submitted</th>
-                        <th className="px-4 py-2">Status</th>
-                        <th className="px-4 py-2 text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Faculty Name</TableHead>
+                        <TableHead>Document Type</TableHead>
+                        <TableHead>File Name</TableHead>
+                        <TableHead>Date Submitted</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
                       {isLoading ? (
                          Array.from({ length: 5 }).map((_, i) => (
-                          <tr key={i} className="border-b">
-                            <td className="px-4 py-4"><Skeleton className="h-4 w-32" /></td>
-                            <td className="px-4 py-4"><Skeleton className="h-4 w-40" /></td>
-                            <td className="px-4 py-4"><Skeleton className="h-4 w-40" /></td>
-                            <td className="px-4 py-4"><Skeleton className="h-4 w-24" /></td>
-                            <td className="px-4 py-4"><Skeleton className="h-4 w-20" /></td>
-                            <td className="px-4 py-4 text-right"><Skeleton className="h-8 w-24 ml-auto" /></td>
-                          </tr>
+                          <TableRow key={i}>
+                            <TableCell className="py-4"><Skeleton className="h-4 w-32" /></TableCell>
+                            <TableCell className="py-4"><Skeleton className="h-4 w-40" /></TableCell>
+                            <TableCell className="py-4"><Skeleton className="h-4 w-40" /></TableCell>
+                            <TableCell className="py-4"><Skeleton className="h-4 w-24" /></TableCell>
+                            <TableCell className="py-4"><Skeleton className="h-4 w-20" /></TableCell>
+                            <TableCell className="py-4 text-right">
+                              <Skeleton className="ml-auto h-8 w-24" />
+                            </TableCell>
+                          </TableRow>
                         ))
                       ) : (
                         submissions.map((submission) => (
-                          <tr
+                          <TableRow
                             key={submission.id}
-                            className="border-b hover:bg-muted/60"
                           >
-                            <td className="px-4 py-2">{submission.facultyName}</td>
-                            <td className="px-4 py-2">{submission.document_type}</td>
-                            <td className="px-4 py-2">{submission.file_name}</td>
-                            <td className="px-4 py-2">
+                            <TableCell>{submission.facultyName}</TableCell>
+                            <TableCell>{submission.document_type}</TableCell>
+                            <TableCell>{submission.file_name}</TableCell>
+                            <TableCell>
                               {new Date(submission.submitted_at).toLocaleDateString()}
-                            </td>
-                            <td className="px-4 py-2">
+                            </TableCell>
+                            <TableCell>
                               <Badge
                                 variant={
                                   submission.status === "Pending"
@@ -148,8 +157,8 @@ export default function AdminApprovalsPage() {
                               >
                                 {submission.status}
                               </Badge>
-                            </td>
-                            <td className="px-4 py-2 text-right">
+                            </TableCell>
+                            <TableCell className="text-right">
                               {submission.status === "Pending" && (
                                 <>
                                   <Button
@@ -186,12 +195,12 @@ export default function AdminApprovalsPage() {
                               >
                                 View
                               </Button>
-                            </td>
-                          </tr>
+                            </TableCell>
+                          </TableRow>
                         ))
                       )}
-                    </tbody>
-                  </table>
+                    </TableBody>
+                  </Table>
                 {!isLoading && submissions.length === 0 && (
                   <p className="text-center text-muted-foreground py-4">
                     No submissions found.

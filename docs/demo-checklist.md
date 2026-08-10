@@ -89,6 +89,7 @@ Local command:
 ```bash
 npm run seo:check
 npm run links:check
+npm run smoke:live
 ```
 
 ## Build Preview Commands
