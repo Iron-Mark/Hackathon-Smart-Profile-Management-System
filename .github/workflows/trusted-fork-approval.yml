@@ -2,8 +2,12 @@ name: Trusted Fork Approval
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "17 4 * * *"
   workflow_dispatch:
+
+concurrency:
+  group: trusted-fork-approval
+  cancel-in-progress: false
 
 permissions:
   actions: write
