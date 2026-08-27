@@ -23,7 +23,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
       className="bg-card text-card-foreground rounded-md shadow-sm overflow-hidden"
     >
       <AccordionTrigger className="flex justify-between items-center w-full p-4 hover:bg-muted/60 transition-colors">
-        <span className="font-semibold text-md sm:text-lg text-green-700 dark:text-green-300">
+        <span className="font-semibold text-md sm:text-lg text-success">
           {title}
         </span>
       </AccordionTrigger>

@@ -8,13 +8,15 @@ import { WebVitalsPanel } from "./components/WebVitalsPanel";
 import { ClerkProviderBoundary } from "./components/ClerkProviderBoundary";
 import { validateEnv } from "./lib/env";
 import { ThemeProvider } from "next-themes";
+import { ThemeColorMeta } from "@/components/ThemeColorMeta";
 
 validateEnv();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ClerkProviderBoundary>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeColorMeta />
         <ErrorBoundary>
           <NetworkListener />
           <App />

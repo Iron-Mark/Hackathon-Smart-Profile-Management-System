@@ -262,11 +262,11 @@ export default function UploadedFilesPage() {
                       "cursor-pointer flex items-center gap-2 px-3 py-1 rounded-full transition-colors whitespace-nowrap",
                       statusFilter === status.label
                         ? status.label === "Verified"
-                          ? "bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-200"
+                          ? "bg-success/15 text-success"
                           : status.label === "Pending"
-                          ? "bg-blue-100 text-blue-800 dark:bg-blue-950/60 dark:text-blue-200"
+                          ? "bg-info/15 text-info"
                           : status.label === "Not Approved"
-                          ? "bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-200"
+                          ? "bg-destructive/15 text-destructive"
                           : ""
                         : "hover:bg-muted"
                     )}
@@ -311,25 +311,25 @@ export default function UploadedFilesPage() {
               />
               <label
                 htmlFor="file-upload"
-                className="mt-4 px-4 py-2 bg-blue-700 text-white rounded-md cursor-pointer hover:bg-blue-800 transition-colors dark:bg-blue-700 dark:text-white dark:hover:bg-blue-800"
+                className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md cursor-pointer hover:bg-primary/90 transition-colors"
               >
                 Select File
               </label>
             </div>
 
             {isUploading && (
-              <div className="mb-6 p-4 bg-blue-50 text-blue-800 rounded-lg animate-pulse dark:bg-blue-950/60 dark:text-blue-200">
+              <div className="mb-6 p-4 bg-info/10 text-info rounded-lg animate-pulse">
                 Extracting text from image... Please wait.
               </div>
             )}
 
             {extractedText && (
-              <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200 dark:bg-green-950/50 dark:border-green-900/70">
-                <h3 className="font-semibold text-green-900 mb-2 flex justify-between items-center dark:text-green-200">
+              <div className="mb-6 p-4 bg-success/10 rounded-lg border border-success/30">
+                <h3 className="font-semibold text-success mb-2 flex justify-between items-center">
                   Extracted Text:
                   <Button variant="outline" size="sm" onClick={() => setExtractedText(null)}>Clear</Button>
                 </h3>
-                <p className="whitespace-pre-wrap text-sm text-green-800 max-h-60 overflow-y-auto dark:text-green-200">{extractedText}</p>
+                <p className="whitespace-pre-wrap text-sm text-success max-h-60 overflow-y-auto">{extractedText}</p>
               </div>
             )}
 

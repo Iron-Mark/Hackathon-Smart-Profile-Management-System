@@ -17,7 +17,8 @@ import getFromDatabase from "@/tools/database/getFromDatabase";
 import updateDatabase from "@/tools/database/updateDatabase";
 import getFileFromFolder from "@/tools/buckets/getFileFromFolder";
 import { logAudit } from "@/tools/database/logAudit";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
+import { ThemedToaster } from "@/components/ThemedToaster";
 
 interface Submission {
   id: string;
@@ -95,7 +96,7 @@ export default function AdminApprovalsPage() {
 
   return (
     <SidebarProvider>
-      <Toaster position="top-right" />
+      <ThemedToaster position="top-right" />
       <div className="flex w-screen min-h-screen">
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">
@@ -164,7 +165,7 @@ export default function AdminApprovalsPage() {
                                   <Button
                                     variant="default"
                                     size="sm"
-                                    className="mr-2 bg-green-700 hover:bg-green-800 text-white dark:bg-green-500 dark:text-green-950 dark:hover:bg-green-400"
+                                    className="mr-2 bg-success text-success-foreground hover:bg-success/90"
                                     onClick={() => handleAction(submission.id, "Approved")}
                                   >
                                     Approve

@@ -7,7 +7,8 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/com
 import { Button } from '@/components/ui/button'
 import { Skeleton } from "@/components/ui/skeleton"
 import DropZone from '@/components/drop-zone'
-import { Toaster, toast } from 'sonner'
+import { toast } from 'sonner'
+import { ThemedToaster } from '@/components/ThemedToaster'
 import determineDocumentTypeAndUpload from '@/tools/determineDocumentTypeAndUpload'
 import getFromDatabase from '@/tools/database/getFromDatabase'
 import { useUserId } from '@/hooks/use-userId'
@@ -168,7 +169,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
           </div>
 
           <main className='flex-1 w-full p-6 bg-muted/40 text-foreground'>
-            <Toaster position='top-right' />
+            <ThemedToaster position='top-right' />
             {children ?? (
               <>
                 <div className="mb-6 flex flex-col gap-4 rounded-lg border bg-card p-5 text-card-foreground shadow-sm lg:flex-row lg:items-center lg:justify-between">
@@ -202,10 +203,10 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                   <div>
                     <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
                       {[
-                        { label: 'Profile Completion', val: `${completion}%`, color: 'text-emerald-700 dark:text-emerald-300', icon: CheckCircle2, description: 'Profile sections with data' },
-                        { label: 'Pending Approvals', val: pendingCount, color: 'text-amber-700 dark:text-amber-300', icon: FileStack, description: 'Credentials awaiting admin review' },
-                        { label: 'Notifications', val: notificationsCount, color: 'text-sky-700 dark:text-sky-300', icon: Bell, description: 'Reviewed credential updates' },
-                        { label: 'Upcoming Deadlines', val: '3', color: 'text-red-700 dark:text-red-300', icon: CalendarClock, description: 'Demo compliance reminders' }
+                        { label: 'Profile Completion', val: `${completion}%`, color: 'text-success', icon: CheckCircle2, description: 'Profile sections with data' },
+                        { label: 'Pending Approvals', val: pendingCount, color: 'text-warning', icon: FileStack, description: 'Credentials awaiting admin review' },
+                        { label: 'Notifications', val: notificationsCount, color: 'text-info', icon: Bell, description: 'Reviewed credential updates' },
+                        { label: 'Upcoming Deadlines', val: '3', color: 'text-destructive', icon: CalendarClock, description: 'Demo compliance reminders' }
                       ].map((item, i) => {
                         const Icon = item.icon
                         return (
@@ -230,7 +231,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                   <div>
                     <div className="mb-4 rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
                       <div className="flex items-start gap-3">
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-200">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-success/15 text-success">
                           <Sparkles className="h-5 w-5" />
                         </span>
                         <div>
@@ -240,7 +241,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                           </p>
                         </div>
                       </div>
-                      <p className='mt-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/50 dark:text-amber-200'>
+                      <p className='mt-4 rounded-md border border-warning/30 bg-warning/10 px-3 py-2 text-sm text-warning'>
                         Use sample files only. Public demo uploads stay in this browser and are meant for showcase testing.
                       </p>
                     </div>
@@ -267,7 +268,7 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                             <CardContent>
                               <div className='w-full bg-muted rounded-full h-2.5 mb-2'>
                                 <div
-                                  className='h-2.5 rounded-full bg-blue-600'
+                                  className='h-2.5 rounded-full bg-primary'
                                   style={{
                                     width: `${result.progress}%`,
                                     transition: 'width 0.2s ease'
@@ -276,15 +277,15 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
                               </div>
                               {result.status === 'uploaded' && result.documentType ? (
                                 <div className='space-y-1'>
-                                  <p className='text-sm font-medium text-emerald-700 dark:text-emerald-300'>
+                                  <p className='text-sm font-medium text-success'>
                                     Uploaded
                                   </p>
-                                  <p className='text-sm text-emerald-700 dark:text-emerald-300'>
+                                  <p className='text-sm text-success'>
                                     Type: {result.documentType}
                                   </p>
                                 </div>
                               ) : result.status === 'failed' ? (
-                                <p className='text-sm text-red-700 dark:text-red-300'>
+                                <p className='text-sm text-destructive'>
                                   Upload failed. Check the file and try again.
                                 </p>
                               ) : (

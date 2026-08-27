@@ -7,9 +7,9 @@ import { startWebVitalsReporting, type VitalName, type VitalSnapshot } from '@/l
 const metricOrder: VitalName[] = ['LCP', 'INP', 'CLS', 'FCP', 'TTFB'];
 
 const ratingClass = {
-  good: 'text-emerald-800 bg-emerald-50 border-emerald-200 dark:text-emerald-200 dark:bg-emerald-950/60 dark:border-emerald-900/70',
-  'needs-improvement': 'text-amber-800 bg-amber-50 border-amber-200 dark:text-amber-200 dark:bg-amber-950/60 dark:border-amber-900/70',
-  poor: 'text-red-800 bg-red-50 border-red-200 dark:text-red-200 dark:bg-red-950/60 dark:border-red-900/70',
+  good: 'text-success bg-success/10 border-success/30',
+  'needs-improvement': 'text-warning bg-warning/10 border-warning/30',
+  poor: 'text-destructive bg-destructive/10 border-destructive/30',
 };
 
 const ratingSeverity: Record<VitalSnapshot['rating'], number> = {
@@ -25,10 +25,10 @@ const ratingLabel: Record<VitalSnapshot['rating'], string> = {
 };
 
 const buttonBadgeClass: Record<VitalSnapshot['rating'] | 'collecting', string> = {
-  collecting: 'border-slate-300 bg-slate-100 text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200',
-  good: 'border-emerald-300 bg-emerald-100 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-100',
-  'needs-improvement': 'border-amber-300 bg-amber-100 text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100',
-  poor: 'border-red-300 bg-red-100 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-100',
+  collecting: 'border-border bg-muted text-muted-foreground',
+  good: 'border-success/40 bg-success/15 text-success',
+  'needs-improvement': 'border-warning/40 bg-warning/15 text-warning',
+  poor: 'border-destructive/40 bg-destructive/15 text-destructive',
 };
 
 export function WebVitalsPanel() {
@@ -112,7 +112,7 @@ export function WebVitalsPanel() {
           </div>
 
           {error ? (
-            <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+            <p className="text-sm text-destructive">{error}</p>
           ) : orderedMetrics.length === 0 ? (
             <p className="text-sm text-muted-foreground">Collecting metrics...</p>
           ) : (

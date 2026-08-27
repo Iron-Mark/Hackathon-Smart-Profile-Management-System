@@ -40,7 +40,8 @@ import getFromDatabase from "@/tools/database/getFromDatabase";
 import removeFromDatabase from "@/tools/database/removeFromDatabase";
 import updateDatabase from "@/tools/database/updateDatabase";
 import signUpUser from "@/tools/accounts/signUpUser";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
+import { ThemedToaster } from "@/components/ThemedToaster";
 import { Skeleton } from "@/components/ui/skeleton";
 import { logAudit } from "@/tools/database/logAudit";
 import backend from "@/client/backend";
@@ -218,7 +219,7 @@ export default function AdminAccountsPage() {
 
   return (
     <SidebarProvider>
-      <Toaster position="top-right" />
+      <ThemedToaster position="top-right" />
       <div className="flex w-screen min-h-screen">
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">
@@ -426,7 +427,7 @@ export default function AdminAccountsPage() {
                             <TableCell>{user.email}</TableCell>
                             <TableCell className="capitalize">{user.type || "faculty"}</TableCell>
                             <TableCell>
-                              <Badge variant="outline" className="bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-200">
+                              <Badge variant="outline" className="bg-success/15 text-success">
                                 Active
                               </Badge>
                             </TableCell>

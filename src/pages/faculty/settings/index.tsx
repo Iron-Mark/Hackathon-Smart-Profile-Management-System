@@ -18,7 +18,8 @@ import demoAccountActions from "@/tools/accounts/demoAccountActions";
 import { useState } from "react";
 import { useTheme } from "next-themes";
 import { useNavigate } from "react-router-dom";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
+import { ThemedToaster } from "@/components/ThemedToaster";
 import { logAudit } from "@/tools/database/logAudit";
 import { Lock, LogOut, Bell, Shield } from "lucide-react";
 
@@ -38,10 +39,10 @@ function Preferences() {
   };
 
   return (
-    <Card className="h-full shadow-lg border-stone-200">
+    <Card className="h-full shadow-lg border-border">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Bell className="w-5 h-5 text-blue-700 dark:text-blue-300" /> Preferences
+          <Bell className="w-5 h-5 text-info" /> Preferences
         </CardTitle>
         <CardDescription>Manage your app experience and notifications.</CardDescription>
       </CardHeader>
@@ -122,7 +123,7 @@ export default function FacultySettingsPage() {
 
   return (
     <SidebarProvider>
-      <Toaster position="top-right" />
+      <ThemedToaster position="top-right" />
       <div className="flex w-screen min-h-screen bg-muted/40 text-foreground">
         <AppSidebar />
         <div className="flex-1 flex flex-col">
@@ -130,10 +131,10 @@ export default function FacultySettingsPage() {
             <h1 className="text-3xl font-bold mb-8">Settings</h1>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <Card className="h-full shadow-lg border-stone-200">
+              <Card className="h-full shadow-lg border-border">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-green-700 dark:text-green-300" /> Account Security
+                    <Shield className="w-5 h-5 text-success" /> Account Security
                   </CardTitle>
                   <CardDescription>Manage your password and session.</CardDescription>
                 </CardHeader>

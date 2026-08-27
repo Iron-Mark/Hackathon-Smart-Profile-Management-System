@@ -42,7 +42,7 @@ interface CategoryDatum {
   value: number;
 }
 
-const COLORS = ['#2563eb', '#059669', '#d97706', '#dc2626', '#7c3aed', '#0891b2', '#ca8a04', '#be123c'];
+const COLORS = ['var(--info)', 'var(--success)', 'var(--warning)', 'var(--destructive)', 'var(--primary)', 'var(--chart-5)', 'var(--chart-2)', 'var(--chart-4)'];
 const chartTooltipStyle = {
   backgroundColor: 'var(--popover)',
   borderColor: 'var(--border)',
@@ -186,39 +186,39 @@ export default function AdminDashboard() {
             <Separator className="mb-6" />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="rounded-lg border-blue-200 bg-blue-50 text-blue-950 shadow-sm dark:border-blue-900/70 dark:bg-blue-950/50 dark:text-blue-100">
+              <Card className="rounded-lg border-info/30 bg-info/10 text-info shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-sm">
                     <UsersRound className="h-4 w-4" />
                     Total Users
                   </CardTitle>
-                  <CardDescription className="text-blue-800/80 dark:text-blue-100/75">Seeded and browser-local accounts</CardDescription>
+                  <CardDescription className="text-info/80">Seeded and browser-local accounts</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : usersCount}</div>
                 </CardContent>
               </Card>
 
-              <Card className="rounded-lg border-green-200 bg-green-50 text-green-950 shadow-sm dark:border-green-900/70 dark:bg-green-950/50 dark:text-green-100">
+              <Card className="rounded-lg border-success/30 bg-success/10 text-success shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-sm">
                     <Activity className="h-4 w-4" />
                     Active Sessions (24h)
                   </CardTitle>
-                  <CardDescription className="text-green-900 dark:text-green-100">Recent seeded login activity</CardDescription>
+                  <CardDescription className="text-success/80">Recent seeded login activity</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : activeSessions}</div>
                 </CardContent>
               </Card>
 
-              <Card className="rounded-lg border-amber-200 bg-amber-50 text-amber-950 shadow-sm dark:border-amber-900/70 dark:bg-amber-950/50 dark:text-amber-100">
+              <Card className="rounded-lg border-warning/30 bg-warning/10 text-warning shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-sm">
                     <ClipboardCheck className="h-4 w-4" />
                     Pending Approvals
                   </CardTitle>
-                  <CardDescription className="text-amber-900 dark:text-amber-100">Credentials waiting for review</CardDescription>
+                  <CardDescription className="text-warning/80">Credentials waiting for review</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : pendingApprovals}</div>
@@ -243,7 +243,7 @@ export default function AdminDashboard() {
                         <XAxis dataKey="name" tick={{ fill: 'currentColor' }} />
                         <YAxis tick={{ fill: 'currentColor' }} />
                         <RechartsTooltip contentStyle={chartTooltipStyle} labelStyle={{ color: 'var(--popover-foreground)' }} />
-                        <Bar dataKey="uploads" fill="#2563eb" radius={[4, 4, 0, 0]} isAnimationActive={false} />
+                        <Bar dataKey="uploads" fill="var(--info)" radius={[4, 4, 0, 0]} isAnimationActive={false} />
                       </BarChart>
                     </ResponsiveContainer>
                   )}
@@ -344,20 +344,20 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
                   <Button
                     asChild
-                    className="w-full bg-blue-100 hover:bg-blue-200 text-blue-950 dark:bg-blue-900/70 dark:text-blue-100 dark:hover:bg-blue-900"
+                    className="w-full bg-info/15 hover:bg-info/25 text-info"
                   >
                     <Link to="/admin/accounts">Add User</Link>
                   </Button>
                   <Button
                     asChild
-                    className="w-full bg-amber-100 hover:bg-amber-200 text-amber-950 dark:bg-amber-900/70 dark:text-amber-100 dark:hover:bg-amber-900"
+                    className="w-full bg-warning/15 hover:bg-warning/25 text-warning"
                   >
                     <Link to="/admin/approvals">View Approvals</Link>
                   </Button>
 
                   <Button
                     asChild
-                    className="w-full bg-green-100 hover:bg-green-200 text-green-950 dark:bg-green-900/70 dark:text-green-100 dark:hover:bg-green-900"
+                    className="w-full bg-success/15 hover:bg-success/25 text-success"
                   >
                     <Link to="/admin/reports">Generate Report</Link>
                   </Button>

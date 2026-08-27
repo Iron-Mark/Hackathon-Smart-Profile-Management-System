@@ -56,9 +56,9 @@ export default function BackupSettings() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg flex gap-3 dark:bg-amber-950/50 dark:border-amber-900/70">
-          <ShieldAlert className="w-6 h-6 text-amber-700 shrink-0 dark:text-amber-300" />
-          <div className="text-sm text-amber-900 dark:text-amber-200">
+        <div className="p-4 bg-warning/10 border border-warning/30 rounded-lg flex gap-3">
+          <ShieldAlert className="w-6 h-6 text-warning shrink-0" />
+          <div className="text-sm text-warning">
             <p className="font-bold mb-1">Warning</p>
             Backups contain sensitive faculty information including personal details and document records. Ensure all exported data is stored securely.
           </div>

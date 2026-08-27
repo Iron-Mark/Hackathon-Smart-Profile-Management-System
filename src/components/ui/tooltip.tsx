@@ -14,7 +14,7 @@ export const Tooltip: React.FC<TooltipProps> = ({ children, content }) => {
   return (
     <div className="relative group">
       {children}
-      <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-max bg-black text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-max bg-foreground text-background text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
         {content}
       </div>
     </div>

@@ -18,7 +18,7 @@ export default defineConfig(({ command }) => ({
         name: 'Smart Profile Management System',
         short_name: 'SmartProfile',
         description: 'An AI-powered academic and professional profile management system',
-        theme_color: '#ffffff',
+        theme_color: '#f3faf4',
         icons: [
           {
             src: 'pwa-192x192.png',

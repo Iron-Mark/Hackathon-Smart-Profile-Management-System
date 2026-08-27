@@ -37,7 +37,7 @@ export default function DemoStoragePreview() {
       <section className="mx-auto max-w-4xl px-4 py-8">
         <div className="mb-6 flex items-center justify-between gap-4">
           <div>
-            <div className="mb-2 inline-flex rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
+            <div className="mb-2 inline-flex rounded-md border border-success/30 bg-success/10 px-2 py-1 text-xs font-medium text-success">
               Demo preview
             </div>
             <h1 className="text-3xl font-semibold text-foreground">Demo File Preview</h1>

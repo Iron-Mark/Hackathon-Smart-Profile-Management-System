@@ -14,7 +14,8 @@ import { DatePickerWithRange } from "@/components/ui/date-picker";
 import getFromDatabase from "@/tools/database/getFromDatabase";
 import { filterRowsByDateRange, type DateRangeFilter } from "@/lib/reportExport";
 import Papa from 'papaparse';
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
+import { ThemedToaster } from "@/components/ThemedToaster";
 
 // Report types
 const reportTypes = [
@@ -81,7 +82,7 @@ export default function AdminReportsPage() {
 
   return (
     <SidebarProvider>
-      <Toaster position="top-right" />
+      <ThemedToaster position="top-right" />
       <div className="flex w-screen min-h-screen">
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">

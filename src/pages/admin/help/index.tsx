@@ -54,14 +54,14 @@ export default function AdminHelpPage() {
               </AccordionItem>
             </Accordion>
 
-            <div className="mt-8 p-4 border rounded-md bg-blue-50 text-blue-950 dark:bg-blue-950/50 dark:text-blue-100 dark:border-blue-900/70">
+            <div className="mt-8 p-4 border rounded-md bg-info/10 text-info border-info/30">
               <h2 className="text-xl font-semibold mb-2">Contact Support</h2>
               <p>
                 If you encounter any issues or have questions not covered in
                 this guide, please contact the IT support team at{" "}
                 <a
                   href="mailto:support@ccis.edu"
-                  className="text-blue-700 hover:underline dark:text-blue-300"
+                  className="text-info underline-offset-4 hover:underline"
                 >
                   support@ccis.edu
                 </a>

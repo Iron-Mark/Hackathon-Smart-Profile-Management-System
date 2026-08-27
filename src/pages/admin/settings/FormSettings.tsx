@@ -12,7 +12,7 @@ export default function FormSettings() {
         <CardTitle>Form & Category Configuration</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex items-start gap-3 p-3 bg-blue-50 text-blue-900 rounded-md border border-blue-200 text-sm dark:bg-blue-950/50 dark:text-blue-200 dark:border-blue-900/70">
+        <div className="flex items-start gap-3 p-3 bg-info/10 text-info rounded-md border border-info/30 text-sm">
           <span className="shrink-0"><Info className="w-5 h-5" /></span>
           <p>
             The following document categories are currently active in the system. These categories are used by the AI to classify uploaded documents.
