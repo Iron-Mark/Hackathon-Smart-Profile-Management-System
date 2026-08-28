@@ -51,8 +51,8 @@ export function DemoAccessPanel ({
   const snackbar = (
     <section
       aria-label='Demo access'
-      className={`fixed left-3 right-3 z-50 max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-lg border border-border bg-card p-4 text-sm text-card-foreground shadow-lg ring-1 ring-border/60 backdrop-blur sm:left-auto sm:right-4 sm:w-80 lg:w-full lg:max-w-sm ${className}`}
-      style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+      className={`fixed left-3 right-3 z-50 max-h-[calc(100dvh-7rem)] overflow-y-auto rounded-lg border border-border bg-card p-4 text-sm text-card-foreground shadow-lg ring-1 ring-border/60 backdrop-blur sm:left-auto sm:right-4 sm:w-80 lg:w-full lg:max-w-sm ${className}`}
+      style={{ bottom: 'max(5.5rem, calc(4.5rem + env(safe-area-inset-bottom)))' }}
     >
       <div className='flex flex-col gap-3'>
         <div className='flex items-start gap-3'>

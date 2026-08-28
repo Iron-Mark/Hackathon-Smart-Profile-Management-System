@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Activity, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { isDemoBackendEnabled } from '@/client/demoBackend';
@@ -89,12 +90,12 @@ export function WebVitalsPanel() {
 
   if (!isDemoBackendEnabled()) return null;
 
-  return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
+  const panel = (
+    <div className="pointer-events-none fixed right-4 z-[60] flex flex-col items-end gap-2" style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
       {open && (
         <section
           aria-label="Web Vitals panel"
-          className="w-[calc(100vw-2rem)] rounded-lg border bg-popover p-4 text-popover-foreground shadow-lg sm:w-72"
+          className="pointer-events-auto w-[calc(100vw-2rem)] rounded-lg border bg-popover p-4 text-popover-foreground shadow-lg sm:w-72"
         >
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
@@ -104,7 +105,7 @@ export function WebVitalsPanel() {
             <button
               type="button"
               className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
-              aria-label="Close Web Vitals"
+              aria-label="Close Web Vitals panel"
               onClick={() => setOpen(false)}
             >
               <X className="h-4 w-4" />
@@ -142,7 +143,8 @@ export function WebVitalsPanel() {
       <Button
         type="button"
         size="sm"
-        className="relative h-11 w-11 rounded-full p-0 shadow-lg sm:h-9 sm:w-auto sm:rounded-md sm:px-3"
+        className="pointer-events-auto relative h-11 w-11 rounded-full p-0 shadow-lg sm:h-9 sm:w-auto sm:rounded-md sm:px-3"
+        aria-label="Web Vitals"
         aria-expanded={open}
         aria-describedby={statusId}
         title={`Web Vitals: ${buttonStatus}`}
@@ -159,4 +161,10 @@ export function WebVitalsPanel() {
       </Button>
     </div>
   );
+
+  if (typeof document === 'undefined') {
+    return panel;
+  }
+
+  return createPortal(panel, document.body);
 }
