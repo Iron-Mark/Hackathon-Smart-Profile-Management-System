@@ -47,6 +47,16 @@ For GitHub Pages-style local QA, use the build preview commands in `docs/demo-ch
 - The full local gate passed: 21 Vitest files with 52 tests, ESLint, secret scanning, SEO and link checks, the GitHub Pages production build, and 26 Chromium Playwright tests.
 - This is local verification evidence only. It does not replace the documented `v2.1.1` public release or claim a new deployment.
 
+## Unreleased Branch Work
+
+The following is verified locally on `agent/theme-contrast-overhaul-e65d` and is not yet the public Pages checkpoint:
+
+- Light and dark CCIS green chrome with a public theme toggle. The landing hero stays a dark branded band in both modes.
+- Web Vitals button stays clickable above the login/register demo access panel.
+- Marketing README plus refreshed `docs/images/` captures of landing, login, faculty, admin, approvals, and Web Vitals.
+
+These do **not** replace `v2.1.1` until they are merged, deployed, and re-checked against the live URL.
+
 ## Last Recorded Live Evidence
 
 The `v2.1.1` checkpoint was previously verified against GitHub Pages with:

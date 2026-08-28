@@ -37,6 +37,7 @@ Admin authorization is intentionally not derived from Clerk Organization roles b
 - Data does not sync across devices or browsers.
 - Do not upload sensitive real documents to the public showcase.
 - Do not add `CLERK_SECRET_KEY` or other backend secrets to this Vite app.
+- Theme toggle and local Web Vitals remain available on Clerk-enabled auth screens; they do not depend on Clerk.
 
 ## References
 
