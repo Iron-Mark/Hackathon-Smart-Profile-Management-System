@@ -192,7 +192,7 @@ export default function AdminDashboard() {
                     <UsersRound className="h-4 w-4" />
                     Total Users
                   </CardTitle>
-                  <CardDescription className="text-info/80">Seeded and browser-local accounts</CardDescription>
+                  <CardDescription>Seeded and browser-local accounts</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : usersCount}</div>
@@ -205,7 +205,7 @@ export default function AdminDashboard() {
                     <Activity className="h-4 w-4" />
                     Active Sessions (24h)
                   </CardTitle>
-                  <CardDescription className="text-success/80">Recent seeded login activity</CardDescription>
+                  <CardDescription>Recent seeded login activity</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : activeSessions}</div>
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
                     <ClipboardCheck className="h-4 w-4" />
                     Pending Approvals
                   </CardTitle>
-                  <CardDescription className="text-warning/80">Credentials waiting for review</CardDescription>
+                  <CardDescription>Credentials waiting for review</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : pendingApprovals}</div>

@@ -118,38 +118,38 @@ export default function Landing() {
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-background text-foreground">
-      <section className="relative flex min-h-[86dvh] items-center bg-primary px-5 py-16 text-primary-foreground sm:px-8 lg:px-12">
+      <section className="relative flex min-h-[86dvh] items-center bg-hero px-5 py-16 text-hero-foreground sm:px-8 lg:px-12">
         <div className="relative mx-auto grid w-full max-w-7xl gap-10">
           <nav aria-label="Public demo navigation" className="flex flex-wrap items-center justify-between gap-4">
-            <Link to="/" className="inline-flex min-h-11 items-center gap-3 rounded-md text-sm font-semibold text-primary-foreground">
-              <img className="h-10 w-10 rounded-md bg-primary-foreground/95 object-contain p-1" alt="FPMS logo" src={assetPath('fav-icon.png')} />
+            <Link to="/" className="inline-flex min-h-11 items-center gap-3 rounded-md text-sm font-semibold text-hero-foreground">
+              <img className="h-10 w-10 rounded-md bg-hero-foreground/95 object-contain p-1" alt="FPMS logo" src={assetPath('fav-icon.png')} />
               <span>Smart Profile</span>
             </Link>
             <div className="flex flex-wrap items-center gap-2">
-              <ThemeToggle className="text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground" />
+              <ThemeToggle className="text-hero-foreground hover:bg-hero-foreground/15 hover:text-hero-foreground" />
               <Button asChild variant="secondary" size="sm">
                 <Link to="/auth/login">Sign in</Link>
               </Button>
-              <Button asChild size="sm" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+              <Button asChild size="sm" className="bg-hero-foreground text-hero hover:bg-hero-foreground/90">
                 <Link to="/auth/login?demo=faculty">Demo</Link>
               </Button>
             </div>
           </nav>
 
           <div className="max-w-4xl pt-10">
-            <Badge className="mb-5 border-primary-foreground/30 bg-primary-foreground/15 text-primary-foreground">
+            <Badge className="mb-5 border-hero-foreground/30 bg-hero-foreground/15 text-hero-foreground">
               Browser-local demo mode
             </Badge>
             <h1 className="max-w-4xl text-4xl font-bold leading-tight tracking-normal sm:text-5xl lg:text-6xl">
               CCIS Smart Faculty Profile Management System
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-7 text-primary-foreground/80 sm:text-lg">
+            <p className="mt-6 max-w-2xl text-base leading-7 text-hero-foreground/85 sm:text-lg">
               A restored 7th CCIS Hackathon demo for faculty credential intake,
               admin review, and profile proofing. Reviewers can use seeded accounts
               and generated sample files without private backend or OpenAI credentials.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" className="min-h-11 bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+              <Button asChild size="lg" className="min-h-11 bg-hero-foreground text-hero hover:bg-hero-foreground/90">
                 <Link to="/auth/login?demo=faculty">
                   <Sparkles className="h-4 w-4" />
                   Start demo
@@ -158,16 +158,16 @@ export default function Landing() {
               <Button asChild size="lg" variant="secondary" className="min-h-11">
                 <Link to="/auth/login">Login</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="min-h-11 border-primary-foreground/30 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground">
+              <Button asChild size="lg" variant="outline" className="min-h-11 border-hero-foreground/40 bg-hero-foreground/10 text-hero-foreground hover:bg-hero-foreground/20 hover:text-hero-foreground">
                 <Link to="/auth/register">Register</Link>
               </Button>
             </div>
-            <div className="mt-7 flex flex-wrap gap-3 text-sm text-primary-foreground/80">
-              <a href={samplePath('sample-certificate.svg')} className="inline-flex min-h-11 items-center gap-2 rounded-md border border-primary-foreground/20 bg-primary-foreground/10 px-3 hover:bg-primary-foreground/20">
+            <div className="mt-7 flex flex-wrap gap-3 text-sm text-hero-foreground/85">
+              <a href={samplePath('sample-certificate.svg')} className="inline-flex min-h-11 items-center gap-2 rounded-md border border-hero-foreground/30 bg-hero-foreground/10 px-3 hover:bg-hero-foreground/20">
                 <Download className="h-4 w-4" />
                 Download sample certificate
               </a>
-              <a href={samplePath('sample-transcript.svg')} className="inline-flex min-h-11 items-center gap-2 rounded-md border border-primary-foreground/20 bg-primary-foreground/10 px-3 hover:bg-primary-foreground/20">
+              <a href={samplePath('sample-transcript.svg')} className="inline-flex min-h-11 items-center gap-2 rounded-md border border-hero-foreground/30 bg-hero-foreground/10 px-3 hover:bg-hero-foreground/20">
                 <Download className="h-4 w-4" />
                 Download sample transcript
               </a>

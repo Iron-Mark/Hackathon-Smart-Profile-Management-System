@@ -49,6 +49,8 @@ describe('UI contrast and print-safe styling', () => {
       '--info:',
       '--info-foreground:',
       '--destructive-foreground:',
+      '--hero:',
+      '--hero-foreground:',
       '--sidebar:',
     ]) {
       expect(root).toContain(token);
@@ -62,9 +64,9 @@ describe('UI contrast and print-safe styling', () => {
     expect(dark).toMatch(/--primary:\s*oklch\(0\.7[0-9].*(145|150)\)/);
     expect(root).toMatch(/--sidebar:\s*oklch\(0\.9/);
     expect(dark).toMatch(/--sidebar:\s*oklch\(0\.1[0-9]/);
-    expect(css).toContain('--color-success: var(--success)');
-    expect(css).toContain('--color-warning: var(--warning)');
-    expect(css).toContain('--color-info: var(--info)');
+    expect(root).toContain('--hero:');
+    expect(dark).toContain('--hero:');
+    expect(css).toContain('--color-hero: var(--hero)');
   });
 
   test('keeps public chrome on semantic theme tokens instead of locked slate', () => {
@@ -73,7 +75,7 @@ describe('UI contrast and print-safe styling', () => {
     const register = readSourceFile('src/pages/auth/register.tsx');
 
     expect(landing).toContain('bg-background text-foreground');
-    expect(landing).toContain('bg-primary');
+    expect(landing).toContain('bg-hero');
     expect(landing).not.toContain('bg-slate-950');
     expect(login).toContain('bg-background');
     expect(login).not.toContain('bg-slate-950');
