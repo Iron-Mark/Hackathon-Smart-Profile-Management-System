@@ -45,7 +45,7 @@ Additional seeded faculty profiles use the same demo password for admin-review d
 
 Generated sample files in `public/demo-samples` cover certificate, transcript, diploma, CV, and research summary records. They are fictional and safe for public demo testing.
 
-Product screenshots of the current faculty and admin chrome are in `docs/images/`. Regenerate them with `npm run docs:screenshots` while the local Vite server is running.
+Product stills of the current faculty and admin chrome are in `docs/images/`. Looping GIFs and the silent demo MP4 are in `docs/media/`. Regenerate them with `npm run docs:screenshots` and `npm run docs:media` while the local Vite server is running.
 
 ## Optional AI Behavior
 

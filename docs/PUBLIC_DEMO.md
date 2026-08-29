@@ -8,7 +8,7 @@ Demo mode stores accounts, submissions, audit logs, and uploaded file metadata i
 There is no hosted backend for the public showcase.
 Optional Clerk sign-in can be enabled locally with `VITE_CLERK_PUBLISHABLE_KEY`; it maps visitors to browser-local faculty demo profiles and does not create production document storage.
 
-The current UI uses one CCIS green token system for light and dark mode. The landing hero stays a dark branded band in both themes. Product screenshots for the README live in `docs/images/`.
+The current UI uses one CCIS green token system for light and dark mode. The landing hero stays a dark branded band in both themes. Product stills live in `docs/images/`. Looping GIFs and the silent demo MP4 live in `docs/media/`.
 
 ## Fast Path
 
@@ -22,8 +22,11 @@ The current UI uses one CCIS green token system for light and dark mode. The lan
 
 ## Current UI Surfaces
 
-These captures match the restored public chrome. Refresh them with `npm run docs:screenshots` after visual changes.
+These captures match the restored public chrome. Refresh stills with `npm run docs:screenshots` and motion clips with `npm run docs:media` after visual changes.
 
+- `docs/media/preview.gif` — looping Start demo → faculty workspace preview
+- `docs/media/demo.mp4` — silent full walkthrough (upload, approve, profile bio)
+- `docs/media/feature-upload.gif` / `feature-approvals.gif` / `feature-profile.gif` / `feature-uploaded-files.gif` / `feature-theme.gif` / `feature-web-vitals.gif`
 - `docs/images/landing-light.png` / `docs/images/landing-dark.png` — public landing hero in both themes
 - `docs/images/landing-workflow.png` — numbered workflow, compact samples, and public facts
 - `docs/images/login.png` — seeded Faculty demo / Admin demo shortcuts

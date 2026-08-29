@@ -63,15 +63,16 @@ Expected invalid-login messages after a reset are shown in the UI only; they sho
 
 The authenticated sidebar also includes **Clear demo data**, which resets the browser-local state and returns to Login.
 
-## Screenshot Refresh
+## Screenshot And Media Refresh
 
-README and public-demo screenshots live in `docs/images/`. With the local Vite server running (`npm run dev`, usually `http://localhost:5173`):
+README stills live in `docs/images/`. Looping GIFs and the silent demo MP4 live in `docs/media/`. With the local Vite server running (`npm run dev`, usually `http://localhost:5173`):
 
 ```bash
 npm run docs:screenshots
+npm run docs:media
 ```
 
-That capture writes:
+Still capture writes:
 
 - `landing-light.png`, `landing-dark.png`, `landing-workflow.png`
 - `login.png`
@@ -82,7 +83,13 @@ That capture writes:
 - `approvals.png`
 - `web-vitals.png`
 
-Override the capture target with `PLAYWRIGHT_BASE_URL` when needed.
+Motion capture writes:
+
+- `preview.gif` and `demo.mp4`
+- `feature-upload.gif`, `feature-approvals.gif`, `feature-profile.gif`
+- `feature-uploaded-files.gif`, `feature-theme.gif`, `feature-web-vitals.gif`
+
+Clip usage, size budget, and `DOCS_MEDIA_ONLY` are in `docs/media/README.md`. Override the capture target with `PLAYWRIGHT_BASE_URL` when needed.
 
 ## Static Hosting Deep Links
 

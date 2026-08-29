@@ -37,6 +37,14 @@ function certificateUpload (name) {
   }
 }
 
+function fileSizeMb (filePath) {
+  return fs.statSync(filePath).size / (1024 * 1024)
+}
+
+function logSize (filePath) {
+  console.log(`Wrote ${path.relative(ROOT, filePath)} (${fileSizeMb(filePath).toFixed(2)} MB)`)
+}
+
 async function setTheme (context, theme) {
   await context.addInitScript((value) => {
     try {
@@ -47,36 +55,40 @@ async function setTheme (context, theme) {
   }, theme)
 }
 
-async function hideVitalsAcrossNavigations (context) {
-  await context.addInitScript(() => {
-    const css =
-      '[aria-label="Web Vitals"], [aria-label="Web Vitals panel"] { visibility: hidden !important; }'
-    const inject = () => {
-      if (document.querySelector('style[data-docs-hide-vitals]')) return
-      const style = document.createElement('style')
-      style.setAttribute('data-docs-hide-vitals', '')
-      style.textContent = css
-      document.documentElement.appendChild(style)
-    }
-    inject()
-    document.addEventListener('DOMContentLoaded', inject)
+async function hideWebVitals (page) {
+  await page.addStyleTag({
+    content: [
+      '[aria-label="Web Vitals"],',
+      '[aria-label="Web Vitals panel"],',
+      '[aria-label="Close Web Vitals panel"] {',
+      '  display: none !important;',
+      '}',
+    ].join(' '),
   })
 }
 
-async function beat (page, ms = 600) {
-  await page.waitForTimeout(ms)
+async function beat (_page, ms = 700) {
+  // Use a real timer so Playwright screenshots can keep firing during holds.
+  await new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-async function goto (page, pathname) {
-  await page.goto(urlFor(pathname), { waitUntil: 'networkidle' })
+async function waitForRouteReady (page) {
+  const loading = page.getByRole('status').filter({ hasText: 'Loading screen' })
+  await loading.waitFor({ state: 'detached', timeout: 20_000 }).catch(() => {})
   await page.evaluate(() => document.fonts.ready)
-  await beat(page, 350)
 }
 
-async function signIn (page, role) {
-  await goto(page, '/auth/login')
+async function goto (page, pathname, { hideVitals = true } = {}) {
+  await page.goto(urlFor(pathname), { waitUntil: 'domcontentloaded' })
+  await waitForRouteReady(page)
+  if (hideVitals) await hideWebVitals(page)
+  await beat(page, 250)
+}
+
+async function signIn (page, role, { hideVitals = true } = {}) {
+  await goto(page, '/auth/login', { hideVitals })
   await page.getByRole('button', { name: role === 'faculty' ? 'Faculty demo' : 'Admin demo' }).click()
-  await beat(page, 350)
+  await beat(page, 250)
   await page.getByRole('button', { name: 'Login' }).click()
 }
 
@@ -87,40 +99,106 @@ async function uploadCertificate (page, fileName) {
     .setInputFiles(certificateUpload(fileName))
   const submit = page.getByRole('button', { name: 'Submit files' })
   await submit.waitFor({ state: 'visible' })
-  await beat(page, 400)
+  await beat(page, 500)
   await submit.click()
   await page.getByText('Type: Certificates').waitFor({ timeout: 20_000 })
 }
 
-async function withRecording (browser, { theme = 'light', hideVitals = true, reducedMotion = 'reduce' }, work) {
-  const context = await browser.newContext({
-    viewport: VIEWPORT,
-    recordVideo: { dir: os.tmpdir(), size: VIEWPORT },
-    colorScheme: theme,
-    reducedMotion,
-  })
-  await setTheme(context, theme)
-  if (hideVitals) await hideVitalsAcrossNavigations(context)
-  const page = await context.newPage()
-
-  await work(page)
-  await beat(page, 900)
-
-  const video = page.video()
-  await page.close()
-  const videoPath = await video.path()
-  await context.close()
-  return videoPath
+function padFrame (index) {
+  return `${String(index).padStart(5, '0')}.jpg`
 }
 
-async function toMp4 (input, output) {
+function createGrabber (page) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'docs-media-'))
+  let index = 0
+  let paused = true
+  let stopped = false
+  let inFlight = false
+  let clientPromise
+
+  const tick = async () => {
+    if (stopped || paused || inFlight) return
+    inFlight = true
+    try {
+      if (!clientPromise) clientPromise = page.context().newCDPSession(page)
+      const client = await clientPromise
+      const { data } = await client.send('Page.captureScreenshot', {
+        format: 'jpeg',
+        quality: 80,
+        fromSurface: true,
+      })
+      const filePath = path.join(dir, padFrame(index))
+      await fs.promises.writeFile(filePath, Buffer.from(data, 'base64'))
+      index += 1
+    } catch {
+      // Ignore frames captured during navigation or context teardown.
+    } finally {
+      inFlight = false
+    }
+  }
+
+  const timer = setInterval(() => {
+    void tick()
+  }, 80)
+
+  return {
+    dir,
+    resume () {
+      paused = false
+    },
+    pause () {
+      paused = true
+    },
+    async stop () {
+      stopped = true
+      clearInterval(timer)
+      for (let i = 0; i < 30 && inFlight; i += 1) {
+        await new Promise((resolve) => setTimeout(resolve, 40))
+      }
+      if (clientPromise) {
+        const client = await clientPromise.catch(() => null)
+        await client?.detach().catch(() => {})
+      }
+      if (index < 12) {
+        throw new Error(`Too few frames captured in ${dir} (${index})`)
+      }
+      return { dir, frames: index }
+    },
+  }
+}
+
+async function sequenceToGif (dir, output, { fps = 11, width = 840, colors = 80 } = {}) {
   await execFileAsync('ffmpeg', [
     '-y',
     '-hide_banner',
     '-loglevel',
     'error',
+    '-framerate',
+    String(fps),
+    '-start_number',
+    '0',
     '-i',
-    input,
+    path.join(dir, '%05d.jpg'),
+    '-vf',
+    `fps=${fps},scale=${width}:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=${colors}:stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=5`,
+    '-loop',
+    '0',
+    output,
+  ])
+}
+
+async function sequenceToMp4 (dir, output, { fps = 12 } = {}) {
+  await execFileAsync('ffmpeg', [
+    '-y',
+    '-hide_banner',
+    '-loglevel',
+    'error',
+    '-framerate',
+    String(fps),
+    '-start_number',
+    '0',
+    '-i',
+    path.join(dir, '%05d.jpg'),
     '-an',
     '-vf',
     'scale=1280:720:flags=lanczos',
@@ -131,49 +209,66 @@ async function toMp4 (input, output) {
     '-movflags',
     '+faststart',
     '-crf',
-    '28',
+    '26',
     '-preset',
     'medium',
     output,
   ])
 }
 
-async function toGif (input, output, { fps = 10, width = 760, speed = 1, colors = 64 } = {}) {
-  const prelude = []
-  if (speed !== 1) prelude.push(`setpts=${(1 / speed).toFixed(3)}*PTS`)
-  prelude.push(`fps=${fps}`, `scale=${width}:-1:flags=lanczos`)
-  const vf = `${prelude.join(',')},split[s0][s1];[s0]palettegen=max_colors=${colors}:stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=5`
-
+async function shrinkGifIfNeeded (filePath, maxMb = 3.2) {
+  if (fileSizeMb(filePath) <= maxMb) return
+  console.log(`Shrinking ${path.relative(ROOT, filePath)} from ${fileSizeMb(filePath).toFixed(2)} MB…`)
+  const tempPath = `${filePath}.tmp.gif`
   await execFileAsync('ffmpeg', [
     '-y',
     '-hide_banner',
     '-loglevel',
     'error',
     '-i',
-    input,
+    filePath,
     '-vf',
-    vf,
+    'fps=8,scale=640:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=48:stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=5',
     '-loop',
     '0',
-    output,
+    tempPath,
   ])
-}
-
-function fileSizeMb (filePath) {
-  return fs.statSync(filePath).size / (1024 * 1024)
-}
-
-function logSize (filePath) {
-  console.log(`Wrote ${path.relative(ROOT, filePath)} (${fileSizeMb(filePath).toFixed(2)} MB)`)
-}
-
-async function shrinkGifIfNeeded (filePath, maxMb = 3.2) {
-  if (fileSizeMb(filePath) <= maxMb) return
-  console.log(`Shrinking ${path.relative(ROOT, filePath)} from ${fileSizeMb(filePath).toFixed(2)} MB…`)
-  const tempPath = `${filePath}.tmp.gif`
-  await toGif(filePath, tempPath, { fps: 8, width: 640, speed: 1.35, colors: 48 })
   fs.renameSync(tempPath, filePath)
-  logSize(filePath)
+}
+
+async function withPage (browser, { theme = 'light', hideVitals = true, reducedMotion = 'reduce' }, work) {
+  const context = await browser.newContext({
+    viewport: VIEWPORT,
+    colorScheme: theme,
+    reducedMotion,
+  })
+  await setTheme(context, theme)
+  const page = await context.newPage()
+  const grabber = createGrabber(page)
+  try {
+    await work(page, grabber, hideVitals)
+    return await grabber.stop()
+  } catch (error) {
+    await grabber.stop().catch(() => {})
+    throw error
+  } finally {
+    await context.close()
+  }
+}
+
+async function recordClip (browser, name, options, work, convert) {
+  if (!shouldCapture(name)) {
+    console.log(`Skipping ${name}`)
+    return
+  }
+  console.log(`Recording ${name}…`)
+  const { dir, frames } = await withPage(browser, options, work)
+  console.log(`  ${frames} frames`)
+  try {
+    await convert(dir)
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true })
+  }
 }
 
 async function assertDevServer () {
@@ -183,225 +278,261 @@ async function assertDevServer () {
   }
 }
 
-async function captureClip (browser, name, options, work, convert) {
-  if (!shouldCapture(name)) {
-    console.log(`Skipping ${name}`)
-    return
-  }
-  console.log(`Recording ${name}…`)
-  const source = await withRecording(browser, options, work)
-  try {
-    await convert(source)
-  } finally {
-    fs.rmSync(source, { force: true })
-  }
-}
-
 async function capture () {
   await assertDevServer()
   fs.mkdirSync(OUT_DIR, { recursive: true })
-  const browser = await chromium.launch({ headless: true, slowMo: 80 })
+  const browser = await chromium.launch({ headless: true, slowMo: 55 })
 
   try {
-    await captureClip(
+    await recordClip(
       browser,
       'preview',
       {},
-      async (page) => {
-        await goto(page, '/')
+      async (page, grabber, hideVitals) => {
+        await goto(page, '/', { hideVitals })
         await page.getByRole('heading', { name: /CCIS Smart Faculty Profile Management System/i }).waitFor()
-        await beat(page, 900)
+        grabber.resume()
+        await beat(page, 1400)
+        grabber.pause()
         await page.getByRole('link', { name: 'Start demo' }).click()
         await page.getByRole('heading', { name: 'Welcome Back' }).waitFor()
-        await beat(page, 700)
+        await waitForRouteReady(page)
+        if (hideVitals) await hideWebVitals(page)
+        grabber.resume()
+        await beat(page, 1000)
+        grabber.pause()
         await page.getByRole('button', { name: 'Login' }).click()
         await page.getByRole('heading', { name: /Welcome, Dr\. Maria Santos/i }).waitFor()
-        await beat(page, 1200)
+        await waitForRouteReady(page)
+        if (hideVitals) await hideWebVitals(page)
+        grabber.resume()
+        await beat(page, 1800)
       },
-      async (source) => {
+      async (dir) => {
         const output = path.join(OUT_DIR, 'preview.gif')
-        await toGif(source, output, { fps: 12, width: 880, speed: 1.2, colors: 64 })
+        await sequenceToGif(dir, output, { fps: 11, width: 920, colors: 96 })
         await shrinkGifIfNeeded(output, 2.8)
         logSize(output)
       },
     )
 
-    await captureClip(
+    await recordClip(
       browser,
       'demo',
       {},
-      async (page) => {
+      async (page, grabber, hideVitals) => {
         const fileName = 'ccis-showcase-certificate.svg'
-        await goto(page, '/')
+        await goto(page, '/', { hideVitals })
         await page.getByRole('heading', { name: /CCIS Smart Faculty Profile Management System/i }).waitFor()
-        await beat(page, 800)
+        grabber.resume()
+        await beat(page, 1100)
+        grabber.pause()
         await page.getByRole('link', { name: 'Start demo' }).click()
         await page.getByRole('heading', { name: 'Welcome Back' }).waitFor()
-        await beat(page, 500)
+        await waitForRouteReady(page)
+        if (hideVitals) await hideWebVitals(page)
+        grabber.resume()
+        await beat(page, 800)
+        grabber.pause()
         await page.getByRole('button', { name: 'Login' }).click()
         await page.getByRole('heading', { name: /Welcome, Dr\. Maria Santos/i }).waitFor()
-        await beat(page, 600)
+        await waitForRouteReady(page)
+        if (hideVitals) await hideWebVitals(page)
+        grabber.resume()
+        await beat(page, 900)
         await uploadCertificate(page, fileName)
-        await beat(page, 800)
-        await signIn(page, 'admin')
+        await beat(page, 1100)
+        grabber.pause()
+        await signIn(page, 'admin', { hideVitals })
         await page.getByRole('heading', { name: 'Admin Dashboard' }).waitFor()
-        await beat(page, 500)
-        await page.getByRole('link', { name: 'Approvals' }).click()
+        await waitForRouteReady(page)
+        if (hideVitals) await hideWebVitals(page)
+        grabber.resume()
+        await beat(page, 700)
+        grabber.pause()
+        await page.getByRole('link', { name: 'Approvals', exact: true }).click()
         await page.getByRole('heading', { name: 'Approval Management' }).waitFor()
+        await waitForRouteReady(page)
+        if (hideVitals) await hideWebVitals(page)
+        grabber.resume()
         const uploadedRow = page.locator('tr', { hasText: fileName })
         await uploadedRow.waitFor()
-        await beat(page, 400)
+        await beat(page, 600)
         await uploadedRow.getByRole('button', { name: 'Approve' }).click()
         await uploadedRow.getByText('Approved').waitFor()
-        await beat(page, 700)
-        await signIn(page, 'faculty')
+        await beat(page, 1000)
+        grabber.pause()
+        await signIn(page, 'faculty', { hideVitals })
         await page.getByRole('link', { name: 'Uploaded Files' }).click()
         await page.getByRole('heading', { name: /Uploaded Files/ }).waitFor()
+        await waitForRouteReady(page)
+        if (hideVitals) await hideWebVitals(page)
+        grabber.resume()
         await page.locator('tr', { hasText: fileName }).getByText('Approved').waitFor()
-        await beat(page, 800)
+        await beat(page, 1200)
+        grabber.pause()
         await page.getByRole('link', { name: 'Profile' }).click()
         await page.getByText('Smart Profile Builder').waitFor()
-        await beat(page, 400)
+        await waitForRouteReady(page)
+        if (hideVitals) await hideWebVitals(page)
+        grabber.resume()
+        await beat(page, 700)
         await page.getByRole('button', { name: 'Generate AI Bio' }).click()
         await page.getByText(/documented academic background and verified credentials/i).waitFor({ timeout: 20_000 })
-        await beat(page, 1200)
+        await beat(page, 1600)
       },
-      async (source) => {
+      async (dir) => {
         const output = path.join(OUT_DIR, 'demo.mp4')
-        await toMp4(source, output)
+        await sequenceToMp4(dir, output)
         logSize(output)
       },
     )
 
-    await captureClip(
+    await recordClip(
       browser,
       'upload',
       {},
-      async (page) => {
-        await signIn(page, 'faculty')
+      async (page, grabber, hideVitals) => {
+        await signIn(page, 'faculty', { hideVitals })
         await page.getByRole('heading', { name: /Welcome, Dr\. Maria Santos/i }).waitFor()
-        await beat(page, 500)
+        await waitForRouteReady(page)
+        if (hideVitals) await hideWebVitals(page)
+        grabber.resume()
+        await beat(page, 900)
         await uploadCertificate(page, 'feature-upload-certificate.svg')
-        await beat(page, 1000)
+        await beat(page, 1500)
       },
-      async (source) => {
+      async (dir) => {
         const output = path.join(OUT_DIR, 'feature-upload.gif')
-        await toGif(source, output, { fps: 10, width: 760, speed: 1.15 })
+        await sequenceToGif(dir, output)
         await shrinkGifIfNeeded(output)
         logSize(output)
       },
     )
 
-    await captureClip(
+    await recordClip(
       browser,
       'approvals',
       {},
-      async (page) => {
+      async (page, grabber, hideVitals) => {
         const fileName = 'feature-approvals-certificate.svg'
-        await signIn(page, 'faculty')
+        await signIn(page, 'faculty', { hideVitals })
         await page.getByRole('heading', { name: /Welcome, Dr\. Maria Santos/i }).waitFor()
         await uploadCertificate(page, fileName)
-        await signIn(page, 'admin')
-        await page.getByRole('link', { name: 'Approvals' }).click()
+        await signIn(page, 'admin', { hideVitals })
+        await page.getByRole('link', { name: 'Approvals', exact: true }).click()
         await page.getByRole('heading', { name: 'Approval Management' }).waitFor()
+        await waitForRouteReady(page)
+        if (hideVitals) await hideWebVitals(page)
+        grabber.resume()
         const row = page.locator('tr', { hasText: fileName }).last()
         await row.waitFor()
-        await beat(page, 500)
+        await beat(page, 900)
         await row.getByRole('button', { name: 'Approve' }).click()
         await row.getByText('Approved').waitFor()
-        await beat(page, 1000)
+        await beat(page, 1400)
       },
-      async (source) => {
+      async (dir) => {
         const output = path.join(OUT_DIR, 'feature-approvals.gif')
-        await toGif(source, output, { fps: 10, width: 760, speed: 1.25 })
+        await sequenceToGif(dir, output)
         await shrinkGifIfNeeded(output)
         logSize(output)
       },
     )
 
-    await captureClip(
+    await recordClip(
       browser,
       'profile',
       {},
-      async (page) => {
-        await signIn(page, 'faculty')
+      async (page, grabber, hideVitals) => {
+        await signIn(page, 'faculty', { hideVitals })
         await page.getByRole('link', { name: 'Profile' }).click()
         await page.getByText('Smart Profile Builder').waitFor()
-        await beat(page, 600)
+        await waitForRouteReady(page)
+        if (hideVitals) await hideWebVitals(page)
+        grabber.resume()
+        await beat(page, 1000)
         await page.getByRole('button', { name: 'Generate AI Bio' }).click()
         await page.getByText(/documented academic background and verified credentials/i).waitFor({ timeout: 20_000 })
-        await beat(page, 1200)
+        await beat(page, 1600)
       },
-      async (source) => {
+      async (dir) => {
         const output = path.join(OUT_DIR, 'feature-profile.gif')
-        await toGif(source, output, { fps: 10, width: 760 })
+        await sequenceToGif(dir, output)
         await shrinkGifIfNeeded(output)
         logSize(output)
       },
     )
 
-    await captureClip(
+    await recordClip(
       browser,
       'theme',
       { reducedMotion: 'no-preference' },
-      async (page) => {
-        await goto(page, '/')
-        await page.getByRole('heading', { name: /CCIS Smart Faculty Profile Management System/i }).waitFor()
-        const toggle = page.getByRole('button', { name: 'Switch to dark mode' })
-        await toggle.waitFor()
-        await beat(page, 700)
-        await toggle.click()
+      async (page, grabber, hideVitals) => {
+        await signIn(page, 'faculty', { hideVitals })
+        await page.getByRole('heading', { name: /Welcome, Dr\. Maria Santos/i }).waitFor()
+        await waitForRouteReady(page)
+        if (hideVitals) await hideWebVitals(page)
+        const darkToggle = page.getByRole('button', { name: 'Switch to dark mode' })
+        await darkToggle.waitFor()
+        grabber.resume()
+        await beat(page, 1200)
+        await darkToggle.click()
         await page.getByRole('button', { name: 'Switch to light mode' }).waitFor({ timeout: 8000 })
-        await beat(page, 1100)
+        await beat(page, 1500)
         await page.getByRole('button', { name: 'Switch to light mode' }).click()
         await page.getByRole('button', { name: 'Switch to dark mode' }).waitFor({ timeout: 8000 })
-        await beat(page, 900)
+        await beat(page, 1300)
       },
-      async (source) => {
+      async (dir) => {
         const output = path.join(OUT_DIR, 'feature-theme.gif')
-        await toGif(source, output, { fps: 12, width: 760 })
+        await sequenceToGif(dir, output, { fps: 12, width: 840, colors: 96 })
         await shrinkGifIfNeeded(output)
         logSize(output)
       },
     )
 
-    await captureClip(
+    await recordClip(
       browser,
       'uploaded-files',
       {},
-      async (page) => {
-        await signIn(page, 'faculty')
+      async (page, grabber, hideVitals) => {
+        await signIn(page, 'faculty', { hideVitals })
         await page.getByRole('link', { name: 'Uploaded Files' }).click()
         await page.getByRole('heading', { name: /Uploaded Files/ }).waitFor()
-        await beat(page, 700)
-        await page.getByText(/Pending \(/).click()
-        await beat(page, 900)
-        await page.getByText(/^All \(/).first().click()
+        await waitForRouteReady(page)
+        if (hideVitals) await hideWebVitals(page)
+        grabber.resume()
         await beat(page, 1000)
+        await page.getByText(/Pending \(/).click()
+        await beat(page, 1100)
+        await page.getByText(/^All \(/).first().click()
+        await beat(page, 1300)
       },
-      async (source) => {
+      async (dir) => {
         const output = path.join(OUT_DIR, 'feature-uploaded-files.gif')
-        await toGif(source, output, { fps: 10, width: 760 })
+        await sequenceToGif(dir, output)
         await shrinkGifIfNeeded(output)
         logSize(output)
       },
     )
 
-    await captureClip(
+    await recordClip(
       browser,
       'web-vitals',
       { hideVitals: false },
-      async (page) => {
-        await goto(page, '/')
+      async (page, grabber) => {
+        await goto(page, '/', { hideVitals: false })
         await page.getByRole('heading', { name: /CCIS Smart Faculty Profile Management System/i }).waitFor()
-        await beat(page, 600)
+        grabber.resume()
+        await beat(page, 900)
         await page.getByRole('button', { name: 'Web Vitals', exact: true }).click()
         await page.getByRole('region', { name: 'Web Vitals panel' }).waitFor()
-        await beat(page, 1400)
+        await beat(page, 1800)
       },
-      async (source) => {
+      async (dir) => {
         const output = path.join(OUT_DIR, 'feature-web-vitals.gif')
-        await toGif(source, output, { fps: 10, width: 760 })
+        await sequenceToGif(dir, output)
         await shrinkGifIfNeeded(output)
         logSize(output)
       },

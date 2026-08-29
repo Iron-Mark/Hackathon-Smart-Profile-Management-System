@@ -27,9 +27,18 @@
 </div>
 
 <p align="center">
-  <img src="docs/images/landing-light.png" alt="Public landing page with a dark CCIS green hero, Start demo, Login, Register, and a three-metric strip" width="920" />
+  <a href="docs/media/demo.mp4">
+    <img src="docs/media/preview.gif" alt="Quick preview: Start demo opens login, then the faculty workspace for Dr. Maria Santos" width="920" />
+  </a>
 </p>
-<p align="center"><sub>Branded CCIS green hero, seeded demo entry, and a metric strip instead of stacked cards.</sub></p>
+<p align="center">
+  <sub>
+    Quick preview of how it works. Click for the silent
+    <a href="docs/media/demo.mp4">full demo video</a> (MP4).
+    GitHub README can loop GIFs but cannot autoplay video.
+    Reuse these files from <a href="docs/media/README.md">docs/media</a> in later marketing.
+  </sub>
+</p>
 
 ---
 
@@ -60,7 +69,52 @@ This is a **browser-local public showcase**, not a production records system. Us
 
 ---
 
-## Product screens
+## Feature clips
+
+Looping GIFs for README, social posts, and later marketing. The silent MP4 walkthrough is [`docs/media/demo.mp4`](docs/media/demo.mp4). Usage notes live in [`docs/media/README.md`](docs/media/README.md).
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/media/feature-upload.gif" alt="Faculty smart upload classifying a sample certificate" />
+      <br />
+      <sub>Smart upload</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/media/feature-approvals.gif" alt="Admin approval queue approving a pending certificate" />
+      <br />
+      <sub>Admin approvals</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/media/feature-profile.gif" alt="Faculty profile builder generating an AI biography from credentials" />
+      <br />
+      <sub>Profile AI bio</sub>
+    </td>
+    <td align="center">
+      <img src="docs/media/feature-uploaded-files.gif" alt="Uploaded files table filtered to pending then all credentials" />
+      <br />
+      <sub>Uploaded files</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/media/feature-theme.gif" alt="Faculty workspace switching from light mint chrome to dark green-black chrome" />
+      <br />
+      <sub>Light and dark theme</sub>
+    </td>
+    <td align="center">
+      <img src="docs/media/feature-web-vitals.gif" alt="Landing page Core Web Vitals panel showing LCP, FCP, and TTFB" />
+      <br />
+      <sub>Web Vitals</sub>
+    </td>
+  </tr>
+</table>
+
+---
+
+## Product stills
 
 Light and dark mode share one CCIS green token system. The landing hero stays a dark branded band in both themes so the first impression does not invert to bright lime.
 
@@ -124,7 +178,10 @@ Refresh captures after UI changes (`npm run dev` in another terminal):
 
 ```bash
 npm run docs:screenshots
+npm run docs:media
 ```
+
+Stills go to `docs/images/`. GIFs and the demo MP4 go to `docs/media/`. See [`docs/media/README.md`](docs/media/README.md) for clip names, size budget, and `DOCS_MEDIA_ONLY`.
 
 ---
 
@@ -273,6 +330,7 @@ To verify the built output with the same base path used by GitHub Pages, use the
 | Doc | What it covers |
 | --- | --- |
 | [`docs/PUBLIC_DEMO.md`](docs/PUBLIC_DEMO.md) | Fast reviewer path, safety notes, post-deploy smoke checks |
+| [`docs/media/README.md`](docs/media/README.md) | Preview GIF, feature GIFs, demo MP4, recapture, marketing reuse |
 | [`docs/demo-checklist.md`](docs/demo-checklist.md) | Showcase script, theme checks, screenshot refresh, Pages preview |
 | [`docs/demo-backend.md`](docs/demo-backend.md) | Browser-local storage, reset behavior, optional Clerk/AI |
 | [`docs/seo-readiness.md`](docs/seo-readiness.md) | Canonical URL, indexing policy, AEO/GEO sources |
