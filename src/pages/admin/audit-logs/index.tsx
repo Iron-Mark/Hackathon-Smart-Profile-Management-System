@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { AppSidebar } from "@/components/app-sidebar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { PageShell } from "@/components/layout/PageShell";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { Surface } from "@/components/layout/Section";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -93,20 +93,14 @@ export default function AdminAuditLogsPage() {
   }, []);
 
   return (
-    <SidebarProvider>
-      <div className="flex w-screen min-h-screen">
-        <AppSidebar className="hidden md:block" />
-        <div className="flex-1 flex flex-col overflow-auto">
-          <main className="flex-1 w-full bg-muted/40 text-foreground p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-bold">System Audit Logs</h1>
-            </div>
+    <PageShell>
+      <PageHeader
+        kicker="Reviewer workspace"
+        title="System Audit Logs"
+        description="Filter browser-local demo activity by user email and action."
+      />
 
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>Filter Logs</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col md:flex-row gap-4">
+      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center">
                 <Input
                   placeholder="Filter by User Email..."
                   className="max-w-xs"
@@ -132,14 +126,9 @@ export default function AdminAuditLogsPage() {
                   </SelectContent>
                 </Select>
                 <Button onClick={fetchLogs}>Refresh</Button>
-              </CardContent>
-            </Card>
+      </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Log Entries</CardTitle>
-              </CardHeader>
-              <CardContent>
+      <Surface>
                 <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
@@ -180,11 +169,7 @@ export default function AdminAuditLogsPage() {
                     No audit logs found.
                   </p>
                 )}
-              </CardContent>
-            </Card>
-          </main>
-        </div>
-      </div>
-    </SidebarProvider>
+      </Surface>
+    </PageShell>
   );
 }

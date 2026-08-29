@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Notice } from "@/components/layout/Notice";
+import { Section } from "@/components/layout/Section";
 import { Button } from "@/components/ui/button";
 import { Download, Database, ShieldAlert } from "lucide-react";
 import getFromDatabase from "@/tools/database/getFromDatabase";
@@ -22,8 +23,8 @@ export default function BackupSettings() {
         "audit_logs"
       ];
 
-      const backupData: any = {};
-      
+      const backupData: Record<string, unknown> = {};
+
       for (const table of tables) {
         const data = await getFromDatabase({ table, getAll: true, match: {} });
         backupData[table] = data;
@@ -37,7 +38,7 @@ export default function BackupSettings() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       await logAudit('SETTINGS_CHANGE', 'Admin exported a full system backup');
       toast.success("System backup exported successfully");
     } catch (error) {
@@ -49,45 +50,40 @@ export default function BackupSettings() {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Database className="w-5 h-5" /> Backup & Data Management
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="p-4 bg-warning/10 border border-warning/30 rounded-lg flex gap-3">
-          <ShieldAlert className="w-6 h-6 text-warning shrink-0" />
-          <div className="text-sm text-warning">
-            <p className="font-bold mb-1">Warning</p>
-            Backups contain sensitive faculty information including personal details and document records. Ensure all exported data is stored securely.
+    <Section
+      title={
+        <span className="inline-flex items-center gap-2">
+          <Database className="h-5 w-5" /> Backup & Data Management
+        </span>
+      }
+    >
+      <Notice tone="warning" icon={ShieldAlert} title="Warning">
+        Backups contain sensitive faculty information including personal details and document records. Ensure all exported data is stored securely.
+      </Notice>
+
+      <div className="divide-y divide-border overflow-hidden rounded-lg border border-border">
+        <div className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-medium">Full System Export</p>
+            <p className="text-sm text-muted-foreground">Download all database tables as a single JSON file.</p>
           </div>
+          <Button onClick={handleExportAll} disabled={isExporting}>
+            <Download className="mr-2 h-4 w-4" />
+            {isExporting ? "Exporting..." : "Export JSON"}
+          </Button>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div>
-              <p className="font-medium">Full System Export</p>
-              <p className="text-sm text-muted-foreground">Download all database tables as a single JSON file.</p>
-            </div>
-            <Button onClick={handleExportAll} disabled={isExporting}>
-              <Download className="w-4 h-4 mr-2" />
-              {isExporting ? "Exporting..." : "Export JSON"}
-            </Button>
+        <div className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-medium">Reset-Safe Local Backup</p>
+            <p className="text-sm text-muted-foreground">Export browser-local demo data before resetting the showcase.</p>
           </div>
-
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div>
-              <p className="font-medium">Reset-Safe Local Backup</p>
-              <p className="text-sm text-muted-foreground">Export browser-local demo data before resetting the showcase.</p>
-            </div>
-            <Button onClick={handleExportAll} disabled={isExporting} variant="outline">
-              <Download className="w-4 h-4 mr-2" />
-              {isExporting ? "Exporting..." : "Export Backup"}
-            </Button>
-          </div>
+          <Button onClick={handleExportAll} disabled={isExporting} variant="outline">
+            <Download className="mr-2 h-4 w-4" />
+            {isExporting ? "Exporting..." : "Export Backup"}
+          </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </Section>
   );
 }

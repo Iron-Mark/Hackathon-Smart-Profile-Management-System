@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { AppSidebar } from "@/components/app-sidebar";
+import { PageShell } from "@/components/layout/PageShell";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { Section, Surface } from "@/components/layout/Section";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import {
   Select,
   SelectContent,
@@ -16,7 +16,6 @@ import { filterRowsByDateRange, type DateRangeFilter } from "@/lib/reportExport"
 import Papa from 'papaparse';
 import { toast } from "sonner";
 
-// Report types
 const reportTypes = [
   { value: "faculty_list", label: "Faculty List & Roles", table: "account_details" },
   { value: "submissions_report", label: "Submissions Summary", table: "submissions" },
@@ -80,78 +79,65 @@ export default function AdminReportsPage() {
   };
 
   return (
-    <SidebarProvider>
-      <div className="flex w-screen min-h-screen">
-        <AppSidebar className="hidden md:block" />
-        <div className="flex-1 flex flex-col overflow-auto">
-          <main className="flex-1 w-full bg-muted/40 text-foreground p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-bold">Reports and Analytics</h1>
-            </div>
+    <PageShell>
+      <PageHeader
+        kicker="Reviewer workspace"
+        title="Reports and Analytics"
+        description="Export browser-local demo tables as CSV for review."
+      />
 
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>Generate New Report (CSV)</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="reportType"
-                    className="block text-sm font-medium text-foreground mb-1"
-                  >
-                    Select Report Type
-                  </label>
-                  <Select onValueChange={setSelectedReport} value={selectedReport}>
-                    <SelectTrigger id="reportType">
-                      <SelectValue placeholder="Choose a report..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {reportTypes.map((report) => (
-                        <SelectItem key={report.value} value={report.value}>
-                          {report.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+      <Section title="Generate New Report (CSV)">
+        <div className="space-y-4">
+          <div>
+            <label
+              htmlFor="reportType"
+              className="mb-1 block text-sm font-medium text-foreground"
+            >
+              Select Report Type
+            </label>
+            <Select onValueChange={setSelectedReport} value={selectedReport}>
+              <SelectTrigger id="reportType" className="max-w-md">
+                <SelectValue placeholder="Choose a report..." />
+              </SelectTrigger>
+              <SelectContent>
+                {reportTypes.map((report) => (
+                  <SelectItem key={report.value} value={report.value}>
+                    {report.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      htmlFor="dateRange"
-                      className="block text-sm font-medium text-foreground mb-1"
-                    >
-                      Date Range (Optional)
-                    </label>
-                    <DatePickerWithRange
-                      onDateChange={setDateRange}
-                    />
-                  </div>
-                </div>
+          <div>
+            <label
+              htmlFor="dateRange"
+              className="mb-1 block text-sm font-medium text-foreground"
+            >
+              Date Range (Optional)
+            </label>
+            <DatePickerWithRange
+              onDateChange={setDateRange}
+            />
+          </div>
 
-                <Button
-                  onClick={handleGenerateReport}
-                  className="w-full md:w-auto"
-                  disabled={isGenerating}
-                >
-                  {isGenerating ? "Generating..." : "Generate & Download CSV"}
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Analytics Insights</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-center text-muted-foreground py-4">
-                  Data visualization modules are integrated with Recharts in the Dashboard.
-                </p>
-              </CardContent>
-            </Card>
-          </main>
+          <Button
+            onClick={handleGenerateReport}
+            className="w-full md:w-auto"
+            disabled={isGenerating}
+          >
+            {isGenerating ? "Generating..." : "Generate & Download CSV"}
+          </Button>
         </div>
-      </div>
-    </SidebarProvider>
+      </Section>
+
+      <Section className="mt-10" title="Analytics Insights">
+        <Surface className="px-4 py-8">
+          <p className="text-center text-sm text-muted-foreground">
+            Data visualization modules are integrated with Recharts in the Dashboard.
+          </p>
+        </Surface>
+      </Section>
+    </PageShell>
   );
 }

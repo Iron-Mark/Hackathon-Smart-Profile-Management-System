@@ -13,13 +13,7 @@ import {
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
+import { MetricStrip } from '@/components/layout/MetricStrip'
 import { ThemeToggle } from '@/components/ThemeToggle'
 
 const publicDemoFacts = [
@@ -176,53 +170,47 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="border-b border-border bg-card px-5 py-10 text-card-foreground sm:px-8 lg:px-12">
-        <div className="mx-auto grid max-w-7xl gap-4 sm:grid-cols-3">
-          {reviewerStats.map((stat) => {
-            const Icon = stat.icon
-            return (
-              <Card key={stat.label} className="rounded-lg">
-                <CardContent className="flex items-center gap-4 py-6">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-md bg-muted text-foreground">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <p className="text-2xl font-bold">{stat.value}</p>
-                    <p className="text-sm text-muted-foreground">{stat.label}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
+      <section className="border-b border-border bg-background px-5 py-10 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-7xl">
+          <MetricStrip
+            items={reviewerStats.map((stat) => ({
+              label: stat.label,
+              value: stat.value,
+              icon: stat.icon,
+            }))}
+          />
         </div>
       </section>
 
       <section className="bg-background px-5 py-16 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 max-w-3xl">
-            <Badge variant="outline" className="mb-3 bg-card">Demo workflow</Badge>
+            <Badge variant="outline" className="mb-3">Demo workflow</Badge>
             <h2 className="text-3xl font-bold tracking-normal">A complete reviewer path, not a static mockup</h2>
             <p className="mt-3 text-muted-foreground">
               The public build uses seeded browser-local data so reviewers can test the
               upload, approval, preview, and profile-building flow end to end.
             </p>
           </div>
-          <div className="grid gap-5 md:grid-cols-3">
-            {workflowSteps.map((step) => {
+          <ol className="divide-y divide-border overflow-hidden rounded-lg border border-border">
+            {workflowSteps.map((step, index) => {
               const Icon = step.icon
               return (
-                <Card key={step.title} className="rounded-lg">
-                  <CardHeader>
-                    <span className="mb-2 flex h-11 w-11 items-center justify-center rounded-md bg-success/15 text-success">
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <CardTitle>{step.title}</CardTitle>
-                    <CardDescription>{step.description}</CardDescription>
-                  </CardHeader>
-                </Card>
+                <li key={step.title} className="flex gap-4 px-5 py-5 sm:gap-6">
+                  <span className="w-10 shrink-0 text-2xl font-semibold tabular-nums text-muted-foreground">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-success/15 text-success">
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <h3 className="font-semibold">{step.title}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{step.description}</p>
+                  </div>
+                </li>
               )
             })}
-          </div>
+          </ol>
         </div>
       </section>
 
@@ -244,34 +232,30 @@ export default function Landing() {
               </a>
             </Button>
           </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+          <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-background">
             {sampleDocuments.map((document) => (
-              <Card key={document.fileName} className="overflow-hidden rounded-lg">
-                <div className="aspect-[4/3] bg-muted">
-                  <img
-                    src={samplePath(document.fileName)}
-                    alt={`${document.title} sample preview`}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
+              <li key={document.fileName} className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center">
+                <img
+                  src={samplePath(document.fileName)}
+                  alt={`${document.title} sample preview`}
+                  className="h-16 w-24 shrink-0 rounded-md object-cover"
+                  loading="lazy"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium">{document.title}</p>
+                  <p className="text-sm text-muted-foreground">{document.description}</p>
                 </div>
-                <CardHeader className="gap-2">
-                  <CardTitle className="text-base">{document.title}</CardTitle>
-                  <CardDescription>{document.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <a className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary hover:text-primary/80" href={samplePath(document.fileName)}>
-                    Open sample
-                    <ArrowRight className="h-4 w-4" />
-                  </a>
-                </CardContent>
-              </Card>
+                <a className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary hover:text-primary/80" href={samplePath(document.fileName)}>
+                  Open sample
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
-      <section className="bg-card px-5 py-16 text-card-foreground sm:px-8 lg:px-12">
+      <section className="bg-background px-5 py-16 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 max-w-3xl">
             <Badge className="mb-3 border-info/30 bg-info/15 text-info">AEO and GEO sources</Badge>
@@ -281,16 +265,12 @@ export default function Landing() {
               For canonical Q&A, use the public answer files linked below.
             </p>
           </div>
-          <dl className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <dl className="divide-y divide-border overflow-hidden rounded-lg border border-border">
             {publicDemoFacts.map((fact) => (
-              <Card key={fact.question} className="rounded-lg">
-                <CardHeader>
-                  <dt className="text-base font-semibold">{fact.question}</dt>
-                </CardHeader>
-                <CardContent>
-                  <dd className="text-sm leading-6 text-muted-foreground">{fact.answer}</dd>
-                </CardContent>
-              </Card>
+              <div key={fact.question} className="px-5 py-4">
+                <dt className="text-base font-semibold">{fact.question}</dt>
+                <dd className="mt-1 text-sm leading-6 text-muted-foreground">{fact.answer}</dd>
+              </div>
             ))}
           </dl>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">

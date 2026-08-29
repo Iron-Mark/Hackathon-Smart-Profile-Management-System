@@ -148,13 +148,13 @@ test('admin can return a credential and faculty sees Returned', async ({ page })
 
   await signInAsFaculty(page)
   await page.goto(appRoute('/faculty/uploaded'))
-  const card = page.locator('[data-slot="card"]', { hasText: 'return-me-certificate.png' }).first()
-  await expect(card).toContainText('Returned')
+  const row = page.locator('tr', { hasText: 'return-me-certificate.png' }).first()
+  await expect(row).toContainText('Returned')
 
   await page.getByText(/Pending \(/).click()
-  await expect(page.locator('[data-slot="card"]', { hasText: 'return-me-certificate.png' })).toHaveCount(0)
+  await expect(page.locator('tr', { hasText: 'return-me-certificate.png' })).toHaveCount(0)
   await page.getByText(/^All \(/).first().click()
-  await expect(card).toBeVisible()
+  await expect(row).toBeVisible()
 })
 
 test('faculty profile bio, work, development, print, and autofill work', async ({ page }) => {
@@ -329,6 +329,6 @@ test('faculty uploaded page can ingest a sample file through Select File', async
 
   await expect(page.getByText(/Extracting text from image/i)).toBeVisible()
   await expect(
-    page.locator('[data-slot="card"]', { hasText: 'uploaded-page-certificate.png' })
+    page.locator('tr', { hasText: 'uploaded-page-certificate.png' })
   ).toBeVisible({ timeout: 60_000 })
 })

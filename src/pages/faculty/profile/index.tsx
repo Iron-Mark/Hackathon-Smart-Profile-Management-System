@@ -1,13 +1,13 @@
 // src/pages/faculty/profile/index.tsx
 import { useEffect, useState, useRef } from 'react'
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
-import { AppSidebar } from '@/components/app-sidebar'
+import { PageShell } from '@/components/layout/PageShell'
+import { Notice } from '@/components/layout/Notice'
+import { Section } from '@/components/layout/Section'
 import { Accordion } from '@/components/ui/accordion'
 import { Edit3Icon, SparklesIcon, PlusIcon, Trash2Icon, FileTextIcon, DownloadIcon } from 'lucide-react'
 import { analyzeDocument } from '@/tools/ai/analyzeDocument'
 import ProfileHeader from './ProfileHeader'
 import ProfileSection from './ProfileSection'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -395,14 +395,10 @@ export default function ProfilePage () {
   }
 
   return (
-    <SidebarProvider>
-      <div className='flex w-screen min-h-screen flex-col md:flex-row'>
-        <AppSidebar className='hidden md:block print:hidden' />
-        <div className='flex-1 flex flex-col overflow-auto'>
-          <div className='md:hidden p-4 border-b print:hidden'>
-            <SidebarTrigger />
-          </div>
-          <main className='flex-1 w-full bg-muted/40 text-foreground p-4 md:p-6 lg:p-8 print:bg-white print:p-0 print:text-black print:[--background:white] print:[--foreground:black] print:[--card:white] print:[--card-foreground:black] print:[--muted:white] print:[--muted-foreground:#374151] print:[--border:#d1d5db] print:[&_*]:!text-black'>
+    <PageShell
+      contentClassName="print:bg-white print:text-black print:[--background:white] print:[--foreground:black] print:[--card:white] print:[--card-foreground:black] print:[--muted:white] print:[--muted-foreground:#374151] print:[--border:#d1d5db] print:[&_*]:!text-black"
+      innerClassName="print:max-w-none print:px-0 print:py-0"
+    >
             <ProfileHeader
               userId={userId}
               onProfileImageUpload={handleProfileImageUpload}
@@ -410,20 +406,15 @@ export default function ProfilePage () {
               className='relative flex flex-col items-center text-center'
             />
 
-            <div className='mt-6 max-w-4xl mx-auto space-y-3'>
-              {/* Auto-Fill Action Banner */}
-              <Card className="bg-info/10 border-info/30 text-info shadow-sm overflow-hidden mb-4 print:hidden">
-                <CardContent className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div>
-                    <h3 className="font-semibold text-info flex items-center">
-                      <SparklesIcon className="w-5 h-5 mr-2" />
-                      Smart Profile Builder
-                    </h3>
-                    <p className="text-sm text-info/90">
-                      Upload your CV, Certificate, or Diploma and let AI extract the details for you.
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
+            <div className='mt-6 max-w-4xl mx-auto space-y-6'>
+              <Notice
+                tone="info"
+                icon={SparklesIcon}
+                className="print:hidden"
+                title="Smart Profile Builder"
+                description="Upload your CV, Certificate, or Diploma and let AI extract the details for you."
+              >
+                  <div className="mt-3 flex flex-wrap gap-2">
                     <Button 
                       variant="outline"
                       onClick={() => window.print()}
@@ -440,7 +431,6 @@ export default function ProfilePage () {
                       <FileTextIcon className="w-4 h-4 mr-2" />
                       {isAutoFilling ? 'Extracting...' : 'Upload & Auto-fill'}
                     </Button>
-                  </div>
                   <input
                     type="file"
                     ref={autoFillInputRef}
@@ -448,15 +438,12 @@ export default function ProfilePage () {
                     accept="image/*,.pdf"
                     className="hidden"
                   />
-                </CardContent>
-              </Card>
+                  </div>
+              </Notice>
 
-              {/* Profile Description Card */}
-              <Card className="bg-card text-card-foreground rounded-md shadow-sm overflow-hidden print:shadow-none print:border-none">
-                <CardHeader className="flex justify-between items-center flex-row print:p-2">
-                  <CardTitle className="font-semibold text-md sm:text-lg text-success">
-                    Profile Description
-                  </CardTitle>
+              <Section
+                title={<span className="text-success">Profile Description</span>}
+                actions={
                   <div className="flex gap-2 print:hidden">
                     <Button 
                       variant="outline" 
@@ -504,13 +491,15 @@ export default function ProfilePage () {
                       </DialogContent>
                     </Dialog>
                   </div>
-                </CardHeader>
-                <CardContent className='text-card-foreground leading-relaxed text-sm sm:text-base'>
+                }
+              >
+                <p className='leading-relaxed text-sm sm:text-base'>
                   {description.description || <span className="text-muted-foreground italic">No description provided. Click edit to add one.</span>}
-                </CardContent>
-              </Card>
+                </p>
+              </Section>
 
               {/* Educational Background */}
+              <div className="overflow-hidden rounded-lg border border-border divide-y divide-border">
               <Accordion
                 type='multiple'
                 value={openSections.filter(s => s === 'education')}
@@ -733,11 +722,9 @@ export default function ProfilePage () {
                   </div>
                 </ProfileSection>
               </Accordion>
+              </div>
             </div>
-          </main>
-        </div>
-      </div>
-    </SidebarProvider>
+    </PageShell>
   )
 }
 

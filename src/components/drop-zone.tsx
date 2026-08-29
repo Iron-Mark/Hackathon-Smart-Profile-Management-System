@@ -115,7 +115,7 @@ const DropZone: React.FC<DropZoneProps> = ({
       className={`border-2 border-dashed rounded-lg flex flex-col items-center justify-center gap-4 p-4 overflow-auto ${w} ${h} ${
         isDragging
           ? 'bg-info/10 border-success'
-          : 'bg-card border-border'
+          : 'bg-background border-border'
       } transition-[background-color,border-color,box-shadow] duration-200 ease-out`}
       onDragOver={handleDragEnter}
       onDragLeave={handleDragLeave}

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
-import { AppSidebar } from '@/components/app-sidebar'
-import { Separator } from '@/components/ui/separator'
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card'
+import { PageShell } from '@/components/layout/PageShell'
+import { PageHeader } from '@/components/layout/PageHeader'
+import { MetricStrip } from '@/components/layout/MetricStrip'
+import { Notice } from '@/components/layout/Notice'
+import { Section } from '@/components/layout/Section'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from '@/components/ui/skeleton'
+import { Progress } from '@/components/ui/progress'
 import DropZone from '@/components/drop-zone'
 import { toast } from 'sonner'
 import determineDocumentTypeAndUpload from '@/tools/determineDocumentTypeAndUpload'
@@ -64,7 +66,6 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
       setName(account[0]?.name || '')
       setPendingCount(pendingSubs.length)
 
-      // Calculate completion (arbitrary weights)
       let score = 0
       if (account[0]?.name) score += 20
       if (prof[0]?.description) score += 20
@@ -73,14 +74,8 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
       if (dev.length > 0) score += 20
       setCompletion(score)
 
-      // Calculate notifications
-      const reviewedSubs = allSubs.filter((sub: any) => sub.status === 'Approved' || sub.status === 'Returned');
-      setNotificationsCount(reviewedSubs.length);
-
-      if (reviewedSubs.length > 0) {
-        // Reviewed submissions found
-      }
-      
+      const reviewedSubs = allSubs.filter((sub: { status: string }) => sub.status === 'Approved' || sub.status === 'Returned')
+      setNotificationsCount(reviewedSubs.length)
     } catch (error) {
       console.error('Error fetching dashboard data:', error)
     } finally {
@@ -150,159 +145,94 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
             : `${successfulUploads} file(s) uploaded. Review failed files before retrying.`
         )
         setUploadedFiles([])
-        fetchDashboardData(userId) // Refresh pending count
+        fetchDashboardData(userId)
       }
     } finally {
       setIsSubmitting(false)
     }
   }
 
+  const metricValue = (value: ReactNode) =>
+    isLoading ? <Skeleton className="h-8 w-12" /> : value
+
   return (
-    <SidebarProvider>
-      <div className='flex w-screen'>
-        <AppSidebar />
-
-        <div className='flex-1 flex flex-col overflow-auto'>
-          <div className='md:hidden p-4'>
-            <SidebarTrigger />
-          </div>
-
-          <main className='flex-1 w-full p-6 bg-muted/40 text-foreground'>
-            {children ?? (
+    <PageShell>
+      {children ?? (
+        <>
+          <PageHeader
+            kicker="Faculty workspace"
+            title={isLoading ? <Skeleton className="h-9 w-64" /> : `Welcome, ${name}`}
+            description="Track your records, sample uploads, and profile readiness in one browser-local demo workspace."
+            actions={
               <>
-                <div className="mb-6 flex flex-col gap-4 rounded-lg border bg-card p-5 text-card-foreground shadow-sm lg:flex-row lg:items-center lg:justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Faculty workspace</p>
-                    <h1 className='text-3xl font-extrabold tracking-tight text-foreground'>
-                      {isLoading ? <Skeleton className="h-9 w-64" /> : `Welcome, ${name}`}
-                    </h1>
-                    <div className='mt-2 max-w-2xl text-sm text-muted-foreground'>
-                      {isLoading ? <Skeleton className="h-4 w-80" /> : 'Track your records, sample uploads, and profile readiness in one browser-local demo workspace.'}
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2 sm:flex-row">
-                    <Button asChild variant="outline" size="sm">
-                      <a href={samplePath('sample-certificate.svg')}>
-                        <Download className="h-4 w-4" />
-                        Certificate
-                      </a>
-                    </Button>
-                    <Button asChild variant="outline" size="sm">
-                      <a href={samplePath('sample-transcript.svg')}>
-                        <Download className="h-4 w-4" />
-                        Transcript
-                      </a>
-                    </Button>
-                  </div>
-                </div>
-                <Separator className='mb-6' />
-
-                <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 relative'>
-                  <div>
-                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
-                      {[
-                        { label: 'Profile Completion', val: `${completion}%`, color: 'text-success', icon: CheckCircle2, description: 'Profile sections with data' },
-                        { label: 'Pending Approvals', val: pendingCount, color: 'text-warning', icon: FileStack, description: 'Credentials awaiting admin review' },
-                        { label: 'Notifications', val: notificationsCount, color: 'text-info', icon: Bell, description: 'Reviewed credential updates' },
-                        { label: 'Upcoming Deadlines', val: '3', color: 'text-destructive', icon: CalendarClock, description: 'Demo compliance reminders' }
-                      ].map((item, i) => {
-                        const Icon = item.icon
-                        return (
-                        <Card key={i} className='rounded-lg shadow-sm transition-shadow hover:shadow-md'>
-                          <CardHeader>
-                            <CardTitle className='flex items-center gap-2 text-sm text-muted-foreground'>
-                              <Icon className="h-4 w-4" />
-                              {item.label}
-                            </CardTitle>
-                            <CardDescription>{item.description}</CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <div className={`text-2xl font-bold ${item.color}`}>
-                              {isLoading ? <Skeleton className="h-8 w-12" /> : item.val}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      )})}
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="mb-4 rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
-                      <div className="flex items-start gap-3">
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-success/15 text-success">
-                          <Sparkles className="h-5 w-5" />
-                        </span>
-                        <div>
-                          <h2 className="font-semibold">Smart upload</h2>
-                          <p className='mt-1 text-sm text-muted-foreground'>
-                            Upload generated sample credentials and let the demo classify and queue them for review.
-                          </p>
-                        </div>
-                      </div>
-                      <p className='mt-4 rounded-md border border-warning/30 bg-warning/10 px-3 py-2 text-sm text-warning'>
-                        Use sample files only. Public demo uploads stay in this browser and are meant for showcase testing.
-                      </p>
-                    </div>
-
-                    <DropZone
-                      setData={handleFileUpload}
-                      handleSubmit={() => handleSubmit()}
-                      isSubmitting={isSubmitting}
-                    />
-
-                    <div>
-                      <div className='grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6'>
-                        {uploadResults.map((result, index) => (
-                          <Card
-                            key={index}
-                            className='rounded-lg shadow-sm transition-shadow hover:shadow-md'
-                          >
-                            <CardHeader>
-                              <CardTitle className='flex items-center gap-2 truncate text-sm text-muted-foreground'>
-                                <FileCheck2 className="h-4 w-4" />
-                                {result.fileName}
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <div className='w-full bg-muted rounded-full h-2.5 mb-2'>
-                                <div
-                                  className='h-2.5 rounded-full bg-primary'
-                                  style={{
-                                    width: `${result.progress}%`,
-                                    transition: 'width 0.2s ease'
-                                  }}
-                                ></div>
-                              </div>
-                              {result.status === 'uploaded' && result.documentType ? (
-                                <div className='space-y-1'>
-                                  <p className='text-sm font-medium text-success'>
-                                    Uploaded
-                                  </p>
-                                  <p className='text-sm text-success'>
-                                    Type: {result.documentType}
-                                  </p>
-                                </div>
-                              ) : result.status === 'failed' ? (
-                                <p className='text-sm text-destructive'>
-                                  Upload failed. Check the file and try again.
-                                </p>
-                              ) : (
-                                <p className='text-sm text-muted-foreground animate-pulse'>
-                                  Processing...
-                                </p>
-                              )}
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <Button asChild variant="outline" size="sm">
+                  <a href={samplePath('sample-certificate.svg')}>
+                    <Download className="h-4 w-4" />
+                    Certificate
+                  </a>
+                </Button>
+                <Button asChild variant="outline" size="sm">
+                  <a href={samplePath('sample-transcript.svg')}>
+                    <Download className="h-4 w-4" />
+                    Transcript
+                  </a>
+                </Button>
               </>
+            }
+          />
+
+          <MetricStrip
+            items={[
+              { label: 'Profile Completion', value: metricValue(`${completion}%`), hint: 'Profile sections with data', icon: CheckCircle2, tone: 'success' },
+              { label: 'Pending Approvals', value: metricValue(pendingCount), hint: 'Credentials awaiting admin review', icon: FileStack, tone: 'warning' },
+              { label: 'Notifications', value: metricValue(notificationsCount), hint: 'Reviewed credential updates', icon: Bell, tone: 'info' },
+              { label: 'Upcoming Deadlines', value: metricValue('3'), hint: 'Demo compliance reminders', icon: CalendarClock, tone: 'destructive' },
+            ]}
+          />
+
+          <Section
+            title="Smart upload"
+            description="Upload generated sample credentials and let the demo classify and queue them for review."
+          >
+            <Notice tone="warning">
+              Use sample files only. Public demo uploads stay in this browser and are meant for showcase testing.
+            </Notice>
+
+            <DropZone
+              setData={handleFileUpload}
+              handleSubmit={() => handleSubmit()}
+              isSubmitting={isSubmitting}
+              h="h-52"
+            />
+
+            {uploadResults.length > 0 && (
+              <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border">
+                {uploadResults.map((result, index) => (
+                  <li key={`${result.fileName}-${index}`} className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:gap-4">
+                    <FileCheck2 className="hidden h-4 w-4 shrink-0 text-muted-foreground sm:block" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">{result.fileName}</p>
+                      <Progress value={result.progress} className="mt-2 h-1.5" />
+                    </div>
+                    <div className="shrink-0 text-sm">
+                      {result.status === 'uploaded' && result.documentType ? (
+                        <span className="inline-flex items-center gap-1.5 text-success">
+                          <Sparkles className="h-3.5 w-3.5" />
+                          Type: {result.documentType}
+                        </span>
+                      ) : result.status === 'failed' ? (
+                        <span className="text-destructive">Upload failed. Check the file and try again.</span>
+                      ) : (
+                        <span className="animate-pulse text-muted-foreground">Processing...</span>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
             )}
-          </main>
-        </div>
-      </div>
-    </SidebarProvider>
+          </Section>
+        </>
+      )}
+    </PageShell>
   )
 }

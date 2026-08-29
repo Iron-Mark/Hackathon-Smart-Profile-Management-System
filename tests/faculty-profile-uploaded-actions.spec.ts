@@ -34,9 +34,9 @@ test('faculty uploaded file category edits persist after refresh', async ({ page
   await signInAsFaculty(page)
   await page.goto(appRoute('/faculty/uploaded'))
 
-  const diplomaCard = page.locator('[data-slot="card"]', { hasText: 'sample-diploma.svg' }).first()
-  await expect(diplomaCard).toContainText('Diplomas')
-  await diplomaCard.getByRole('button', { name: 'Edit' }).click()
+  const diplomaRow = page.locator('tr', { hasText: 'sample-diploma.svg' }).first()
+  await expect(diplomaRow).toContainText('Diplomas')
+  await diplomaRow.getByRole('button', { name: 'Edit' }).click()
 
   const dialog = page.getByRole('dialog', { name: 'Edit File' })
   await dialog.getByRole('combobox').click()
@@ -44,20 +44,20 @@ test('faculty uploaded file category edits persist after refresh', async ({ page
   await expect(dialog).toContainText('Certificates')
 
   await page.reload()
-  const updatedCard = page.locator('[data-slot="card"]', { hasText: 'sample-diploma.svg' }).first()
-  await expect(updatedCard).toContainText('Certificates')
-  await expect(updatedCard).toContainText('Pending')
+  const updatedRow = page.locator('tr', { hasText: 'sample-diploma.svg' }).first()
+  await expect(updatedRow).toContainText('Certificates')
+  await expect(updatedRow).toContainText('Pending')
 })
 
 test('faculty uploaded file removal persists after refresh', async ({ page }) => {
   await signInAsFaculty(page)
   await page.goto(appRoute('/faculty/uploaded'))
 
-  const certificateCard = page.locator('[data-slot="card"]', { hasText: 'sample-certificate.svg' }).first()
-  await expect(certificateCard).toBeVisible()
-  await certificateCard.getByRole('button', { name: 'Remove' }).click()
-  await expect(page.locator('[data-slot="card"]', { hasText: 'sample-certificate.svg' })).toHaveCount(0)
+  const certificateRow = page.locator('tr', { hasText: 'sample-certificate.svg' }).first()
+  await expect(certificateRow).toBeVisible()
+  await certificateRow.getByRole('button', { name: 'Remove' }).click()
+  await expect(page.locator('tr', { hasText: 'sample-certificate.svg' })).toHaveCount(0)
 
   await page.reload()
-  await expect(page.locator('[data-slot="card"]', { hasText: 'sample-certificate.svg' })).toHaveCount(0)
+  await expect(page.locator('tr', { hasText: 'sample-certificate.svg' })).toHaveCount(0)
 })
