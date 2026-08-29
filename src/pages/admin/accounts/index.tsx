@@ -41,7 +41,6 @@ import removeFromDatabase from "@/tools/database/removeFromDatabase";
 import updateDatabase from "@/tools/database/updateDatabase";
 import signUpUser from "@/tools/accounts/signUpUser";
 import { toast } from "sonner";
-import { ThemedToaster } from "@/components/ThemedToaster";
 import { Skeleton } from "@/components/ui/skeleton";
 import { logAudit } from "@/tools/database/logAudit";
 import backend from "@/client/backend";
@@ -219,7 +218,6 @@ export default function AdminAccountsPage() {
 
   return (
     <SidebarProvider>
-      <ThemedToaster position="top-right" />
       <div className="flex w-screen min-h-screen">
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">

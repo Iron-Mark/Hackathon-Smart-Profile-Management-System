@@ -18,7 +18,6 @@ import updateDatabase from "@/tools/database/updateDatabase";
 import getFileFromFolder from "@/tools/buckets/getFileFromFolder";
 import { logAudit } from "@/tools/database/logAudit";
 import { toast } from "sonner";
-import { ThemedToaster } from "@/components/ThemedToaster";
 
 interface Submission {
   id: string;
@@ -96,7 +95,6 @@ export default function AdminApprovalsPage() {
 
   return (
     <SidebarProvider>
-      <ThemedToaster position="top-right" />
       <div className="flex w-screen min-h-screen">
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">

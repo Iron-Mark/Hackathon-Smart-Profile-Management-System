@@ -26,7 +26,6 @@ import getFromDatabase from '@/tools/database/getFromDatabase'
 import removeFromDatabase from '@/tools/database/removeFromDatabase'
 import extractTextFromImage from '@/tools/ocr/extractTextFromImage'
 import { toast } from 'sonner'
-import { ThemedToaster } from '@/components/ThemedToaster'
 
 // Define the EducationalBackground and Experience types
 
@@ -69,6 +68,7 @@ export default function ProfilePage () {
   const [tempDescription, setTempDescription] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [isAutoFilling, setIsAutoFilling] = useState(false)
+  const [isEditingDescription, setIsEditingDescription] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const autoFillInputRef = useRef<HTMLInputElement>(null)
 
@@ -253,6 +253,7 @@ export default function ProfilePage () {
 
       if (success) {
         setDescription(updatedDescription)
+        setIsEditingDescription(false)
         toast.success('Description updated and pending approval')
       }
     } catch (error) {
@@ -395,7 +396,6 @@ export default function ProfilePage () {
 
   return (
     <SidebarProvider>
-      <ThemedToaster position="top-right" className="print:hidden" />
       <div className='flex w-screen min-h-screen flex-col md:flex-row'>
         <AppSidebar className='hidden md:block print:hidden' />
         <div className='flex-1 flex flex-col overflow-auto'>
@@ -468,7 +468,7 @@ export default function ProfilePage () {
                       <SparklesIcon className="w-4 h-4 mr-1 sm:mr-2" />
                       {isGenerating ? 'Generating Bio...' : 'Generate AI Bio'}
                     </Button>
-                    <Dialog>
+                    <Dialog open={isEditingDescription} onOpenChange={setIsEditingDescription}>
                       <DialogTrigger asChild>
                         <button aria-label="Edit profile description" className='text-muted-foreground hover:text-foreground p-2'>
                           <Edit3Icon className='w-5 h-5' />

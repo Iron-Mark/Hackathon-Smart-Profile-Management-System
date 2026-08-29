@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from "@/components/ui/skeleton"
 import DropZone from '@/components/drop-zone'
 import { toast } from 'sonner'
-import { ThemedToaster } from '@/components/ThemedToaster'
 import determineDocumentTypeAndUpload from '@/tools/determineDocumentTypeAndUpload'
 import getFromDatabase from '@/tools/database/getFromDatabase'
 import { useUserId } from '@/hooks/use-userId'
@@ -169,7 +168,6 @@ export default function FacultyDashboard ({ children }: FacultyDashboardProps) {
           </div>
 
           <main className='flex-1 w-full p-6 bg-muted/40 text-foreground'>
-            <ThemedToaster position='top-right' />
             {children ?? (
               <>
                 <div className="mb-6 flex flex-col gap-4 rounded-lg border bg-card p-5 text-card-foreground shadow-sm lg:flex-row lg:items-center lg:justify-between">

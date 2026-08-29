@@ -15,7 +15,6 @@ import getFromDatabase from "@/tools/database/getFromDatabase";
 import { filterRowsByDateRange, type DateRangeFilter } from "@/lib/reportExport";
 import Papa from 'papaparse';
 import { toast } from "sonner";
-import { ThemedToaster } from "@/components/ThemedToaster";
 
 // Report types
 const reportTypes = [
@@ -82,7 +81,6 @@ export default function AdminReportsPage() {
 
   return (
     <SidebarProvider>
-      <ThemedToaster position="top-right" />
       <div className="flex w-screen min-h-screen">
         <AppSidebar className="hidden md:block" />
         <div className="flex-1 flex flex-col overflow-auto">

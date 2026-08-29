@@ -19,7 +19,6 @@ import { useState } from "react";
 import { useTheme } from "next-themes";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { ThemedToaster } from "@/components/ThemedToaster";
 import { logAudit } from "@/tools/database/logAudit";
 import { Lock, LogOut, Bell, Shield } from "lucide-react";
 
@@ -123,7 +122,6 @@ export default function FacultySettingsPage() {
 
   return (
     <SidebarProvider>
-      <ThemedToaster position="top-right" />
       <div className="flex w-screen min-h-screen bg-muted/40 text-foreground">
         <AppSidebar />
         <div className="flex-1 flex flex-col">
