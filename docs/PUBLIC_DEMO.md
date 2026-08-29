@@ -25,8 +25,10 @@ The current UI uses one CCIS green token system for light and dark mode. The lan
 These captures match the restored public chrome. Refresh them with `npm run docs:screenshots` after visual changes.
 
 - `docs/images/landing-light.png` / `docs/images/landing-dark.png` — public landing hero in both themes
+- `docs/images/landing-workflow.png` — numbered workflow, compact samples, and public facts
 - `docs/images/login.png` — seeded Faculty demo / Admin demo shortcuts
 - `docs/images/faculty-dashboard.png` / `docs/images/faculty-dashboard-dark.png` — faculty workspace and smart upload
+- `docs/images/uploaded-files.png` — faculty uploaded-files table
 - `docs/images/profile.png` — profile builder and biography draft
 - `docs/images/dashboard.png` — admin reviewer dashboard
 - `docs/images/approvals.png` — approval queue with Approve, Return, and View

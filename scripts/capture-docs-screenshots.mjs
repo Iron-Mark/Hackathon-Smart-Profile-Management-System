@@ -22,6 +22,17 @@ async function settle(page) {
   await page.waitForTimeout(400);
 }
 
+async function hideWebVitals(page) {
+  await page.addStyleTag({
+    content: [
+      '[aria-label="Web Vitals"],',
+      '[aria-label="Web Vitals panel"] {',
+      '  visibility: hidden !important;',
+      '}',
+    ].join(' '),
+  });
+}
+
 async function goto(page, pathname) {
   await page.goto(new URL(pathname, BASE_URL).toString(), { waitUntil: 'networkidle' });
   await settle(page);
@@ -67,6 +78,7 @@ async function capture() {
     await withPage(browser, 'light', async (page) => {
       await goto(page, '/');
       await page.getByRole('heading', { name: /CCIS Smart Faculty Profile Management System/i }).waitFor();
+      await hideWebVitals(page);
       await shot(page, 'landing-light.png');
     });
 
@@ -74,18 +86,31 @@ async function capture() {
       await goto(page, '/');
       await page.getByRole('heading', { name: /CCIS Smart Faculty Profile Management System/i }).waitFor();
       await page.locator('html.dark').waitFor();
+      await hideWebVitals(page);
       await shot(page, 'landing-dark.png');
+    });
+
+    await withPage(browser, 'light', async (page) => {
+      await goto(page, '/');
+      await page.getByText('Demo workflow', { exact: true }).evaluate((el) => {
+        el.scrollIntoView({ block: 'start', behavior: 'instant' })
+      });
+      await hideWebVitals(page);
+      await settle(page);
+      await shot(page, 'landing-workflow.png');
     });
 
     await withPage(browser, 'light', async (page) => {
       await goto(page, '/auth/login');
       await page.getByRole('heading', { name: 'Welcome Back' }).waitFor();
+      await hideWebVitals(page);
       await shot(page, 'login.png');
     });
 
     await withPage(browser, 'light', async (page) => {
       await login(page, 'faculty');
       await page.getByRole('heading', { name: /Welcome, Dr\. Maria Santos/i }).waitFor();
+      await hideWebVitals(page);
       await shot(page, 'faculty-dashboard.png');
     });
 
@@ -93,7 +118,18 @@ async function capture() {
       await login(page, 'faculty');
       await page.getByRole('heading', { name: /Welcome, Dr\. Maria Santos/i }).waitFor();
       await page.locator('html.dark').waitFor();
+      await hideWebVitals(page);
       await shot(page, 'faculty-dashboard-dark.png');
+    });
+
+    await withPage(browser, 'light', async (page) => {
+      await login(page, 'faculty');
+      await goto(page, '/faculty/uploaded');
+      await page.getByRole('heading', { name: /Uploaded Files/ }).waitFor();
+      await page.locator('table').waitFor();
+      await hideWebVitals(page);
+      await settle(page);
+      await shot(page, 'uploaded-files.png');
     });
 
     await withPage(browser, 'light', async (page) => {
@@ -101,6 +137,7 @@ async function capture() {
       await page.getByRole('heading', { name: /Welcome, Dr\. Maria Santos/i }).waitFor();
       await goto(page, '/faculty/profile');
       await page.getByText('Smart Profile Builder').waitFor();
+      await hideWebVitals(page);
       await settle(page);
       await shot(page, 'profile.png');
     });
@@ -109,6 +146,7 @@ async function capture() {
       await login(page, 'admin');
       await page.getByRole('heading', { name: 'Admin Dashboard' }).waitFor();
       await page.locator('.recharts-wrapper').first().waitFor({ timeout: 10_000 }).catch(() => {});
+      await hideWebVitals(page);
       await settle(page);
       await shot(page, 'dashboard.png');
     });
@@ -117,6 +155,7 @@ async function capture() {
       await login(page, 'admin');
       await goto(page, '/admin/approvals');
       await page.getByRole('heading', { name: /approval/i }).waitFor();
+      await hideWebVitals(page);
       await settle(page);
       await shot(page, 'approvals.png');
     });

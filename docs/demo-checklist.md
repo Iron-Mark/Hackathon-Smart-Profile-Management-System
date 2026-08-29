@@ -46,7 +46,7 @@ Clerk-authenticated visitors are still mapped to browser-local faculty demo prof
 9. Return to Approvals and approve the uploaded credential.
 10. Sign back in with Faculty demo.
 11. Open Uploaded Files and confirm the credential is Approved.
-12. Select View from the faculty file card and confirm the Demo File Preview opens.
+12. Select View from the faculty file row and confirm the Demo File Preview opens.
 
 ## Theme And Chrome Checks
 
@@ -73,9 +73,10 @@ npm run docs:screenshots
 
 That capture writes:
 
-- `landing-light.png`, `landing-dark.png`
+- `landing-light.png`, `landing-dark.png`, `landing-workflow.png`
 - `login.png`
 - `faculty-dashboard.png`, `faculty-dashboard-dark.png`
+- `uploaded-files.png`
 - `profile.png`
 - `dashboard.png` (admin)
 - `approvals.png`

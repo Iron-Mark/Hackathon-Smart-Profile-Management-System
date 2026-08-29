@@ -53,7 +53,7 @@ The following is verified locally on `agent/theme-contrast-overhaul-e65d` and is
 
 - Light and dark CCIS green chrome with a public theme toggle. The landing hero stays a dark branded band in both modes.
 - Web Vitals button stays clickable above the login/register demo access panel.
-- Marketing README plus refreshed `docs/images/` captures of landing, login, faculty, admin, approvals, and Web Vitals.
+- Marketing README plus refreshed `docs/images/` captures of landing, workflow, login, faculty, uploaded files, admin, approvals, and Web Vitals.
 
 These do **not** replace `v2.1.1` until they are merged, deployed, and re-checked against the live URL.
 

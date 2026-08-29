@@ -1,23 +1,35 @@
 <div align="center">
+  <img src="public/fav-icon.png" width="88" alt="College of Computing and Information Sciences, University of Makati seal" />
 
-# CCIS Smart Faculty Profile Management System
+  <h1>CCIS Smart Faculty Profile Management System</h1>
 
-**A restored 7th CCIS Hackathon showcase for faculty credentials, admin review, and profile proofing — live in the browser, no backend required.**
+  <p>
+    A restored 7th CCIS Hackathon showcase for faculty credentials, admin review, and profile proofing.
+    <br />
+    Live in the browser. No backend required.
+  </p>
 
-[Live Demo](https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/) · [Public Demo Guide](docs/PUBLIC_DEMO.md) · [Release Status](docs/release-status.md)
+  <p>
+    <a href="https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/"><strong>Live demo</strong></a>
+    ·
+    <a href="docs/PUBLIC_DEMO.md">Public demo guide</a>
+    ·
+    <a href="docs/release-status.md">Release status</a>
+  </p>
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-GitHub_Pages-0B7A4B?style=for-the-badge)](https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/)
-[![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev/)
-
+  <p>
+    <a href="https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/"><img src="https://img.shields.io/badge/Live_Demo-GitHub_Pages-0B7A4B?style=flat-square" alt="Live Demo" /></a>
+    <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-102418?style=flat-square&logo=vite&logoColor=FFD62E" alt="Vite" /></a>
+    <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-102418?style=flat-square&logo=typescript&logoColor=3178C6" alt="TypeScript" /></a>
+    <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind-102418?style=flat-square&logo=tailwindcss&logoColor=38BDF8" alt="Tailwind CSS" /></a>
+    <a href="https://playwright.dev/"><img src="https://img.shields.io/badge/Playwright-102418?style=flat-square&logo=playwright&logoColor=2EAD33" alt="Playwright" /></a>
+  </p>
 </div>
 
 <p align="center">
-  <img src="docs/images/landing-light.png" alt="Public landing page in light mode, with a dark CCIS green hero, Start demo actions, and the Web Vitals button" width="92%" />
+  <img src="docs/images/landing-light.png" alt="Public landing page with a dark CCIS green hero, Start demo, Login, Register, and a three-metric strip" width="920" />
 </p>
-<p align="center"><em>The public landing page: branded CCIS green hero, seeded demo entry, and local Web Vitals in the lower right.</em></p>
+<p align="center"><sub>Branded CCIS green hero, seeded demo entry, and a metric strip instead of stacked cards.</sub></p>
 
 ---
 
@@ -32,16 +44,19 @@ Open the live GitHub Pages demo:
 3. Sign in as admin, open **Approvals**, preview the file, and approve it.
 4. Return as faculty and confirm the credential is approved.
 
-Seeded accounts:
-
 | Role | Email | Password |
-| --- | --- | --- |
+| :---: | --- | --- |
 | Faculty | `faculty@umak.edu.ph` | `Faculty123` |
 | Admin | `admin@umak.edu.ph` | `Admin123` |
 
-Additional seeded faculty rows for admin-review data: `daniel.reyes@umak.edu.ph` and `liza.mercado@umak.edu.ph` (same faculty password).
+Extra seeded faculty for the admin queue: `daniel.reyes@umak.edu.ph` and `liza.mercado@umak.edu.ph` (same faculty password).
 
 This is a **browser-local public showcase**, not a production records system. Use the generated sample files only. Do not upload real IDs, transcripts, licenses, or private faculty documents.
+
+<p align="center">
+  <img src="docs/images/login.png" alt="Login screen with Faculty demo and Admin demo shortcuts" width="720" />
+</p>
+<p align="center"><sub>Seeded Faculty demo and Admin demo shortcuts. Register with any valid email for a browser-local faculty account.</sub></p>
 
 ---
 
@@ -49,40 +64,63 @@ This is a **browser-local public showcase**, not a production records system. Us
 
 Light and dark mode share one CCIS green token system. The landing hero stays a dark branded band in both themes so the first impression does not invert to bright lime.
 
-<p align="center">
-  <img src="docs/images/landing-light.png" alt="Landing page light mode" width="48%" />
-  <img src="docs/images/landing-dark.png" alt="Landing page dark mode with moon theme toggle" width="48%" />
-</p>
-<p align="center"><em>Landing in light and dark. Theme toggle is in the public header.</em></p>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/images/landing-dark.png" alt="Landing page in dark mode" />
+      <br />
+      <sub>Landing · dark</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/images/landing-workflow.png" alt="Landing workflow steps, compact sample files, and public demo facts" />
+      <br />
+      <sub>Workflow, samples, and facts</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/images/faculty-dashboard.png" alt="Faculty dashboard with metric strip and smart upload" />
+      <br />
+      <sub>Faculty workspace · light</sub>
+    </td>
+    <td align="center">
+      <img src="docs/images/faculty-dashboard-dark.png" alt="Faculty dashboard in dark mode" />
+      <br />
+      <sub>Faculty workspace · dark</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/images/uploaded-files.png" alt="Uploaded files table with status chips and row actions" />
+      <br />
+      <sub>Uploaded files table</sub>
+    </td>
+    <td align="center">
+      <img src="docs/images/profile.png" alt="Faculty profile builder with Smart Profile Builder and education records" />
+      <br />
+      <sub>Profile builder</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/images/dashboard.png" alt="Admin dashboard with metric strip, charts, and pending submissions table" />
+      <br />
+      <sub>Admin dashboard</sub>
+    </td>
+    <td align="center">
+      <img src="docs/images/approvals.png" alt="Admin approval queue with Approve, Return, and View" />
+      <br />
+      <sub>Approval queue</sub>
+    </td>
+  </tr>
+</table>
 
 <p align="center">
-  <img src="docs/images/login.png" alt="Login screen with Faculty demo and Admin demo shortcuts plus a clickable Web Vitals button" width="92%" />
+  <img src="docs/images/web-vitals.png" alt="Landing page with the Core Web Vitals panel open showing LCP, FCP, and TTFB" width="920" />
 </p>
-<p align="center"><em>Login with seeded Faculty demo / Admin demo shortcuts. Web Vitals stays clickable below the demo access panel.</em></p>
+<p align="center"><sub>Local Core Web Vitals: LCP, INP, CLS, FCP, and TTFB stay in this browser. Nothing is sent anywhere.</sub></p>
 
-<p align="center">
-  <img src="docs/images/faculty-dashboard.png" alt="Faculty dashboard in light mode with smart upload and profile stats" width="48%" />
-  <img src="docs/images/faculty-dashboard-dark.png" alt="Faculty dashboard in dark mode with a deep green sidebar" width="48%" />
-</p>
-<p align="center"><em>Faculty workspace: smart upload, sample-file warning, and a light or deep-green sidebar.</em></p>
-
-<p align="center">
-  <img src="docs/images/profile.png" alt="Faculty profile builder with AI bio draft and education records" width="92%" />
-</p>
-<p align="center"><em>Faculty profile builder with document-assisted autofill and biography draft actions.</em></p>
-
-<p align="center">
-  <img src="docs/images/dashboard.png" alt="Admin dashboard with user metrics and document charts" width="48%" />
-  <img src="docs/images/approvals.png" alt="Admin approval queue with Approve, Return, and View actions" width="48%" />
-</p>
-<p align="center"><em>Admin reviewer workspace and the approval queue that closes the faculty → admin loop.</em></p>
-
-<p align="center">
-  <img src="docs/images/web-vitals.png" alt="Landing page with the Core Web Vitals panel open showing LCP, FCP, and TTFB" width="92%" />
-</p>
-<p align="center"><em>Local Core Web Vitals panel: live LCP, FCP, and TTFB for the current browser session. Metrics stay in the browser.</em></p>
-
-Refresh these captures after UI changes:
+Refresh captures after UI changes (`npm run dev` in another terminal):
 
 ```bash
 npm run docs:screenshots
@@ -96,41 +134,36 @@ The original 7th CCIS Hackathon entry showed a faculty credential workflow: uplo
 
 Reviewers can click through a complete loop without private backend accounts, storage buckets, or OpenAI keys. Seeded data, generated sample files, and deterministic AI/OCR fallbacks keep the story honest and runnable from a clean clone or GitHub Pages.
 
-What that means in practice:
-
-- **Faculty intake** — validate sample files, classify the document type, and store a pending submission in this browser.
-- **Admin review** — open a demo preview, approve or return the file, and leave an audit trail in local demo storage.
-- **Profile proof** — edit professional details and draft a biography from approved credentials.
-- **Readable CCIS theme** — light mint surfaces and a dark green-black chrome share one brand, with a public theme toggle.
-- **Reviewer telemetry** — a lower-right Web Vitals control reports LCP, INP, CLS, FCP, and TTFB locally. It does not send analytics anywhere.
+| Surface | What reviewers can try |
+| --- | --- |
+| Faculty intake | Validate sample files, classify the document type, and store a pending submission in this browser. |
+| Admin review | Open a demo preview, approve or return the file, and leave an audit trail in local demo storage. |
+| Profile proof | Edit professional details and draft a biography from approved credentials. |
+| CCIS theme | Light mint surfaces and dark green-black chrome share one brand, with a public theme toggle. |
+| Reviewer telemetry | Lower-right Web Vitals reports LCP, INP, CLS, FCP, and TTFB locally. |
 
 Public checkpoint: [`v2.1.1`](https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System/releases/tag/v2.1.1). Current release notes live in [`docs/release-status.md`](docs/release-status.md).
 
+<details>
+<summary>Pull-request CI policy</summary>
+
 Pull-request CI is read-only and receives no repository secrets. Owners, collaborators, Dependabot, and Imgbot can be readied and queued for squash auto-merge only after all required checks succeed; other forks stay manual. Workflow dependencies are pinned to full commit SHAs. See [`.github/CI_SECURITY.md`](.github/CI_SECURITY.md).
+
+</details>
 
 ---
 
 ## Key capabilities
 
-### Smart upload pipeline
+**Smart upload pipeline.** Faculty users drop a sample credential on the dashboard. The demo checks type and size, classifies the document, stores the submission, and stays usable when OCR or OpenAI services are not configured.
 
-Faculty users drop a sample credential on the dashboard. The demo checks type and size, classifies the document, stores the submission, and keeps the flow usable when OCR or OpenAI services are not configured.
+**Role-based demo routing.** Administrators and faculty users land in separate app areas. `ProtectedRoute` reads the signed-in role from browser-local demo state.
 
-### Role-based demo routing
+**Admin review dashboard.** Admins review pending submissions, open the demo file preview, and approve or return uploads. Faculty users then see the updated status in Uploaded Files.
 
-Administrators and faculty users land in separate app areas. `ProtectedRoute` reads the signed-in role from browser-local demo state.
+**Profile builder and bio drafting.** The faculty profile screen supports editable professional details, document-assisted autofill, and a biography draft action based on approved credentials. In public demo mode this uses safe fallbacks unless a local API key is set.
 
-### Admin review dashboard
-
-Admins review pending submissions, open the demo file preview, and approve or return uploads. Faculty users then see the updated status in Uploaded Files.
-
-### Profile builder and bio drafting
-
-The faculty profile screen supports editable professional details, document-assisted autofill, and a biography draft action based on approved credentials. In public demo mode this uses safe fallbacks unless a local API key is set.
-
-### Light and dark brand theme
-
-One CCIS green token system covers landing, auth, faculty, and admin chrome. Status chips use `success`, `warning`, and `info` tokens. The theme-color meta tag follows the active mode (`#f3faf4` light, `#102418` dark).
+**Light and dark brand theme.** One CCIS green token system covers landing, auth, faculty, and admin chrome. Status chips use `success`, `warning`, and `info` tokens. The theme-color meta tag follows the active mode (`#f3faf4` light, `#102418` dark).
 
 ---
 
@@ -220,7 +253,8 @@ npx playwright test
 
 To verify the built output with the same base path used by GitHub Pages, use the commands in `docs/demo-checklist.md`. `npm run preview:pages` serves `dist` under the repository base path so local QA matches GitHub Pages asset URLs.
 
-### Restoration notes
+<details>
+<summary>Restoration notes</summary>
 
 - `npm ci` works without `--legacy-peer-deps`.
 - The production build creates `dist/404.html` through a cross-platform Node script.
@@ -229,6 +263,8 @@ To verify the built output with the same base path used by GitHub Pages, use the
 - `npm run security:scan` checks source files for common private key and token patterns.
 - Local and GitHub Pages demo mode preserve the 7th CCIS Hackathon workflow without requiring private accounts.
 - The demo backend is local-only and is not production authentication, production authorization, or production document storage.
+
+</details>
 
 ---
 
