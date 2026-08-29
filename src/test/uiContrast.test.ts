@@ -17,10 +17,11 @@ function extractBlock(css: string, selector: string) {
 describe('UI contrast and print-safe styling', () => {
   test('keeps dashboard headings on valid Tailwind font utilities', () => {
     const dashboard = readSourceFile('src/pages/admin/dashboard/index.tsx');
+    const header = readSourceFile('src/components/layout/PageHeader.tsx');
 
     expect(dashboard).not.toContain('font-semi bold');
     expect(dashboard).toContain('Quick Actions');
-    expect(dashboard).toContain('font-semibold text-foreground');
+    expect(header).toContain('font-semibold tracking-tight text-foreground');
   });
 
   test('forces profile print output back to paper-safe semantic colors', () => {
