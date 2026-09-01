@@ -14,6 +14,8 @@ Clerk can be enabled as an optional identity showcase by setting `VITE_CLERK_PUB
 
 The data is stored in the visitor's browser storage under `smart-profile-demo-state-v1`. It does not sync across browsers, devices, or users.
 
+Theme preference is separate from demo state. `next-themes` stores the selected light/dark mode in local `theme` storage so the CCIS green chrome survives a refresh in that browser. Local Web Vitals readings are session-only and are not written into demo state.
+
 ## What It Does Not Do
 
 - It does not require a hosted identity provider.
@@ -42,6 +44,8 @@ Additional seeded faculty profiles use the same demo password for admin-review d
 - `liza.mercado@umak.edu.ph` / `Faculty123`
 
 Generated sample files in `public/demo-samples` cover certificate, transcript, diploma, CV, and research summary records. They are fictional and safe for public demo testing.
+
+Product stills of the current faculty and admin chrome are in `docs/images/`. Looping GIFs and the silent demo MP4 are in `docs/media/`. Regenerate them with `npm run docs:screenshots` and `npm run docs:media` while the local Vite server is running.
 
 ## Optional AI Behavior
 

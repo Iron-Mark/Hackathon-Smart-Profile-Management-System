@@ -1,71 +1,232 @@
 <div align="center">
+  <img src="public/fav-icon.png" width="88" alt="College of Computing and Information Sciences, University of Makati seal" />
 
-# 🎓 7th CCIS Hackathon Smart Profile Management System
-**Restored public demo for faculty credential uploads, admin review, and profile building**
+  <h1>CCIS Smart Faculty Profile Management System</h1>
 
-[![React Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)](https://openai.com/)
-[![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev/)
+  <p>
+    A restored 7th CCIS Hackathon showcase for faculty credentials, admin review, and profile proofing.
+    <br />
+    Live in the browser. No backend required.
+  </p>
 
+  <p>
+    <a href="https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/"><strong>Live demo</strong></a>
+    ·
+    <a href="docs/PUBLIC_DEMO.md">Public demo guide</a>
+    ·
+    <a href="docs/release-status.md">Release status</a>
+  </p>
+
+  <p>
+    <a href="https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/"><img src="https://img.shields.io/badge/Live_Demo-GitHub_Pages-0B7A4B?style=flat-square" alt="Live Demo" /></a>
+    <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-102418?style=flat-square&logo=vite&logoColor=FFD62E" alt="Vite" /></a>
+    <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-102418?style=flat-square&logo=typescript&logoColor=3178C6" alt="TypeScript" /></a>
+    <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind-102418?style=flat-square&logo=tailwindcss&logoColor=38BDF8" alt="Tailwind CSS" /></a>
+    <a href="https://playwright.dev/"><img src="https://img.shields.io/badge/Playwright-102418?style=flat-square&logo=playwright&logoColor=2EAD33" alt="Playwright" /></a>
+  </p>
 </div>
+
+<p align="center">
+  <a href="docs/media/demo.mp4">
+    <img src="docs/media/preview.gif" alt="Quick preview: Start demo opens login, then the faculty workspace for Dr. Maria Santos" width="920" />
+  </a>
+</p>
+<p align="center">
+  <sub>
+    Quick preview of how it works. Click for the silent
+    <a href="docs/media/demo.mp4">full demo video</a> (MP4).
+    GitHub README can loop GIFs but cannot autoplay video.
+    Reuse these files from <a href="docs/media/README.md">docs/media</a> in later marketing.
+  </sub>
+</p>
 
 ---
 
-## 🌟 Restoration Status
-This repository contains the source code for the original 7th CCIS Hackathon entry. It has been restored so a developer can install it from a clean clone, run it locally, build it, and demonstrate the main faculty/admin credential workflow without needing private backend or OpenAI credentials.
+## Try it in 60 seconds
 
-Public showcase URL: https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
+Open the live GitHub Pages demo:
 
-Release checkpoint: [`v2.1.1`](https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System/releases/tag/v2.1.1)
+**https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/**
 
-Release status: [`docs/release-status.md`](docs/release-status.md)
+1. Select **Start demo** to prefill the faculty reviewer account.
+2. Upload a generated sample credential from the faculty dashboard.
+3. Sign in as admin, open **Approvals**, preview the file, and approve it.
+4. Return as faculty and confirm the credential is approved.
 
-The public build is intentionally demo-only. It uses seeded reviewer accounts, browser-local demo storage, generated sample files, and deterministic AI/OCR fallbacks when private API keys are not configured. There is no supported hosted persistence path in this showcase branch.
+| Role | Email | Password |
+| :---: | --- | --- |
+| Faculty | `faculty@umak.edu.ph` | `Faculty123` |
+| Admin | `admin@umak.edu.ph` | `Admin123` |
 
-Pull-request CI is read-only and receives no repository secrets. Owners,
-collaborators, Dependabot, and Imgbot can be readied and queued for squash
-auto-merge only after all required checks succeed; other forks stay manual.
-Workflow dependencies are pinned to full commit SHAs. See
-[`.github/CI_SECURITY.md`](.github/CI_SECURITY.md) for the maintained branch,
-fork, and workflow trust policy.
+Extra seeded faculty for the admin queue: `daniel.reyes@umak.edu.ph` and `liza.mercado@umak.edu.ph` (same faculty password).
 
-<div align="center">
-  <img src="docs/images/login.png" alt="Login Page" width="80%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
-  <br>
-  <em>Current GitHub Pages login screen with seeded reviewer shortcuts.</em>
-</div>
+This is a **browser-local public showcase**, not a production records system. Use the generated sample files only. Do not upload real IDs, transcripts, licenses, or private faculty documents.
 
----
-
-## 🚀 Key Features
-
-### 🧠 Smart Upload Demo Pipeline
-Faculty users can upload sample credential files from the dashboard. The restored demo validates file type and size, classifies the document, stores the submission, and keeps the flow usable even when private OCR or OpenAI services are unavailable.
-
-### 🛡️ Role-Based Demo Routing
-Administrators and faculty users are routed into separate app areas. The React `ProtectedRoute` layer checks the signed-in account role from browser-local demo state.
-
-### 📊 Admin Review Dashboard
-Admins can review pending credential submissions, open the demo file preview, and approve or reject uploads. Faculty users can then see the updated status in their uploaded files view.
-
-### ✍️ Profile Builder And Bio Drafting
-The faculty profile screen supports editable professional details, document-assisted autofill, and a biography draft action based on approved credentials. In public demo mode, the feature uses safe fallback behavior unless an API key is configured locally.
-
-<div align="center">
-  <img src="docs/images/profile.png" alt="Faculty Profile & AI Bio" width="80%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-top: 20px;" />
-  <br>
-  <em>Current faculty profile screen from the restored public demo.</em>
-</div>
+<p align="center">
+  <img src="docs/images/login.png" alt="Login screen with Faculty demo and Admin demo shortcuts" width="720" />
+</p>
+<p align="center"><sub>Seeded Faculty demo and Admin demo shortcuts. Register with any valid email for a browser-local faculty account.</sub></p>
 
 ---
 
-## 🏗️ Architecture & Engineering
+## Feature clips
 
-The restored project keeps the original React, Vite, OCR, and OpenAI-assisted product direction while making the public showcase reliable without private services. The demo backend stores seeded accounts, submissions, audit logs, and file metadata in browser-local storage. Uploaded files are demo-local and are not sent to a hosted document store.
+Looping GIFs for README, social posts, and later marketing. The silent MP4 walkthrough is [`docs/media/demo.mp4`](docs/media/demo.mp4). Usage notes live in [`docs/media/README.md`](docs/media/README.md).
 
-### The AI End-to-End Flow
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/media/feature-upload.gif" alt="Faculty smart upload classifying a sample certificate" />
+      <br />
+      <sub>Smart upload</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/media/feature-approvals.gif" alt="Admin approval queue approving a pending certificate" />
+      <br />
+      <sub>Admin approvals</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/media/feature-profile.gif" alt="Faculty profile builder generating an AI biography from credentials" />
+      <br />
+      <sub>Profile AI bio</sub>
+    </td>
+    <td align="center">
+      <img src="docs/media/feature-uploaded-files.gif" alt="Uploaded files table filtered to pending then all credentials" />
+      <br />
+      <sub>Uploaded files</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/media/feature-theme.gif" alt="Faculty workspace switching from light mint chrome to dark green-black chrome" />
+      <br />
+      <sub>Light and dark theme</sub>
+    </td>
+    <td align="center">
+      <img src="docs/media/feature-web-vitals.gif" alt="Landing page Core Web Vitals panel showing LCP, FCP, and TTFB" />
+      <br />
+      <sub>Web Vitals</sub>
+    </td>
+  </tr>
+</table>
+
+---
+
+## Product stills
+
+Light and dark mode share one CCIS green token system. The landing hero stays a dark branded band in both themes so the first impression does not invert to bright lime.
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/images/landing-dark.png" alt="Landing page in dark mode" />
+      <br />
+      <sub>Landing · dark</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/images/landing-workflow.png" alt="Landing workflow steps, compact sample files, and public demo facts" />
+      <br />
+      <sub>Workflow, samples, and facts</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/images/faculty-dashboard.png" alt="Faculty dashboard with metric strip and smart upload" />
+      <br />
+      <sub>Faculty workspace · light</sub>
+    </td>
+    <td align="center">
+      <img src="docs/images/faculty-dashboard-dark.png" alt="Faculty dashboard in dark mode" />
+      <br />
+      <sub>Faculty workspace · dark</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/images/uploaded-files.png" alt="Uploaded files table with status chips and row actions" />
+      <br />
+      <sub>Uploaded files table</sub>
+    </td>
+    <td align="center">
+      <img src="docs/images/profile.png" alt="Faculty profile builder with Smart Profile Builder and education records" />
+      <br />
+      <sub>Profile builder</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/images/dashboard.png" alt="Admin dashboard with metric strip, charts, and pending submissions table" />
+      <br />
+      <sub>Admin dashboard</sub>
+    </td>
+    <td align="center">
+      <img src="docs/images/approvals.png" alt="Admin approval queue with Approve, Return, and View" />
+      <br />
+      <sub>Approval queue</sub>
+    </td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="docs/images/web-vitals.png" alt="Landing page with the Core Web Vitals panel open showing LCP, FCP, and TTFB" width="920" />
+</p>
+<p align="center"><sub>Local Core Web Vitals: LCP, INP, CLS, FCP, and TTFB stay in this browser. Nothing is sent anywhere.</sub></p>
+
+Refresh captures after UI changes (`npm run dev` in another terminal):
+
+```bash
+npm run docs:screenshots
+npm run docs:media
+```
+
+Stills go to `docs/images/`. GIFs and the demo MP4 go to `docs/media/`. See [`docs/media/README.md`](docs/media/README.md) for clip names, size budget, and `DOCS_MEDIA_ONLY`.
+
+---
+
+## Why this demo exists
+
+The original 7th CCIS Hackathon entry showed a faculty credential workflow: upload, classify, review, approve, then turn approved records into a professional profile. This repository restores that product path as a **portfolio-ready public demo**.
+
+Reviewers can click through a complete loop without private backend accounts, storage buckets, or OpenAI keys. Seeded data, generated sample files, and deterministic AI/OCR fallbacks keep the story honest and runnable from a clean clone or GitHub Pages.
+
+| Surface | What reviewers can try |
+| --- | --- |
+| Faculty intake | Validate sample files, classify the document type, and store a pending submission in this browser. |
+| Admin review | Open a demo preview, approve or return the file, and leave an audit trail in local demo storage. |
+| Profile proof | Edit professional details and draft a biography from approved credentials. |
+| CCIS theme | Light mint surfaces and dark green-black chrome share one brand, with a public theme toggle. |
+| Reviewer telemetry | Lower-right Web Vitals reports LCP, INP, CLS, FCP, and TTFB locally. |
+
+Public checkpoint: [`v2.1.1`](https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System/releases/tag/v2.1.1). Current release notes live in [`docs/release-status.md`](docs/release-status.md).
+
+<details>
+<summary>Pull-request CI policy</summary>
+
+Pull-request CI is read-only and receives no repository secrets. Owners, collaborators, Dependabot, and Imgbot can be readied and queued for squash auto-merge only after all required checks succeed; other forks stay manual. Workflow dependencies are pinned to full commit SHAs. See [`.github/CI_SECURITY.md`](.github/CI_SECURITY.md).
+
+</details>
+
+---
+
+## Key capabilities
+
+**Smart upload pipeline.** Faculty users drop a sample credential on the dashboard. The demo checks type and size, classifies the document, stores the submission, and stays usable when OCR or OpenAI services are not configured.
+
+**Role-based demo routing.** Administrators and faculty users land in separate app areas. `ProtectedRoute` reads the signed-in role from browser-local demo state.
+
+**Admin review dashboard.** Admins review pending submissions, open the demo file preview, and approve or return uploads. Faculty users then see the updated status in Uploaded Files.
+
+**Profile builder and bio drafting.** The faculty profile screen supports editable professional details, document-assisted autofill, and a biography draft action based on approved credentials. In public demo mode this uses safe fallbacks unless a local API key is set.
+
+**Light and dark brand theme.** One CCIS green token system covers landing, auth, faculty, and admin chrome. Status chips use `success`, `warning`, and `info` tokens. The theme-color meta tag follows the active mode (`#f3faf4` light, `#102418` dark).
+
+---
+
+## Architecture
+
+The restored project keeps the original React, Vite, OCR, and OpenAI-assisted product direction while making the public showcase reliable without private services. Seeded accounts, submissions, audit logs, and file metadata live in browser storage. Uploaded files stay demo-local and are not sent to a hosted document store.
 
 ```mermaid
 graph TD
@@ -79,74 +240,13 @@ graph TD
     H --> I[Optional profile bio draft uses approved credentials]
 ```
 
-<br>
+### Demo-only backend
 
-<div align="center">
-  <img src="docs/images/dashboard.png" alt="Admin Dashboard" width="80%" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); margin-bottom: 20px;" />
-  <br>
-  <em>Current admin dashboard with seeded public demo data.</em>
-</div>
-
----
-
-## 💻 Running Locally
-
-### Requirements
-
-- Node.js 20 or newer
-- npm 11 or newer
-
-### Demo Mode Quick Start
-
-Demo mode is the only supported runtime path. It uses local browser storage with seeded accounts, profile data, submissions, audit logs, and storage metadata.
-
-```bash
-npm ci
-copy .env.example .env.local
-npm run dev
-```
-
-Open the local Vite URL, usually `http://localhost:5173`.
-
-Demo credentials:
-
-- Faculty: `faculty@umak.edu.ph` / `Faculty123`
-- Admin: `admin@umak.edu.ph` / `Admin123`
-- Additional seeded faculty examples for admin review data: `daniel.reyes@umak.edu.ph` / `Faculty123` and `liza.mercado@umak.edu.ph` / `Faculty123`
-
-The landing page includes a Start demo button that opens the login screen with seeded faculty credentials prefilled. It also links to generated sample credential files in `public/demo-samples`.
-
-The login screen includes quick-fill buttons for both seeded accounts. The login and registration screens also include a Reset demo data button for clearing stale browser-local demo state.
-
-Main demo flow:
-
-1. Log in as the faculty user.
-2. Confirm the upload area warns visitors to use sample files only, then upload a demo credential from the faculty dashboard.
-3. Log in as the admin user.
-4. Open Approvals, select View, and confirm the demo preview opens for the uploaded file.
-5. Approve the uploaded credential.
-6. Log back in as faculty, confirm the credential status is approved, and select View from the faculty file card.
-
-Public visitors can also register with any valid email address in demo mode. Registration creates a local faculty account in that browser only. Do not upload sensitive real documents to a public showcase build; demo data is browser-local and meant for generated sample files. The included sample set covers certificate, transcript, diploma, CV, and research summary records.
-
-For a concise showcase script, see `docs/demo-checklist.md`.
-For public reviewer notes, see `docs/PUBLIC_DEMO.md`.
-For demo backend limitations, see `docs/demo-backend.md`.
-For optional Clerk identity and Organization controls, see `docs/clerk-showcase-auth.md`.
-For the verified release checkpoint and current release gate, see `docs/release-status.md`.
-The README screenshots are maintained in `docs/images/login.png`, `docs/images/profile.png`, and `docs/images/dashboard.png`.
-
-### Performance And Web Vitals
-
-Route screens are lazy-loaded so the landing/auth experience does not load every admin and faculty page up front. Demo mode also shows a local Web Vitals button and panel for LCP, INP, CLS, FCP, and TTFB. The button shows the live collected-metric count for the current browser session, and the panel uses the official `web-vitals` package without sending metrics to a backend.
-
-### Demo-Only Backend
-
-The app no longer supports a hosted backend setup path. `VITE_DEMO_MODE=true` remains in `.env.example` to make the public intent explicit, but the browser-local demo backend is always used.
+The app does not support a hosted backend setup path. `VITE_DEMO_MODE=true` remains in `.env.example` to make that intent explicit, but the browser-local demo backend is always used.
 
 `VITE_OPENAI_API_KEY` is optional for local restoration. If it is missing, AI classification and biography generation use mock/demo fallbacks. Do not use a browser-exposed OpenAI key for production without a server-side proxy.
 
-### Optional Clerk Showcase Auth
+### Optional Clerk showcase auth
 
 Clerk can be enabled for sign-in, sign-up, profile menu, and Organization switching by adding a publishable key to `.env.local`:
 
@@ -154,16 +254,48 @@ Clerk can be enabled for sign-in, sign-up, profile menu, and Organization switch
 VITE_CLERK_PUBLISHABLE_KEY=pk_test_or_pk_live_value_here
 ```
 
-This does not add a production backend. Clerk-authenticated visitors are mapped to a browser-local faculty demo account, and all profile, upload, submission, and approval data still stays in that browser. Admin access remains the seeded admin demo account because browser-side Organization state is not a trusted authorization source.
-
-Helpful Clerk resources:
+This does not add a production backend. Clerk-authenticated visitors map to a browser-local faculty demo account. Admin access remains the seeded admin demo account because browser-side Organization state is not a trusted authorization source.
 
 - React quickstart: https://clerk.com/docs/react/getting-started/quickstart
 - Organizations: https://clerk.com/docs/guides/organizations/overview
 - Components: https://clerk.com/docs/reference/components/overview
 - Dashboard: https://dashboard.clerk.com/
 
-### Verification Commands
+---
+
+## Run locally
+
+### Requirements
+
+- Node.js 20 or newer
+- npm 11 or newer
+
+### Quick start
+
+```bash
+npm ci
+cp .env.example .env.local   # Windows: copy .env.example .env.local
+npm run dev
+```
+
+Open the local Vite URL, usually `http://localhost:5173`.
+
+The landing page **Start demo** button opens login with seeded faculty credentials prefilled and links to generated sample files in `public/demo-samples`. Login and register also include **Reset demo data** for clearing stale browser-local state.
+
+Public visitors can register with any valid email. Registration creates a local faculty account in that browser only. The sample set covers certificate, transcript, diploma, CV, and research summary records.
+
+### Docker
+
+The repository includes a multi-stage Dockerfile that builds the React project and serves the static output through NGINX.
+
+```bash
+docker build -t smart-profile-system .
+docker run -p 80:80 smart-profile-system
+```
+
+---
+
+## Verification
 
 ```bash
 npm ci
@@ -176,30 +308,10 @@ npm run build
 npx playwright test
 ```
 
-To verify the built output with the same base path used by GitHub Pages, use the commands in `docs/demo-checklist.md`.
-The `npm run preview:pages` helper serves `dist` under the repository base path so local QA matches GitHub Pages asset URLs.
+To verify the built output with the same base path used by GitHub Pages, use the commands in `docs/demo-checklist.md`. `npm run preview:pages` serves `dist` under the repository base path so local QA matches GitHub Pages asset URLs.
 
-### 🐋 Docker Optimization
-The repository includes a multi-stage Dockerfile that builds the React project and serves the static output through NGINX.
-```bash
-docker build -t smart-profile-system .
-docker run -p 80:80 smart-profile-system
-```
-
-### 🧪 Verifiable QA
-This platform ships with Vitest component/unit coverage and Playwright end-to-end coverage for the restored demo workflow and RBAC smoke checks.
-```bash
-# Run ESLint validation
-npm run lint
-
-# Run Vitest
-npm test -- --run
-
-# Run headless Playwright End-to-End tests
-npx playwright test
-```
-
-### Restoration Notes
+<details>
+<summary>Restoration notes</summary>
 
 - `npm ci` works without `--legacy-peer-deps`.
 - The production build creates `dist/404.html` through a cross-platform Node script.
@@ -209,13 +321,29 @@ npx playwright test
 - Local and GitHub Pages demo mode preserve the 7th CCIS Hackathon workflow without requiring private accounts.
 - The demo backend is local-only and is not production authentication, production authorization, or production document storage.
 
+</details>
+
 ---
 
-## 👤 About the Author
+## Documentation
+
+| Doc | What it covers |
+| --- | --- |
+| [`docs/PUBLIC_DEMO.md`](docs/PUBLIC_DEMO.md) | Fast reviewer path, safety notes, post-deploy smoke checks |
+| [`docs/media/README.md`](docs/media/README.md) | Preview GIF, feature GIFs, demo MP4, recapture, marketing reuse |
+| [`docs/demo-checklist.md`](docs/demo-checklist.md) | Showcase script, theme checks, screenshot refresh, Pages preview |
+| [`docs/demo-backend.md`](docs/demo-backend.md) | Browser-local storage, reset behavior, optional Clerk/AI |
+| [`docs/seo-readiness.md`](docs/seo-readiness.md) | Canonical URL, indexing policy, AEO/GEO sources |
+| [`docs/clerk-showcase-auth.md`](docs/clerk-showcase-auth.md) | Optional Clerk identity, organizations, limitations |
+| [`docs/release-status.md`](docs/release-status.md) | Verified public checkpoint and release gate |
+
+---
+
+## About the author
 
 * **Sole maintainer:** Mark Siazon
 
-## 👥 Past Initial Hackathon Team (Team 2nd Choice)
+## Past initial hackathon team (Team 2nd Choice)
 
 * **Mark Siazon** – Lead Frontend Developer & UI/UX
 * **Charles Nathaniel Togle** – Backend & Integration

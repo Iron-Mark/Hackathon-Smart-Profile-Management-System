@@ -67,10 +67,10 @@ function ClerkSyncedProtectedRoute(props: ProtectedRouteProps) {
 
   if (syncError) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6 text-slate-100">
-        <div className="max-w-md rounded-lg border border-red-400/30 bg-red-400/10 p-6">
-          <h1 className="text-lg font-semibold text-red-100">Clerk demo profile unavailable</h1>
-          <p className="mt-2 text-sm text-red-50/80">{syncError}</p>
+      <div className="flex min-h-screen items-center justify-center bg-background p-6 text-foreground">
+        <div className="max-w-md rounded-lg border border-destructive/40 bg-destructive/10 p-6">
+          <h1 className="text-lg font-semibold text-destructive">Clerk demo profile unavailable</h1>
+          <p className="mt-2 text-sm text-muted-foreground">{syncError}</p>
         </div>
       </div>
     );

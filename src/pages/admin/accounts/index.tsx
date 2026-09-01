@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { AppSidebar } from "@/components/app-sidebar";
+import { PageShell } from "@/components/layout/PageShell";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { Surface } from "@/components/layout/Section";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { 
   Dialog, 
   DialogContent, 
@@ -40,7 +40,7 @@ import getFromDatabase from "@/tools/database/getFromDatabase";
 import removeFromDatabase from "@/tools/database/removeFromDatabase";
 import updateDatabase from "@/tools/database/updateDatabase";
 import signUpUser from "@/tools/accounts/signUpUser";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { logAudit } from "@/tools/database/logAudit";
 import backend from "@/client/backend";
@@ -217,20 +217,12 @@ export default function AdminAccountsPage() {
   }, []);
 
   return (
-    <SidebarProvider>
-      <Toaster position="top-right" />
-      <div className="flex w-screen min-h-screen">
-        <AppSidebar className="hidden md:block" />
-        <div className="flex-1 flex flex-col overflow-auto">
-          <main className="flex-1 w-full bg-muted/40 text-foreground p-6">
-            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">Account Management</h1>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Manage browser-local demo reviewers, faculty profiles, and role access.
-                </p>
-              </div>
-              
+    <PageShell>
+            <PageHeader
+              kicker="Reviewer workspace"
+              title="Account Management"
+              description="Manage browser-local demo reviewers, faculty profiles, and role access."
+              actions={
               <Dialog open={isDialogOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
                   <Button>Add New User</Button>
@@ -295,7 +287,8 @@ export default function AdminAccountsPage() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-            </div>
+              }
+            />
 
             <Dialog open={Boolean(editingUser)} onOpenChange={(open) => !open && setEditingUser(null)}>
               <DialogContent>
@@ -387,11 +380,7 @@ export default function AdminAccountsPage() {
               </DialogContent>
             </Dialog>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Faculty & Administrator Accounts</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <Surface>
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
@@ -426,7 +415,7 @@ export default function AdminAccountsPage() {
                             <TableCell>{user.email}</TableCell>
                             <TableCell className="capitalize">{user.type || "faculty"}</TableCell>
                             <TableCell>
-                              <Badge variant="outline" className="bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-200">
+                              <Badge variant="outline" className="bg-success/15 text-success">
                                 Active
                               </Badge>
                             </TableCell>
@@ -461,11 +450,7 @@ export default function AdminAccountsPage() {
                     No users found.
                   </p>
                 )}
-              </CardContent>
-            </Card>
-          </main>
-        </div>
-      </div>
-    </SidebarProvider>
+            </Surface>
+    </PageShell>
   );
 }

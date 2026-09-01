@@ -1,9 +1,17 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { PageShell } from "@/components/layout/PageShell";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { MetricStrip } from "@/components/layout/MetricStrip";
+import { Section, Surface } from "@/components/layout/Section";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 import { Link } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
@@ -42,7 +50,7 @@ interface CategoryDatum {
   value: number;
 }
 
-const COLORS = ['#2563eb', '#059669', '#d97706', '#dc2626', '#7c3aed', '#0891b2', '#ca8a04', '#be123c'];
+const COLORS = ['var(--info)', 'var(--success)', 'var(--warning)', 'var(--destructive)', 'var(--primary)', 'var(--chart-5)', 'var(--chart-2)', 'var(--chart-4)'];
 const chartTooltipStyle = {
   backgroundColor: 'var(--popover)',
   borderColor: 'var(--border)',
@@ -74,13 +82,13 @@ export default function AdminDashboard() {
     try {
       const submissions = await getFromDatabase<SubmissionRow>({ table: 'submissions', getAll: true, match: {} });
       if (!submissions || submissions.length === 0) return;
-      
+
       const keys = Object.keys(submissions[0]);
       const csv = [
         keys.join(','),
         ...submissions.map((row) => keys.map((key) => `"${String(row[key] ?? '').replace(/"/g, '""')}"`).join(','))
       ].join('\n');
-      
+
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -103,7 +111,7 @@ export default function AdminDashboard() {
         setUsersCount(accounts.length);
 
         const submissions = await getFromDatabase<SubmissionRow>({ table: 'submissions', getAll: true, match: {} });
-        
+
         const pending = submissions.filter((submission) => submission.status === "Pending");
         setPendingApprovals(pending.length);
         setRecentSubmissions(pending.slice(0, 5));
@@ -162,218 +170,171 @@ export default function AdminDashboard() {
     fetchData();
   }, []);
 
+  const metricValue = (value: number) =>
+    isLoading ? <Skeleton className="h-8 w-12" /> : value;
+
   return (
-    <SidebarProvider>
-      <div className="flex w-screen min-h-screen">
-        <AppSidebar className="hidden md:block" />
-        <div className="flex-1 flex flex-col overflow-auto">
-          <main className="flex-1 w-full bg-muted/40 text-foreground p-6">
-            <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Reviewer workspace</p>
-                <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
-                  Admin Dashboard
-                </h1>
-                <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-                  Monitor browser-local demo submissions, credential mix, and reviewer activity from one place.
-                </p>
-              </div>
-              <Button onClick={handleExportCSV} className="w-full sm:w-auto">
-                <Download className="h-4 w-4" />
-                Export CSV
-              </Button>
-            </div>
-            <Separator className="mb-6" />
+    <PageShell>
+      <PageHeader
+        kicker="Reviewer workspace"
+        title="Admin Dashboard"
+        description="Monitor browser-local demo submissions, credential mix, and reviewer activity from one place."
+        actions={
+          <Button onClick={handleExportCSV}>
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
+        }
+      />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="rounded-lg border-blue-200 bg-blue-50 text-blue-950 shadow-sm dark:border-blue-900/70 dark:bg-blue-950/50 dark:text-blue-100">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-sm">
-                    <UsersRound className="h-4 w-4" />
-                    Total Users
-                  </CardTitle>
-                  <CardDescription className="text-blue-800/80 dark:text-blue-100/75">Seeded and browser-local accounts</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : usersCount}</div>
-                </CardContent>
-              </Card>
+      <MetricStrip
+        items={[
+          { label: 'Total Users', value: metricValue(usersCount), hint: 'Seeded and browser-local accounts', icon: UsersRound, tone: 'info' },
+          { label: 'Active Sessions (24h)', value: metricValue(activeSessions), hint: 'Recent seeded login activity', icon: Activity, tone: 'success' },
+          { label: 'Pending Approvals', value: metricValue(pendingApprovals), hint: 'Credentials waiting for review', icon: ClipboardCheck, tone: 'warning' },
+        ]}
+      />
 
-              <Card className="rounded-lg border-green-200 bg-green-50 text-green-950 shadow-sm dark:border-green-900/70 dark:bg-green-950/50 dark:text-green-100">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-sm">
-                    <Activity className="h-4 w-4" />
-                    Active Sessions (24h)
-                  </CardTitle>
-                  <CardDescription className="text-green-900 dark:text-green-100">Recent seeded login activity</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : activeSessions}</div>
-                </CardContent>
-              </Card>
+      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <Section
+          title={
+            <span className="inline-flex items-center gap-2">
+              <FileStack className="h-5 w-5" />
+              Documents Uploaded (Last 7 Days)
+            </span>
+          }
+          description="Demo submissions grouped by day"
+        >
+          <Surface className="h-[300px] p-4 text-muted-foreground">
+            {isLoading ? <Skeleton className="h-full w-full" /> : (
+              <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 500, height: 300 }}>
+                <BarChart data={uploadData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.2} />
+                  <XAxis dataKey="name" tick={{ fill: 'currentColor' }} />
+                  <YAxis tick={{ fill: 'currentColor' }} />
+                  <RechartsTooltip contentStyle={chartTooltipStyle} labelStyle={{ color: 'var(--popover-foreground)' }} />
+                  <Bar dataKey="uploads" fill="var(--info)" radius={[4, 4, 0, 0]} isAnimationActive={false} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </Surface>
+        </Section>
 
-              <Card className="rounded-lg border-amber-200 bg-amber-50 text-amber-950 shadow-sm dark:border-amber-900/70 dark:bg-amber-950/50 dark:text-amber-100">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-sm">
-                    <ClipboardCheck className="h-4 w-4" />
-                    Pending Approvals
-                  </CardTitle>
-                  <CardDescription className="text-amber-900 dark:text-amber-100">Credentials waiting for review</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{isLoading ? <Skeleton className="h-9 w-12" /> : pendingApprovals}</div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-              <Card className="rounded-lg shadow-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileStack className="h-5 w-5" />
-                    Documents Uploaded (Last 7 Days)
-                  </CardTitle>
-                  <CardDescription>Demo submissions grouped by day</CardDescription>
-                </CardHeader>
-                <CardContent className="h-[300px] text-muted-foreground">
-                  {isLoading ? <Skeleton className="w-full h-full" /> : (
-                    <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 500, height: 300 }}>
-                      <BarChart data={uploadData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.2} />
-                        <XAxis dataKey="name" tick={{ fill: 'currentColor' }} />
-                        <YAxis tick={{ fill: 'currentColor' }} />
-                        <RechartsTooltip contentStyle={chartTooltipStyle} labelStyle={{ color: 'var(--popover-foreground)' }} />
-                        <Bar dataKey="uploads" fill="#2563eb" radius={[4, 4, 0, 0]} isAnimationActive={false} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  )}
-                </CardContent>
-              </Card>
-
-              <Card className="rounded-lg shadow-sm">
-                <CardHeader>
-                  <CardTitle>Document Categories</CardTitle>
-                  <CardDescription>Credential types in the browser-local queue</CardDescription>
-                </CardHeader>
-                <CardContent className="h-[300px] text-muted-foreground">
-                  {isLoading ? <Skeleton className="w-full h-full" /> : (
-                    <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 500, height: 300 }}>
-                      <PieChart>
-                        <Pie
-                          data={categoryData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={80}
-                          fill="#8884d8"
-                          paddingAngle={5}
-                          dataKey="value"
-                          label={{ fill: 'currentColor' }}
-                          isAnimationActive={false}
-                        >
-                          {categoryData.map((_, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <RechartsTooltip contentStyle={chartTooltipStyle} labelStyle={{ color: 'var(--popover-foreground)' }} />
-                        <Legend
-                          formatter={(value) => (
-                            <span className="text-foreground">{value}</span>
-                          )}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="mt-8">
-              <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <h2 className="text-2xl font-semibold text-foreground">
-                    Recent Submissions for Approval
-                  </h2>
-                  <p className="text-sm text-muted-foreground">Search pending demo records before opening Approvals.</p>
-                </div>
-                <label className="relative block w-full md:w-72">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <span className="sr-only">Search submissions</span>
-                  <Input
-                    type="text"
-                    placeholder="Search faculty or docs..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9"
+        <Section
+          title="Document Categories"
+          description="Credential types in the browser-local queue"
+        >
+          <Surface className="h-[300px] p-4 text-muted-foreground">
+            {isLoading ? <Skeleton className="h-full w-full" /> : (
+              <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 500, height: 300 }}>
+                <PieChart>
+                  <Pie
+                    data={categoryData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    paddingAngle={5}
+                    dataKey="value"
+                    label={{ fill: 'currentColor' }}
+                    isAnimationActive={false}
+                  >
+                    {categoryData.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip contentStyle={chartTooltipStyle} labelStyle={{ color: 'var(--popover-foreground)' }} />
+                  <Legend
+                    formatter={(value) => (
+                      <span className="text-foreground">{value}</span>
+                    )}
                   />
-                </label>
-              </div>
-              <div className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
-                <ul className="space-y-3">
-                  {isLoading ? (
-                    Array.from({ length: 3 }).map((_, i) => (
-                      <li key={i} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
-                        <Skeleton className="h-4 w-64" />
-                        <Skeleton className="h-8 w-20" />
-                      </li>
-                    ))
-                  ) : filteredRecentSubmissions.length > 0 ? (
-                    filteredRecentSubmissions.map((sub) => (
-                      <li key={sub.id} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
-                        <span className="text-sm text-muted-foreground">
-                          {sub.document_type} upload: <span className="font-medium text-foreground">{sub.file_name}</span>
-                        </span>
-                        <div className="space-x-2">
-                          <Button asChild size="sm" variant="outline">
-                            <Link to="/admin/approvals">Manage</Link>
-                          </Button>
-                        </div>
-                      </li>
-                    ))
-                  ) : (
-                    <li className="text-center text-sm text-muted-foreground py-2">No pending submissions.</li>
-                  )}
-                </ul>
-              </div>
-            </div>
-
-            <div className="mt-8">
-              <h2 className="mb-4 text-2xl font-semibold text-foreground">
-                Quick Actions
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
-                  <Button
-                    asChild
-                    className="w-full bg-blue-100 hover:bg-blue-200 text-blue-950 dark:bg-blue-900/70 dark:text-blue-100 dark:hover:bg-blue-900"
-                  >
-                    <Link to="/admin/accounts">Add User</Link>
-                  </Button>
-                  <Button
-                    asChild
-                    className="w-full bg-amber-100 hover:bg-amber-200 text-amber-950 dark:bg-amber-900/70 dark:text-amber-100 dark:hover:bg-amber-900"
-                  >
-                    <Link to="/admin/approvals">View Approvals</Link>
-                  </Button>
-
-                  <Button
-                    asChild
-                    className="w-full bg-green-100 hover:bg-green-200 text-green-950 dark:bg-green-900/70 dark:text-green-100 dark:hover:bg-green-900"
-                  >
-                    <Link to="/admin/reports">Generate Report</Link>
-                  </Button>
-
-                  <Button
-                    asChild
-                    className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                  >
-                    <Link to="/admin/settings">Settings</Link>
-                  </Button>
-
-              </div>
-            </div>
-          </main>
-        </div>
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </Surface>
+        </Section>
       </div>
-    </SidebarProvider>
+
+      <Section
+        className="mt-8"
+        title="Recent Submissions for Approval"
+        description="Search pending demo records before opening Approvals."
+        actions={
+          <label className="relative block w-full md:w-72">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <span className="sr-only">Search submissions</span>
+            <Input
+              type="text"
+              placeholder="Search faculty or docs..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </label>
+        }
+      >
+        <Surface>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Document</TableHead>
+                <TableHead>File</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-48" /></TableCell>
+                    <TableCell className="text-right"><Skeleton className="ml-auto h-8 w-20" /></TableCell>
+                  </TableRow>
+                ))
+              ) : filteredRecentSubmissions.length > 0 ? (
+                filteredRecentSubmissions.map((sub) => (
+                  <TableRow key={sub.id}>
+                    <TableCell className="text-muted-foreground">
+                      {sub.document_type} upload:
+                    </TableCell>
+                    <TableCell className="font-medium">{sub.file_name}</TableCell>
+                    <TableCell className="text-right">
+                      <Button asChild size="sm" variant="outline">
+                        <Link to="/admin/approvals">Manage</Link>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} className="py-6 text-center text-sm text-muted-foreground">
+                    No pending submissions.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </Surface>
+      </Section>
+
+      <Section className="mt-8" title="Quick Actions">
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline">
+            <Link to="/admin/accounts">Add User</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/admin/approvals">View Approvals</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/admin/reports">Generate Report</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/admin/settings">Settings</Link>
+          </Button>
+        </div>
+      </Section>
+    </PageShell>
   );
 }

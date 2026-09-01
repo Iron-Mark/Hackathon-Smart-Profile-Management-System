@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { AppSidebar } from "@/components/app-sidebar";
+import { PageShell } from "@/components/layout/PageShell";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { Surface } from "@/components/layout/Section";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -17,7 +17,7 @@ import getFromDatabase from "@/tools/database/getFromDatabase";
 import updateDatabase from "@/tools/database/updateDatabase";
 import getFileFromFolder from "@/tools/buckets/getFileFromFolder";
 import { logAudit } from "@/tools/database/logAudit";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 interface Submission {
   id: string;
@@ -94,21 +94,14 @@ export default function AdminApprovalsPage() {
   };
 
   return (
-    <SidebarProvider>
-      <Toaster position="top-right" />
-      <div className="flex w-screen min-h-screen">
-        <AppSidebar className="hidden md:block" />
-        <div className="flex-1 flex flex-col overflow-auto">
-          <main className="flex-1 w-full bg-muted/40 text-foreground p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-3xl font-bold">Approval Management</h1>
-            </div>
+    <PageShell>
+      <PageHeader
+        kicker="Reviewer workspace"
+        title="Approval Management"
+        description="Preview, approve, or return faculty credential submissions."
+      />
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Faculty Submissions</CardTitle>
-              </CardHeader>
-              <CardContent>
+      <Surface>
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -164,7 +157,7 @@ export default function AdminApprovalsPage() {
                                   <Button
                                     variant="default"
                                     size="sm"
-                                    className="mr-2 bg-green-700 hover:bg-green-800 text-white dark:bg-green-500 dark:text-green-950 dark:hover:bg-green-400"
+                                    className="mr-2 bg-success text-success-foreground hover:bg-success/90"
                                     onClick={() => handleAction(submission.id, "Approved")}
                                   >
                                     Approve
@@ -206,11 +199,7 @@ export default function AdminApprovalsPage() {
                     No submissions found.
                   </p>
                 )}
-              </CardContent>
-            </Card>
-          </main>
-        </div>
-      </div>
-    </SidebarProvider>
+      </Surface>
+    </PageShell>
   );
 }

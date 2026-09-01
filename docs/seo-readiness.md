@@ -43,6 +43,7 @@ For this repo, AEO means answer-engine optimization and GEO means generative-eng
 Implemented signals:
 
 - Visible **Public Demo Facts** content on the landing page.
+- Public theme toggle plus `theme-color` metadata that follows light (`#f3faf4`) and dark (`#102418`) mode.
 - Visible links from the landing page to `answers.md` and `llms.txt`.
 - Matching `FAQPage` JSON-LD in `index.html`.
 - Minimal `WebSite` and `Organization` JSON-LD context in `index.html`.

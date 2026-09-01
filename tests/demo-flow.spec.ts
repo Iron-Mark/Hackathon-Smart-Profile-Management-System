@@ -46,7 +46,7 @@ test('demo faculty upload can be approved by an admin end to end', async ({ page
   await page.getByRole('button', { name: 'Login' }).click();
   await page.goto(appRoute('/faculty/uploaded'));
 
-  const facultyRow = page.locator('[data-slot="card"]', { hasText: 'board-exam-certificate.png' }).first();
+  const facultyRow = page.locator('tr', { hasText: 'board-exam-certificate.png' }).first();
   await expect(facultyRow).toContainText('Approved');
 
   const facultyPreviewPromise = page.waitForEvent('popup');

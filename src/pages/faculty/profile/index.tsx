@@ -1,13 +1,13 @@
 // src/pages/faculty/profile/index.tsx
 import { useEffect, useState, useRef } from 'react'
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
-import { AppSidebar } from '@/components/app-sidebar'
+import { PageShell } from '@/components/layout/PageShell'
+import { Notice } from '@/components/layout/Notice'
+import { Section } from '@/components/layout/Section'
 import { Accordion } from '@/components/ui/accordion'
 import { Edit3Icon, SparklesIcon, PlusIcon, Trash2Icon, FileTextIcon, DownloadIcon } from 'lucide-react'
 import { analyzeDocument } from '@/tools/ai/analyzeDocument'
 import ProfileHeader from './ProfileHeader'
 import ProfileSection from './ProfileSection'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -25,7 +25,7 @@ import updateDatabase from '@/tools/database/updateDatabase'
 import getFromDatabase from '@/tools/database/getFromDatabase'
 import removeFromDatabase from '@/tools/database/removeFromDatabase'
 import extractTextFromImage from '@/tools/ocr/extractTextFromImage'
-import { toast, Toaster } from 'sonner'
+import { toast } from 'sonner'
 
 // Define the EducationalBackground and Experience types
 
@@ -68,6 +68,7 @@ export default function ProfilePage () {
   const [tempDescription, setTempDescription] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [isAutoFilling, setIsAutoFilling] = useState(false)
+  const [isEditingDescription, setIsEditingDescription] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const autoFillInputRef = useRef<HTMLInputElement>(null)
 
@@ -252,6 +253,7 @@ export default function ProfilePage () {
 
       if (success) {
         setDescription(updatedDescription)
+        setIsEditingDescription(false)
         toast.success('Description updated and pending approval')
       }
     } catch (error) {
@@ -393,15 +395,10 @@ export default function ProfilePage () {
   }
 
   return (
-    <SidebarProvider>
-      <Toaster position="top-right" className="print:hidden" />
-      <div className='flex w-screen min-h-screen flex-col md:flex-row'>
-        <AppSidebar className='hidden md:block print:hidden' />
-        <div className='flex-1 flex flex-col overflow-auto'>
-          <div className='md:hidden p-4 border-b print:hidden'>
-            <SidebarTrigger />
-          </div>
-          <main className='flex-1 w-full bg-muted/40 text-foreground p-4 md:p-6 lg:p-8 print:bg-white print:p-0 print:text-black print:[--background:white] print:[--foreground:black] print:[--card:white] print:[--card-foreground:black] print:[--muted:white] print:[--muted-foreground:#374151] print:[--border:#d1d5db] print:[&_*]:!text-black'>
+    <PageShell
+      contentClassName="print:bg-white print:text-black print:[--background:white] print:[--foreground:black] print:[--card:white] print:[--card-foreground:black] print:[--muted:white] print:[--muted-foreground:#374151] print:[--border:#d1d5db] print:[&_*]:!text-black"
+      innerClassName="print:max-w-none print:px-0 print:py-0"
+    >
             <ProfileHeader
               userId={userId}
               onProfileImageUpload={handleProfileImageUpload}
@@ -409,24 +406,19 @@ export default function ProfilePage () {
               className='relative flex flex-col items-center text-center'
             />
 
-            <div className='mt-6 max-w-4xl mx-auto space-y-3'>
-              {/* Auto-Fill Action Banner */}
-              <Card className="bg-indigo-50 border-indigo-200 text-indigo-950 shadow-sm overflow-hidden mb-4 print:hidden dark:bg-indigo-950/50 dark:border-indigo-900/70 dark:text-indigo-100">
-                <CardContent className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div>
-                    <h3 className="font-semibold text-indigo-950 flex items-center dark:text-indigo-100">
-                      <SparklesIcon className="w-5 h-5 mr-2" />
-                      Smart Profile Builder
-                    </h3>
-                    <p className="text-sm text-indigo-800 dark:text-indigo-200">
-                      Upload your CV, Certificate, or Diploma and let AI extract the details for you.
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
+            <div className='mt-6 max-w-4xl mx-auto space-y-6'>
+              <Notice
+                tone="info"
+                icon={SparklesIcon}
+                className="print:hidden"
+                title="Smart Profile Builder"
+                description="Upload your CV, Certificate, or Diploma and let AI extract the details for you."
+              >
+                  <div className="mt-3 flex flex-wrap gap-2">
                     <Button 
                       variant="outline"
                       onClick={() => window.print()}
-                      className="border-indigo-300 text-indigo-800 hover:bg-indigo-100 dark:border-indigo-700 dark:text-indigo-200 dark:hover:bg-indigo-900/60"
+                      className="border-info/40 text-info hover:bg-info/10"
                     >
                       <DownloadIcon className="w-4 h-4 mr-2" />
                       Export PDF
@@ -434,12 +426,11 @@ export default function ProfilePage () {
                     <Button 
                       onClick={() => autoFillInputRef.current?.click()}
                       disabled={isAutoFilling}
-                      className="bg-indigo-700 hover:bg-indigo-800 text-white whitespace-nowrap dark:bg-indigo-400 dark:text-indigo-950 dark:hover:bg-indigo-300"
+                      className="bg-info hover:bg-info/90 text-info-foreground whitespace-nowrap"
                     >
                       <FileTextIcon className="w-4 h-4 mr-2" />
                       {isAutoFilling ? 'Extracting...' : 'Upload & Auto-fill'}
                     </Button>
-                  </div>
                   <input
                     type="file"
                     ref={autoFillInputRef}
@@ -447,27 +438,24 @@ export default function ProfilePage () {
                     accept="image/*,.pdf"
                     className="hidden"
                   />
-                </CardContent>
-              </Card>
+                  </div>
+              </Notice>
 
-              {/* Profile Description Card */}
-              <Card className="bg-card text-card-foreground rounded-md shadow-sm overflow-hidden print:shadow-none print:border-none">
-                <CardHeader className="flex justify-between items-center flex-row print:p-2">
-                  <CardTitle className="font-semibold text-md sm:text-lg text-green-700 dark:text-green-300">
-                    Profile Description
-                  </CardTitle>
+              <Section
+                title={<span className="text-success">Profile Description</span>}
+                actions={
                   <div className="flex gap-2 print:hidden">
                     <Button 
                       variant="outline" 
                       size="sm" 
                       onClick={handleGenerateAIBio} 
                       disabled={isGenerating}
-                      className="text-indigo-700 border-indigo-300 hover:bg-indigo-50 text-xs sm:text-sm dark:text-indigo-200 dark:border-indigo-700 dark:hover:bg-indigo-950/60"
+                      className="text-info border-info/40 hover:bg-info/10 text-xs sm:text-sm"
                     >
                       <SparklesIcon className="w-4 h-4 mr-1 sm:mr-2" />
                       {isGenerating ? 'Generating Bio...' : 'Generate AI Bio'}
                     </Button>
-                    <Dialog>
+                    <Dialog open={isEditingDescription} onOpenChange={setIsEditingDescription}>
                       <DialogTrigger asChild>
                         <button aria-label="Edit profile description" className='text-muted-foreground hover:text-foreground p-2'>
                           <Edit3Icon className='w-5 h-5' />
@@ -492,7 +480,7 @@ export default function ProfilePage () {
                               variant="outline" 
                               onClick={handleGenerateSummary} 
                               disabled={isGenerating}
-                              className="text-indigo-700 border-indigo-300 hover:bg-indigo-50 dark:text-indigo-200 dark:border-indigo-700 dark:hover:bg-indigo-950/60"
+                              className="text-info border-info/40 hover:bg-info/10"
                             >
                               <SparklesIcon className="w-4 h-4 mr-2" />
                               {isGenerating ? 'Generating...' : 'AI Generate Summary'}
@@ -503,13 +491,15 @@ export default function ProfilePage () {
                       </DialogContent>
                     </Dialog>
                   </div>
-                </CardHeader>
-                <CardContent className='text-card-foreground leading-relaxed text-sm sm:text-base'>
+                }
+              >
+                <p className='leading-relaxed text-sm sm:text-base'>
                   {description.description || <span className="text-muted-foreground italic">No description provided. Click edit to add one.</span>}
-                </CardContent>
-              </Card>
+                </p>
+              </Section>
 
               {/* Educational Background */}
+              <div className="overflow-hidden rounded-lg border border-border divide-y divide-border">
               <Accordion
                 type='multiple'
                 value={openSections.filter(s => s === 'education')}
@@ -535,7 +525,7 @@ export default function ProfilePage () {
                       }}
                     >
                       <DialogTrigger asChild>
-                              <button aria-label={`Edit education ${ed.degree}`} className='text-muted-foreground hover:text-green-700 dark:hover:text-green-300' onClick={() => { setEditingEducation(ed); setIsAddingEdu(false); }}>
+                              <button aria-label={`Edit education ${ed.degree}`} className='text-muted-foreground hover:text-success' onClick={() => { setEditingEducation(ed); setIsAddingEdu(false); }}>
                                 <Edit3Icon className='w-4 h-4' />
                               </button>
                             </DialogTrigger>
@@ -549,7 +539,7 @@ export default function ProfilePage () {
                               <EducationForm data={editingEducation} onChange={setEditingEducation} onSave={handleSaveEducation} onCancel={() => setEditingEducation(null)} />
                             </DialogContent>
                           </Dialog>
-                          <button aria-label={`Delete education ${ed.degree}`} className='text-muted-foreground hover:text-red-700 dark:hover:text-red-300' onClick={() => handleDelete('educational_background', ed.id)}>
+                          <button aria-label={`Delete education ${ed.degree}`} className='text-muted-foreground hover:text-destructive' onClick={() => handleDelete('educational_background', ed.id)}>
                             <Trash2Icon className='w-4 h-4' />
                           </button>
                         </div>
@@ -610,7 +600,7 @@ export default function ProfilePage () {
                             }}
                           >
                             <DialogTrigger asChild>
-                              <button aria-label={`Edit work experience ${we.role}`} className='text-muted-foreground hover:text-green-700 dark:hover:text-green-300' onClick={() => { setEditingWork(we); setIsAddingWork(false); }}>
+                              <button aria-label={`Edit work experience ${we.role}`} className='text-muted-foreground hover:text-success' onClick={() => { setEditingWork(we); setIsAddingWork(false); }}>
                                 <Edit3Icon className='w-4 h-4' />
                               </button>
                             </DialogTrigger>
@@ -624,7 +614,7 @@ export default function ProfilePage () {
                               <WorkForm data={editingWork} onChange={setEditingWork} onSave={handleSaveWork} onCancel={() => setEditingWork(null)} />
                             </DialogContent>
                           </Dialog>
-                          <button aria-label={`Delete work experience ${we.role}`} className='text-muted-foreground hover:text-red-700 dark:hover:text-red-300' onClick={() => handleDelete('work_experiences', we.id)}>
+                          <button aria-label={`Delete work experience ${we.role}`} className='text-muted-foreground hover:text-destructive' onClick={() => handleDelete('work_experiences', we.id)}>
                             <Trash2Icon className='w-4 h-4' />
                           </button>
                         </div>
@@ -685,7 +675,7 @@ export default function ProfilePage () {
                             }}
                           >
                             <DialogTrigger asChild>
-                              <button aria-label={`Edit development ${item.role}`} className='text-muted-foreground hover:text-green-700 dark:hover:text-green-300' onClick={() => { setEditingDevelopment(item); setIsAddingDev(false); }}>
+                              <button aria-label={`Edit development ${item.role}`} className='text-muted-foreground hover:text-success' onClick={() => { setEditingDevelopment(item); setIsAddingDev(false); }}>
                                 <Edit3Icon className='w-4 h-4' />
                               </button>
                             </DialogTrigger>
@@ -699,7 +689,7 @@ export default function ProfilePage () {
                               <DevForm data={editingDevelopment} onChange={setEditingDevelopment} onSave={handleSaveDevelopment} onCancel={() => setEditingDevelopment(null)} />
                             </DialogContent>
                           </Dialog>
-                          <button aria-label={`Delete development ${item.role}`} className='text-muted-foreground hover:text-red-700 dark:hover:text-red-300' onClick={() => handleDelete('professional_development', item.id)}>
+                          <button aria-label={`Delete development ${item.role}`} className='text-muted-foreground hover:text-destructive' onClick={() => handleDelete('professional_development', item.id)}>
                             <Trash2Icon className='w-4 h-4' />
                           </button>
                         </div>
@@ -732,11 +722,9 @@ export default function ProfilePage () {
                   </div>
                 </ProfileSection>
               </Accordion>
+              </div>
             </div>
-          </main>
-        </div>
-      </div>
-    </SidebarProvider>
+    </PageShell>
   )
 }
 
