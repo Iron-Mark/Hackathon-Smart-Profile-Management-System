@@ -6,10 +6,11 @@ https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
 
 ## Current Release
 
-- Latest documented checkpoint: `v2.1.1`
-- GitHub release: https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System/releases/tag/v2.1.1
-- Release commit: `09573665db005f4a1114dcaf9606886a7cfbc73f`
+- Latest documented checkpoint: `v2.1.3`
+- GitHub tag: https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System/releases/tag/v2.1.3
+- Release commit: `b24fa02e3d8684915dacc4031fe8c02a03271e93` (merge of PR #42)
 - Public runtime model: static GitHub Pages app with browser-local demo storage
+- `v2.1.2` remains the June 2026 cleanup tag (`bde37623`) and is not this checkpoint
 
 ## What The Release Captures
 
@@ -20,7 +21,11 @@ https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
 - Optional local Clerk sign-in/sign-up showcase; admin access remains the seeded admin demo account.
 - Optional local OpenAI experimentation; missing keys use deterministic demo fallbacks.
 - Public SEO/AEO/GEO sources through landing-page facts, FAQ JSON-LD, `answers.md`, `llms.txt`, sitemap, robots, and social preview metadata.
-- Local Web Vitals panel backed by the official `web-vitals` package.
+- Dedicated 1200×630 Open Graph cards in `public/og/` composed from the CCIS seal and product stills, plus default `og-image.png`.
+- Marketing README stills, looping preview GIF, per-feature GIFs, and silent demo MP4.
+- Light and dark CCIS green chrome with a public theme toggle. The landing hero stays a dark branded band in both modes.
+- Local Web Vitals panel backed by the official `web-vitals` package. The Web Vitals button stays clickable above the login/register demo access panel.
+- Trusted `main` ← `dev` merges dispatch **Deploy to GitHub Pages** through the Actions API so `GITHUB_TOKEN` auto-merge still publishes the demo.
 
 ## Verification Gate
 
@@ -45,34 +50,18 @@ For GitHub Pages-style local QA, use the build preview commands in `docs/demo-ch
 - Refreshed the lockfile to resolve `nanoid` 3.3.18 and `undici` 7.29.0, removing the two high-severity findings present in the development snapshot.
 - `npm audit` reports zero vulnerabilities.
 - The full local gate passed: 21 Vitest files with 52 tests, ESLint, secret scanning, SEO and link checks, the GitHub Pages production build, and 26 Chromium Playwright tests.
-- This is local verification evidence only. It does not replace the documented `v2.1.1` public release or claim a new deployment.
-
-## Unreleased Branch Work
-
-Product work from PRs #29 and #31 is on `main` (first landed in `0b855b1`, 2026-09-02) but is **not** the public Pages checkpoint yet. The live URL still matches the 2026-08-10 deployment.
-
-The API Pages dispatcher from #39/#40 is on `main` (`10c5c28`). PR #40 itself still ran the old `gh workflow run` path and failed. The next trusted `main` ← `dev` merge should POST `deploy.yml` dispatches.
-
-Until a Pages run for current `main` succeeds and the live URL is re-checked:
-
-- Light and dark CCIS green chrome with a public theme toggle. The landing hero stays a dark branded band in both modes.
-- Web Vitals button stays clickable above the login/register demo access panel.
-- Marketing README plus refreshed `docs/images/` stills, `docs/media/` preview GIF, feature GIFs, silent demo MP4, and dedicated 1200x630 Open Graph cards in `public/og/`.
-
-These do **not** replace `v2.1.1` until they are deployed and re-checked against the live URL. The next documented tag after that check must be newer than `v2.1.2`.
+- This is historical local verification evidence only.
 
 ## Last Recorded Live Evidence
 
-The `v2.1.1` checkpoint was previously verified against GitHub Pages with:
+`v2.1.3` was verified against GitHub Pages on 2026-09-02 after workflow_dispatch run `33629926878` (triggered by Trusted PR Lifecycle after PR #42):
 
-- Full live Playwright suite: `17 passed`
-- Landing page and app deep links returning HTTP 200 through static fallbacks
-- Generated sample files returning HTTP 200
-- `answers.md`, `llms.txt`, `sitemap.xml`, `robots.txt`, and `og-image.png` returning HTTP 200
-- Mobile landing and faculty dashboard smoke checks
+- `og-image.png` `Last-Modified: Wed, 02 Sep 2026 12:27:02 GMT`, 1200×630, 346315 bytes
+- `/og/login.png`, `/og/faculty.png`, `/og/approvals.png`, `/og/landing.png` HTTP 200 and 1200×630
+- Landing, `sitemap.xml`, `robots.txt`, `llms.txt`, `answers.md`, sample SVGs, and `fav-icon.png` HTTP 200
+- `npm run smoke:live`: 9 passed (deep links, SEO including dedicated OG paths, public demo responsive)
+- Additional live Playwright: 11 passed (`tests/demo-flow.spec.ts`, `tests/theme-contrast.spec.ts`, `tests/web-vitals.spec.ts`) covering faculty upload → admin approve, theme toggle, and Web Vitals
 - No required backend secrets for the public build
-
-Treat these as release evidence for the historical checkpoint. Re-run the verification gate before making a fresh current-state claim.
 
 ## Release Safety Notes
 
@@ -87,7 +76,7 @@ GitHub does not start new workflows from `push` events created by `GITHUB_TOKEN`
 
 After a `main` ← `dev` merge, Trusted PR Lifecycle waits until the pull request is merged, then creates a `workflow_dispatch` on `deploy.yml` through the Actions API (`ref: main`). The lifecycle job has no git checkout, so `gh workflow run` cannot be used. A human merge of `dev` into `main` still deploys through the normal `push` trigger.
 
-PR #38 (`8c199f6`) and PR #40 (`10c5c28`) both merged while `main` still used `gh workflow run`, so Pages did not publish. The API dispatch landed in #40. Live Pages remains the 2026-08-10 build until a later promotion succeeds.
+This path succeeded for PR #42 (`b24fa02`, 2026-09-02). Earlier promotions #38 and #40 failed while `main` still called `gh workflow run`.
 
 ## Future Release Checklist
 
