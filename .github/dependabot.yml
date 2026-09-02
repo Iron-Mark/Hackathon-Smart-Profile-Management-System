@@ -1,5 +1,20 @@
 version: 2
 updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # Keep the released demo parked between security advisories.
+    open-pull-requests-limit: 0
+    labels:
+      - dependencies
+      - security
+    groups:
+      npm-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
   - package-ecosystem: github-actions
     directory: /
     target-branch: dev

@@ -20,8 +20,13 @@ jobs:
           echo "Validating PR route: ${HEAD_REF} -> ${BASE_REF}"
 
           if [ "${BASE_REF}" = "main" ] && [ "${HEAD_REF}" != "dev" ]; then
-            echo "::error::Only dev can open pull requests into main."
-            exit 1
+            case "${HEAD_REF}" in
+              dependabot/*) ;;
+              *)
+                echo "::error::Only dev and Dependabot security branches can open pull requests into main."
+                exit 1
+                ;;
+            esac
           fi
 
           if [ "${BASE_REF}" = "dev" ] && [ "${HEAD_REF}" = "main" ]; then

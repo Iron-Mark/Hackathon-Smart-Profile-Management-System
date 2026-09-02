@@ -56,9 +56,13 @@ jobs:
           if [[ "${draft}" == "true" ]]; then
             gh pr ready "${pr_url}"
           fi
-          if [[ "${base_ref}" == "main" && "${head_ref}" == "dev" ]]; then
+          if [[ "${base_ref}" == "main" ]]; then
             # Auto-merge waits for remaining required checks (CodeQL analyze, route-policy).
-            gh pr merge "${pr_url}" --auto --merge
+            if [[ "${head_ref}" == "dev" ]]; then
+              gh pr merge "${pr_url}" --auto --merge
+            else
+              gh pr merge "${pr_url}" --auto --squash
+            fi
 
             # GITHUB_TOKEN merges do not create a push workflow run, so Pages
             # would stay stale unless this job dispatches it after the merge lands.
@@ -74,7 +78,7 @@ jobs:
               echo "PR #${PR_NUMBER} did not merge within the wait window; not dispatching Pages."
               exit 0
             fi
-            echo "Dispatching GitHub Pages after PR #${PR_NUMBER} merged into main."
+            echo "Dispatching GitHub Pages after trusted PR #${PR_NUMBER} merged into main."
             # This job has no checkout; `gh workflow run` shells out to git.
             gh api --method POST \
               "repos/${REPOSITORY}/actions/workflows/deploy.yml/dispatches" \
