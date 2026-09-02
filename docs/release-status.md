@@ -25,7 +25,7 @@ https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
 - Marketing README stills, looping preview GIF, per-feature GIFs, and silent demo MP4.
 - Light and dark CCIS green chrome with a public theme toggle. The landing hero stays a dark branded band in both modes.
 - Local Web Vitals panel backed by the official `web-vitals` package. The Web Vitals button stays clickable above the login/register demo access panel.
-- Trusted `main` ← `dev` merges dispatch **Deploy to GitHub Pages** through the Actions API so `GITHUB_TOKEN` auto-merge still publishes the demo.
+- Trusted merges into `main` dispatch **Deploy to GitHub Pages** through the Actions API so `GITHUB_TOKEN` auto-merge still publishes the demo. Branch policy permits `dev` promotions and Dependabot security branches only.
 
 ## Verification Gate
 
@@ -74,7 +74,7 @@ For GitHub Pages-style local QA, use the build preview commands in `docs/demo-ch
 
 GitHub does not start new workflows from `push` events created by `GITHUB_TOKEN`. Trusted auto-merge therefore does **not** run `Deploy to GitHub Pages` on its own.
 
-After a `main` ← `dev` merge, Trusted PR Lifecycle waits until the pull request is merged, then creates a `workflow_dispatch` on `deploy.yml` through the Actions API (`ref: main`). The lifecycle job has no git checkout, so `gh workflow run` cannot be used. A human merge of `dev` into `main` still deploys through the normal `push` trigger.
+After any trusted merge into `main`, Trusted PR Lifecycle waits until the pull request is merged, then creates a `workflow_dispatch` on `deploy.yml` through the Actions API (`ref: main`). The lifecycle job has no git checkout, so `gh workflow run` cannot be used. A human merge into `main` still deploys through the normal `push` trigger.
 
 This path succeeded for PR #42 (`b24fa02`, 2026-09-02). Earlier promotions #38 and #40 failed while `main` still called `gh workflow run`.
 
