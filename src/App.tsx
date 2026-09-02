@@ -5,7 +5,7 @@ import { SeoRouteMeta } from "@/components/SeoRouteMeta";
 import { appRoutes, renderRouteElement } from "@/routes/appRoutes";
 
 const routeFallback = (
-  <div role="status" className="min-h-screen bg-slate-950 p-6 text-slate-100">
+  <div role="status" className="min-h-screen bg-background p-6 text-foreground">
     Loading screen...
   </div>
 );

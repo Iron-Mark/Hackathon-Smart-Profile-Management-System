@@ -34,7 +34,7 @@ The app routes still work for reviewers, but they should not be treated as publi
 - `public/robots.txt` points crawlers to the sitemap and avoids intentional indexing of private app routes.
 - `public/llms.txt` gives AI crawlers factual project context without production overclaims.
 - `public/answers.md` provides concise answer-engine facts for AEO/GEO-style summaries.
-- `public/og-image.png` is the 1200x630 social preview image.
+- `public/og-image.png` is the 1200x630 default social preview. Dedicated cards for login, faculty, upload, profile, admin, approvals, theme, Web Vitals, and related surfaces live in `public/og/`. Recapture with `npm run docs:og`.
 
 ## AEO And GEO Readiness
 
@@ -43,6 +43,7 @@ For this repo, AEO means answer-engine optimization and GEO means generative-eng
 Implemented signals:
 
 - Visible **Public Demo Facts** content on the landing page.
+- Public theme toggle plus `theme-color` metadata that follows light (`#f3faf4`) and dark (`#102418`) mode.
 - Visible links from the landing page to `answers.md` and `llms.txt`.
 - Matching `FAQPage` JSON-LD in `index.html`.
 - Minimal `WebSite` and `Organization` JSON-LD context in `index.html`.

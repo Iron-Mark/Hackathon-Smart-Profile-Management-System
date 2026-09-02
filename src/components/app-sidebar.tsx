@@ -94,7 +94,7 @@ export function AppSidebar ({ className }: AppSidebarProps) {
                 <img
                   alt='CCIS Smart FPMS'
                   src={logoLong}
-                  className='h-auto w-36'
+                  className='h-auto w-36 rounded-md'
                 />
               </div>
             </SidebarGroupLabel>

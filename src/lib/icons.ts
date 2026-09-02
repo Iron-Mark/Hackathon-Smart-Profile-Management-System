@@ -47,24 +47,24 @@ const createIconItem = (
 });
 
 export const categoryIcons: Record<Category, IconItem> = {
-  "Curriculum Vitae": createIconItem(GraduationCap, "text-teal-700 dark:text-teal-300"),
-  "PRC License": createIconItem(User, "text-orange-700 dark:text-orange-300"),
-  Resume: createIconItem(Briefcase, "text-indigo-700 dark:text-indigo-300"),
-  "Valid ID": createIconItem(User, "text-pink-700 dark:text-pink-300"),
-  Diplomas: createIconItem(GraduationCap, "text-purple-700 dark:text-purple-300"),
-  "Transcript of records": createIconItem(GraduationCap, "text-amber-700 dark:text-amber-300"),
-  Certificates: createIconItem(CheckCircle, "text-green-700 dark:text-green-300"),
-  "Research Publications": createIconItem(GraduationCap, "text-red-700 dark:text-red-300"),
-  Others: createIconItem(AlertTriangle, "text-slate-700 dark:text-slate-300"),
+  "Curriculum Vitae": createIconItem(GraduationCap, "text-success"),
+  "PRC License": createIconItem(User, "text-warning"),
+  Resume: createIconItem(Briefcase, "text-info"),
+  "Valid ID": createIconItem(User, "text-info"),
+  Diplomas: createIconItem(GraduationCap, "text-success"),
+  "Transcript of records": createIconItem(GraduationCap, "text-warning"),
+  Certificates: createIconItem(CheckCircle, "text-success"),
+  "Research Publications": createIconItem(GraduationCap, "text-destructive"),
+  Others: createIconItem(AlertTriangle, "text-muted-foreground"),
 
 };
 
 export const statusVariants: Record<Status, IconItem> = {
-  Approved: createIconItem(CheckCircle, "text-green-700 dark:text-green-300"),
-  Returned: createIconItem(XCircle, "text-red-700 dark:text-red-300"),
-  Verified: createIconItem(CheckCircle, "text-green-700 dark:text-green-300"),
-  "Not Approved": createIconItem(XCircle, "text-red-700 dark:text-red-300"),
-  "Not Accurate": createIconItem(AlertTriangle, "text-amber-700 dark:text-amber-300"),
-  Pending: createIconItem(Clock, "text-blue-700 dark:text-blue-300"),
-  Expired: createIconItem(XCircle, "text-slate-700 dark:text-slate-300"),
+  Approved: createIconItem(CheckCircle, "text-success"),
+  Returned: createIconItem(XCircle, "text-destructive"),
+  Verified: createIconItem(CheckCircle, "text-success"),
+  "Not Approved": createIconItem(XCircle, "text-destructive"),
+  "Not Accurate": createIconItem(AlertTriangle, "text-warning"),
+  Pending: createIconItem(Clock, "text-info"),
+  Expired: createIconItem(XCircle, "text-muted-foreground"),
 };

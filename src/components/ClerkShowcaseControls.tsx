@@ -64,12 +64,12 @@ function EnabledClerkAuthPanel({ mode }: ClerkAuthPanelProps) {
   return (
     <section
       aria-label='Clerk showcase authentication'
-      className='rounded-lg border border-emerald-300/30 bg-emerald-300/10 p-4 text-sm text-emerald-50'
+      className='rounded-lg border border-primary/30 bg-primary/10 p-4 text-sm text-foreground'
     >
       <div className='space-y-3'>
         <div>
-          <p className='font-semibold text-emerald-100'>Optional Clerk showcase auth</p>
-          <p className='mt-1 text-xs leading-5 text-emerald-50/80'>
+          <p className='font-semibold text-foreground'>Optional Clerk showcase auth</p>
+          <p className='mt-1 text-xs leading-5 text-muted-foreground'>
             Clerk can sign you in, then this demo creates a local faculty profile in your browser.
           </p>
         </div>
@@ -100,8 +100,8 @@ function EnabledClerkAuthPanel({ mode }: ClerkAuthPanelProps) {
         </Show>
 
         <Show when='signed-in'>
-          <div className='flex items-center justify-between gap-3 rounded-md border border-emerald-200/20 bg-black/20 p-3'>
-            <p className='text-xs text-emerald-50/80' role='status'>
+          <div className='flex items-center justify-between gap-3 rounded-md border border-border bg-muted/40 p-3'>
+            <p className='text-xs text-muted-foreground' role='status'>
               {syncMessage || 'Clerk session active.'}
             </p>
             <UserButton />

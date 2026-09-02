@@ -9,12 +9,14 @@ https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
 ## Public Visitor Flow
 
 1. Open the app landing page.
-2. Confirm **Browser-local demo mode** and the **Web Vitals** button are visible. The Web Vitals badge should show a live collected-metric count such as `0/5`, then increase as the browser reports metrics.
-3. Select Register.
-4. Create a faculty account with any valid email address and a password with letters and numbers.
-5. Sign in and confirm the faculty dashboard opens.
-6. Confirm the upload area reminds visitors to use sample files only.
-7. Upload a sample credential image from `public/demo-samples`.
+2. Confirm **Browser-local demo mode**, the public theme toggle, and the **Web Vitals** button are visible. The Web Vitals badge should show a live collected-metric count such as `0/5`, then increase as the browser reports metrics.
+3. Select the theme toggle once and confirm the page switches between light mint surfaces and dark green-black chrome. The hero band should stay a dark branded green in both modes.
+4. Open the **Web Vitals** panel from the lower right and confirm it reports session metrics without a load error.
+5. Select Register.
+6. Create a faculty account with any valid email address and a password with letters and numbers.
+7. Sign in and confirm the faculty dashboard opens.
+8. Confirm the upload area reminds visitors to use sample files only.
+9. Upload a sample credential image from `public/demo-samples`.
 
 The visitor account is stored only in the current browser when demo mode is active.
 The generated sample set includes certificate, transcript, diploma, CV, and research summary SVG files.
@@ -44,7 +46,14 @@ Clerk-authenticated visitors are still mapped to browser-local faculty demo prof
 9. Return to Approvals and approve the uploaded credential.
 10. Sign back in with Faculty demo.
 11. Open Uploaded Files and confirm the credential is Approved.
-12. Select View from the faculty file card and confirm the Demo File Preview opens.
+12. Select View from the faculty file row and confirm the Demo File Preview opens.
+
+## Theme And Chrome Checks
+
+1. On landing, login, and register, confirm the public theme toggle is enabled.
+2. After sign-in, confirm the sidebar is a light green rail in light mode and a deep green rail in dark mode.
+3. Confirm faculty and admin status chips remain readable in both themes.
+4. On login and register, confirm the **Web Vitals** button is not covered by the demo access panel and still opens the metrics panel.
 
 ## Reset
 
@@ -53,6 +62,34 @@ Use Reset demo data on the login or register screen when the browser-local demo 
 Expected invalid-login messages after a reset are shown in the UI only; they should not produce browser console errors.
 
 The authenticated sidebar also includes **Clear demo data**, which resets the browser-local state and returns to Login.
+
+## Screenshot And Media Refresh
+
+README stills live in `docs/images/`. Looping GIFs and the silent demo MP4 live in `docs/media/`. With the local Vite server running (`npm run dev`, usually `http://localhost:5173`):
+
+```bash
+npm run docs:screenshots
+npm run docs:media
+```
+
+Still capture writes:
+
+- `landing-light.png`, `landing-dark.png`, `landing-workflow.png`
+- `login.png`
+- `faculty-dashboard.png`, `faculty-dashboard-dark.png`
+- `uploaded-files.png`
+- `profile.png`
+- `dashboard.png` (admin)
+- `approvals.png`
+- `web-vitals.png`
+
+Motion capture writes:
+
+- `preview.gif` and `demo.mp4`
+- `feature-upload.gif`, `feature-approvals.gif`, `feature-profile.gif`
+- `feature-uploaded-files.gif`, `feature-theme.gif`, `feature-web-vitals.gif`
+
+Clip usage, size budget, and `DOCS_MEDIA_ONLY` are in `docs/media/README.md`. Open Graph share cards are `npm run docs:og`. Override the capture target with `PLAYWRIGHT_BASE_URL` when needed.
 
 ## Static Hosting Deep Links
 
@@ -82,6 +119,7 @@ After deployment, verify:
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/llms.txt` describes the browser-local demo and sample-file guidance.
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/answers.md` provides concise answer-engine facts for AEO/GEO-style summaries.
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/og-image.png` returns the 1200x630 public share image.
+- Dedicated cards such as `.../og/login.png` and `.../og/faculty.png` also return 200.
 - Auth, admin, faculty, and demo-storage routes render but expose `noindex,nofollow`; matching private route prefixes are also disallowed for AI crawler groups in `robots.txt`.
 
 Local command:
@@ -106,6 +144,21 @@ $env:PLAYWRIGHT_BASE_URL = 'http://127.0.0.1:4173'
 $env:PLAYWRIGHT_WEB_SERVER_URL = 'http://127.0.0.1:4173/Hackathon-Smart-Profile-Management-System/'
 $env:PLAYWRIGHT_WEB_SERVER_COMMAND = 'npm run preview:pages'
 $env:PLAYWRIGHT_BASE_PATH = '/Hackathon-Smart-Profile-Management-System/'
+npx playwright test --reporter=line
+```
+
+macOS / Linux:
+
+```bash
+VITE_DEMO_MODE=true \
+VITE_BASE_PATH='/Hackathon-Smart-Profile-Management-System/' \
+VITE_SITE_URL='https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/' \
+npm run build
+
+PLAYWRIGHT_BASE_URL='http://127.0.0.1:4173' \
+PLAYWRIGHT_WEB_SERVER_URL='http://127.0.0.1:4173/Hackathon-Smart-Profile-Management-System/' \
+PLAYWRIGHT_WEB_SERVER_COMMAND='npm run preview:pages' \
+PLAYWRIGHT_BASE_PATH='/Hackathon-Smart-Profile-Management-System/' \
 npx playwright test --reporter=line
 ```
 

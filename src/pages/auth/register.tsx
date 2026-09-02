@@ -8,6 +8,7 @@ import { Eye, EyeOff, UserRoundPlus } from 'lucide-react'
 import demoAccountActions from '@/tools/accounts/demoAccountActions'
 import { DemoAccessPanel } from '@/components/DemoAccessPanel'
 import { ClerkAuthPanel } from '@/components/ClerkShowcaseControls'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 export default function RegisterPage () {
   const [email, setEmail] = useState('')
@@ -86,14 +87,17 @@ export default function RegisterPage () {
   }
 
   return (
-    <div className='relative flex min-h-screen items-center justify-center overflow-x-hidden bg-slate-950 px-4 py-8 pb-72 sm:pb-52 lg:pb-8'>
-      <Card className='z-10 w-full max-w-md rounded-lg border-white/10 bg-white/[0.04] text-white shadow-2xl shadow-black/30'>
+    <div className='relative flex min-h-screen items-center justify-center overflow-x-hidden bg-background px-4 py-8 pb-72 text-foreground sm:pb-52 lg:pb-8'>
+      <div className='absolute right-4 top-4'>
+        <ThemeToggle />
+      </div>
+      <Card className='z-10 w-full max-w-md rounded-lg border-border bg-card text-card-foreground shadow-lg'>
         <CardHeader className='text-center'>
-          <div className='mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-md bg-sky-400/15 text-sky-200'>
+          <div className='mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-md bg-info/15 text-info'>
             <UserRoundPlus className='h-6 w-6' />
           </div>
           <h2 className='text-3xl font-semibold tracking-tight'>Create Your Account</h2>
-          <CardDescription className='text-slate-300'>
+          <CardDescription>
             Create a browser-local faculty account for this public demo only.
           </CardDescription>
         </CardHeader>
@@ -115,12 +119,12 @@ export default function RegisterPage () {
           }}
         />
         {demoMessage && (
-          <p className='text-sm text-yellow-100' role='status'>
+          <p className='text-sm text-warning' role='status'>
             {demoMessage}
           </p>
         )}
 
-        <form className='space-y-4 text-white' onSubmit={handleSubmit}>
+        <form className='space-y-4' onSubmit={handleSubmit}>
           <div>
             <Label htmlFor='name' className='mb-2'>
               Full Name
@@ -132,10 +136,10 @@ export default function RegisterPage () {
               onChange={e => setName(e.target.value)}
               aria-invalid={Boolean(errors.name)}
               aria-describedby='name-error'
-              className='mt-2 bg-white text-slate-950'
+              className='mt-2'
             />
             {errors.name && (
-              <p id='name-error' className='text-sm text-red-400 mt-1'>
+              <p id='name-error' className='text-sm text-destructive mt-1'>
                 {errors.name}
               </p>
             )}
@@ -153,10 +157,10 @@ export default function RegisterPage () {
               onChange={e => setEmail(e.target.value)}
               aria-invalid={Boolean(errors.email)}
               aria-describedby='email-error'
-              className='mt-2 bg-white text-slate-950'
+              className='mt-2'
             />
             {errors.email && (
-              <p id='email-error' className='text-sm text-red-400 mt-1'>
+              <p id='email-error' className='text-sm text-destructive mt-1'>
                 {errors.email}
               </p>
             )}
@@ -173,21 +177,21 @@ export default function RegisterPage () {
                 placeholder='********'
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className='mt-2 bg-white pr-12 text-slate-950'
+                className='mt-2 pr-12'
                 aria-invalid={Boolean(errors.password)}
                 aria-describedby='password-error'
               />
               <button
                 type='button'
                 onClick={() => setShowPassword(!showPassword)}
-                className='absolute right-2 top-6 flex min-h-11 min-w-11 items-center justify-center text-slate-500 hover:text-slate-950'
+                className='absolute right-2 top-6 flex min-h-11 min-w-11 items-center justify-center text-muted-foreground hover:text-foreground'
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
             {errors.password && (
-              <p id='password-error' className='text-sm text-red-400 mt-1'>
+              <p id='password-error' className='text-sm text-destructive mt-1'>
                 {errors.password}
               </p>
             )}
@@ -204,14 +208,14 @@ export default function RegisterPage () {
                 placeholder='********'
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
-                className='mt-2 bg-white pr-12 text-slate-950'
+                className='mt-2 pr-12'
                 aria-invalid={Boolean(errors.confirm)}
                 aria-describedby='confirm-error'
               />
               <button
                 type='button'
                 onClick={() => setShowConfirm(!showConfirm)}
-                className='absolute right-2 top-6 flex min-h-11 min-w-11 items-center justify-center text-slate-500 hover:text-slate-950'
+                className='absolute right-2 top-6 flex min-h-11 min-w-11 items-center justify-center text-muted-foreground hover:text-foreground'
                 aria-label={
                   showConfirm
                     ? 'Hide confirm password'
@@ -222,26 +226,26 @@ export default function RegisterPage () {
               </button>
             </div>
             {errors.confirm && (
-              <p id='confirm-error' className='text-sm text-red-400 mt-1'>
+              <p id='confirm-error' className='text-sm text-destructive mt-1'>
                 {errors.confirm}
               </p>
             )}
           </div>
-          <p className='w-full text-left text-red-400'>{registrationError}</p>
+          <p className='w-full text-left text-destructive'>{registrationError}</p>
 
           <Button
             type='submit'
-            className='w-full min-h-11 scroll-mb-72 bg-emerald-500 text-emerald-950 hover:bg-emerald-400 sm:scroll-mb-52 lg:scroll-mb-8'
+            className='w-full min-h-11 scroll-mb-72 sm:scroll-mb-52 lg:scroll-mb-8'
           >
             Register
           </Button>
         </form>
 
-        <p className='text-sm text-center text-gray-400'>
+        <p className='text-sm text-center text-muted-foreground'>
           Already have an account?{' '}
           <Link
             to='/auth/login'
-            className='inline-flex min-h-11 items-center text-emerald-200 transition hover:underline'
+            className='inline-flex min-h-11 items-center text-primary transition hover:underline'
           >
             Login here
           </Link>

@@ -13,13 +13,8 @@ import {
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card'
+import { MetricStrip } from '@/components/layout/MetricStrip'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 const publicDemoFacts = [
   {
@@ -116,46 +111,39 @@ export default function Landing() {
   const samplePath = (fileName: string) => `${import.meta.env.BASE_URL}demo-samples/${fileName}`
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-slate-50 text-slate-950">
-      <section
-        className="relative flex min-h-[86dvh] items-center bg-slate-950 px-5 py-16 text-white sm:px-8 lg:px-12"
-        style={{
-          backgroundImage: `url("${samplePath('sample-diploma.svg')}")`,
-          backgroundPosition: 'right center',
-          backgroundSize: 'cover',
-        }}
-      >
-        <div className="absolute inset-0 bg-slate-950/90" aria-hidden="true" />
+    <main className="min-h-screen overflow-x-hidden bg-background text-foreground">
+      <section className="relative flex min-h-[86dvh] items-center bg-hero px-5 py-16 text-hero-foreground sm:px-8 lg:px-12">
         <div className="relative mx-auto grid w-full max-w-7xl gap-10">
           <nav aria-label="Public demo navigation" className="flex flex-wrap items-center justify-between gap-4">
-            <Link to="/" className="inline-flex min-h-11 items-center gap-3 rounded-md text-sm font-semibold text-white">
-              <img className="h-10 w-10 rounded-md bg-white/95 object-contain p-1" alt="FPMS logo" src={assetPath('fav-icon.png')} />
+            <Link to="/" className="inline-flex min-h-11 items-center gap-3 rounded-md text-sm font-semibold text-hero-foreground">
+              <img className="h-10 w-10 rounded-md bg-hero-foreground/95 object-contain p-1" alt="FPMS logo" src={assetPath('fav-icon.png')} />
               <span>Smart Profile</span>
             </Link>
             <div className="flex flex-wrap items-center gap-2">
+              <ThemeToggle className="text-hero-foreground hover:bg-hero-foreground/15 hover:text-hero-foreground" />
               <Button asChild variant="secondary" size="sm">
                 <Link to="/auth/login">Sign in</Link>
               </Button>
-              <Button asChild size="sm" className="bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
+              <Button asChild size="sm" className="bg-hero-foreground text-hero hover:bg-hero-foreground/90">
                 <Link to="/auth/login?demo=faculty">Demo</Link>
               </Button>
             </div>
           </nav>
 
           <div className="max-w-4xl pt-10">
-            <Badge className="mb-5 border-emerald-300/40 bg-emerald-300/15 text-emerald-100">
+            <Badge className="mb-5 border-hero-foreground/30 bg-hero-foreground/15 text-hero-foreground">
               Browser-local demo mode
             </Badge>
             <h1 className="max-w-4xl text-4xl font-bold leading-tight tracking-normal sm:text-5xl lg:text-6xl">
               CCIS Smart Faculty Profile Management System
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg">
+            <p className="mt-6 max-w-2xl text-base leading-7 text-hero-foreground/85 sm:text-lg">
               A restored 7th CCIS Hackathon demo for faculty credential intake,
               admin review, and profile proofing. Reviewers can use seeded accounts
               and generated sample files without private backend or OpenAI credentials.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" className="min-h-11 bg-emerald-500 text-emerald-950 hover:bg-emerald-400">
+              <Button asChild size="lg" className="min-h-11 bg-hero-foreground text-hero hover:bg-hero-foreground/90">
                 <Link to="/auth/login?demo=faculty">
                   <Sparkles className="h-4 w-4" />
                   Start demo
@@ -164,16 +152,16 @@ export default function Landing() {
               <Button asChild size="lg" variant="secondary" className="min-h-11">
                 <Link to="/auth/login">Login</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="min-h-11 border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white">
+              <Button asChild size="lg" variant="outline" className="min-h-11 border-hero-foreground/40 bg-hero-foreground/10 text-hero-foreground hover:bg-hero-foreground/20 hover:text-hero-foreground">
                 <Link to="/auth/register">Register</Link>
               </Button>
             </div>
-            <div className="mt-7 flex flex-wrap gap-3 text-sm text-slate-200">
-              <a href={samplePath('sample-certificate.svg')} className="inline-flex min-h-11 items-center gap-2 rounded-md border border-white/20 bg-white/10 px-3 hover:bg-white/20">
+            <div className="mt-7 flex flex-wrap gap-3 text-sm text-hero-foreground/85">
+              <a href={samplePath('sample-certificate.svg')} className="inline-flex min-h-11 items-center gap-2 rounded-md border border-hero-foreground/30 bg-hero-foreground/10 px-3 hover:bg-hero-foreground/20">
                 <Download className="h-4 w-4" />
                 Download sample certificate
               </a>
-              <a href={samplePath('sample-transcript.svg')} className="inline-flex min-h-11 items-center gap-2 rounded-md border border-white/20 bg-white/10 px-3 hover:bg-white/20">
+              <a href={samplePath('sample-transcript.svg')} className="inline-flex min-h-11 items-center gap-2 rounded-md border border-hero-foreground/30 bg-hero-foreground/10 px-3 hover:bg-hero-foreground/20">
                 <Download className="h-4 w-4" />
                 Download sample transcript
               </a>
@@ -182,57 +170,51 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="border-b border-slate-200 bg-white px-5 py-10 sm:px-8 lg:px-12">
-        <div className="mx-auto grid max-w-7xl gap-4 sm:grid-cols-3">
-          {reviewerStats.map((stat) => {
-            const Icon = stat.icon
-            return (
-              <Card key={stat.label} className="rounded-lg">
-                <CardContent className="flex items-center gap-4 py-6">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-md bg-slate-100 text-slate-700">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <p className="text-2xl font-bold">{stat.value}</p>
-                    <p className="text-sm text-muted-foreground">{stat.label}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
+      <section className="border-b border-border bg-background px-5 py-10 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-7xl">
+          <MetricStrip
+            items={reviewerStats.map((stat) => ({
+              label: stat.label,
+              value: stat.value,
+              icon: stat.icon,
+            }))}
+          />
         </div>
       </section>
 
-      <section className="bg-slate-50 px-5 py-16 sm:px-8 lg:px-12">
+      <section className="bg-background px-5 py-16 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 max-w-3xl">
-            <Badge variant="outline" className="mb-3 bg-white">Demo workflow</Badge>
+            <Badge variant="outline" className="mb-3">Demo workflow</Badge>
             <h2 className="text-3xl font-bold tracking-normal">A complete reviewer path, not a static mockup</h2>
             <p className="mt-3 text-muted-foreground">
               The public build uses seeded browser-local data so reviewers can test the
               upload, approval, preview, and profile-building flow end to end.
             </p>
           </div>
-          <div className="grid gap-5 md:grid-cols-3">
-            {workflowSteps.map((step) => {
+          <ol className="divide-y divide-border overflow-hidden rounded-lg border border-border">
+            {workflowSteps.map((step, index) => {
               const Icon = step.icon
               return (
-                <Card key={step.title} className="rounded-lg">
-                  <CardHeader>
-                    <span className="mb-2 flex h-11 w-11 items-center justify-center rounded-md bg-emerald-50 text-emerald-700">
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <CardTitle>{step.title}</CardTitle>
-                    <CardDescription>{step.description}</CardDescription>
-                  </CardHeader>
-                </Card>
+                <li key={step.title} className="flex gap-4 px-5 py-5 sm:gap-6">
+                  <span className="w-10 shrink-0 text-2xl font-semibold tabular-nums text-muted-foreground">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-success/15 text-success">
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <div>
+                    <h3 className="font-semibold">{step.title}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{step.description}</p>
+                  </div>
+                </li>
               )
             })}
-          </div>
+          </ol>
         </div>
       </section>
 
-      <section className="bg-white px-5 py-16 sm:px-8 lg:px-12">
+      <section className="bg-muted/40 px-5 py-16 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
@@ -250,53 +232,45 @@ export default function Landing() {
               </a>
             </Button>
           </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+          <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-background">
             {sampleDocuments.map((document) => (
-              <Card key={document.fileName} className="overflow-hidden rounded-lg">
-                <div className="aspect-[4/3] bg-slate-100">
-                  <img
-                    src={samplePath(document.fileName)}
-                    alt={`${document.title} sample preview`}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
+              <li key={document.fileName} className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center">
+                <img
+                  src={samplePath(document.fileName)}
+                  alt={`${document.title} sample preview`}
+                  className="h-16 w-24 shrink-0 rounded-md object-cover"
+                  loading="lazy"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium">{document.title}</p>
+                  <p className="text-sm text-muted-foreground">{document.description}</p>
                 </div>
-                <CardHeader className="gap-2">
-                  <CardTitle className="text-base">{document.title}</CardTitle>
-                  <CardDescription>{document.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <a className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-emerald-700 hover:text-emerald-900" href={samplePath(document.fileName)}>
-                    Open sample
-                    <ArrowRight className="h-4 w-4" />
-                  </a>
-                </CardContent>
-              </Card>
+                <a className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-primary hover:text-primary/80" href={samplePath(document.fileName)}>
+                  Open sample
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
-      <section className="bg-slate-950 px-5 py-16 text-white sm:px-8 lg:px-12">
+      <section className="bg-background px-5 py-16 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 max-w-3xl">
-            <Badge className="mb-3 border-sky-300/40 bg-sky-300/15 text-sky-100">AEO and GEO sources</Badge>
+            <Badge className="mb-3 border-info/30 bg-info/15 text-info">AEO and GEO sources</Badge>
             <h2 className="text-3xl font-bold tracking-normal">Public Demo Facts</h2>
-            <p className="mt-3 text-slate-300">
+            <p className="mt-3 text-muted-foreground">
               Concise project facts for reviewers, search snippets, and AI answer engines.
               For canonical Q&A, use the public answer files linked below.
             </p>
           </div>
-          <dl className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <dl className="divide-y divide-border overflow-hidden rounded-lg border border-border">
             {publicDemoFacts.map((fact) => (
-              <Card key={fact.question} className="rounded-lg border-white/10 bg-white/[0.04] text-white">
-                <CardHeader>
-                  <dt className="text-base font-semibold">{fact.question}</dt>
-                </CardHeader>
-                <CardContent>
-                  <dd className="text-sm leading-6 text-slate-300">{fact.answer}</dd>
-                </CardContent>
-              </Card>
+              <div key={fact.question} className="px-5 py-4">
+                <dt className="text-base font-semibold">{fact.question}</dt>
+                <dd className="mt-1 text-sm leading-6 text-muted-foreground">{fact.answer}</dd>
+              </div>
             ))}
           </dl>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -306,26 +280,26 @@ export default function Landing() {
                 Answer-engine facts
               </a>
             </Button>
-            <Button asChild variant="outline" className="border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white">
+            <Button asChild variant="outline">
               <a href={assetPath('llms.txt')}>llms.txt</a>
             </Button>
           </div>
         </div>
       </section>
 
-      <footer className="bg-white px-5 py-10 text-sm text-slate-600 sm:px-8 lg:px-12">
+      <footer className="border-t border-border bg-background px-5 py-10 text-sm text-muted-foreground sm:px-8 lg:px-12">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
             <img src={assetPath('fav-icon.png')} alt="Smart Profile logo" className="h-10 w-10 rounded-md object-contain" />
             <div>
-              <p className="font-semibold text-slate-950">Smart Profile Management System</p>
+              <p className="font-semibold text-foreground">Smart Profile Management System</p>
               <p>Maintained by Mark Siazon. Original 7th CCIS Hackathon entry by Team 2nd Choice.</p>
             </div>
           </div>
           <div className="flex flex-wrap gap-4">
-            <Link to="/auth/login" className="inline-flex min-h-11 items-center hover:text-slate-950">Faculty Portal</Link>
-            <Link to="/auth/login" className="inline-flex min-h-11 items-center hover:text-slate-950">Admin Login</Link>
-            <a href="https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System" className="inline-flex min-h-11 items-center gap-2 hover:text-slate-950">
+            <Link to="/auth/login" className="inline-flex min-h-11 items-center hover:text-foreground">Faculty Portal</Link>
+            <Link to="/auth/login" className="inline-flex min-h-11 items-center hover:text-foreground">Admin Login</Link>
+            <a href="https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System" className="inline-flex min-h-11 items-center gap-2 hover:text-foreground">
               <Github className="h-4 w-4" />
               Repository
             </a>

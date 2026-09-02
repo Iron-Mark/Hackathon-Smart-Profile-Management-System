@@ -114,20 +114,20 @@ const DropZone: React.FC<DropZoneProps> = ({
       aria-label='Smart upload'
       className={`border-2 border-dashed rounded-lg flex flex-col items-center justify-center gap-4 p-4 overflow-auto ${w} ${h} ${
         isDragging
-          ? 'bg-blue-50 border-green-600 dark:bg-blue-950/50 dark:border-green-400'
-          : 'bg-card border-border'
+          ? 'bg-info/10 border-success'
+          : 'bg-background border-border'
       } transition-[background-color,border-color,box-shadow] duration-200 ease-out`}
       onDragOver={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
       <div className='flex flex-col items-center justify-center gap-4 text-center'>
-        <div className='flex items-center justify-center w-16 h-16 bg-green-100 rounded-full dark:bg-green-950/60'>
-          <UploadCloud className='h-8 w-8 text-amber-600 dark:text-amber-300' />
+        <div className='flex items-center justify-center w-16 h-16 bg-success/15 rounded-full'>
+          <UploadCloud className='h-8 w-8 text-warning' />
         </div>
         <p className='text-muted-foreground'>
           {files.length > 0 ? (
-            <span className='text-green-700 font-semibold dark:text-green-300'>
+            <span className='text-success font-semibold'>
               {selectedCountLabel}
             </span>
           ) : (
@@ -160,7 +160,7 @@ const DropZone: React.FC<DropZoneProps> = ({
 
       {feedbackMessages.length > 0 && (
         <div
-          className='w-full rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/50 dark:text-amber-200'
+          className='w-full rounded-md border border-warning/30 bg-warning/10 p-3 text-sm text-warning'
           role='alert'
         >
           <ul className='space-y-1'>
@@ -189,7 +189,7 @@ const DropZone: React.FC<DropZoneProps> = ({
                   e.stopPropagation()
                   handleRemove(index)
                 }}
-                className='inline-flex size-11 shrink-0 items-center justify-center rounded-md text-red-600 transition-colors hover:bg-red-100 hover:text-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 dark:text-red-300 dark:hover:bg-red-950/50 dark:hover:text-red-200'
+                className='inline-flex size-11 shrink-0 items-center justify-center rounded-md text-destructive transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50'
               >
                 <X className='h-4 w-4' aria-hidden='true' />
               </button>
@@ -205,7 +205,7 @@ const DropZone: React.FC<DropZoneProps> = ({
           e.stopPropagation()
           handleUploadClick()
         }}
-        className='inline-flex min-h-11 w-full items-center justify-center rounded-md bg-green-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-green-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:w-auto dark:bg-green-500 dark:text-green-950 dark:hover:bg-green-400'
+        className='inline-flex min-h-11 w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:w-auto'
       >
         <span aria-live='polite'>
           {isSubmitting ? 'Processing files...' : 'Submit files'}
