@@ -75,7 +75,10 @@ jobs:
               exit 0
             fi
             echo "Dispatching GitHub Pages after PR #${PR_NUMBER} merged into main."
-            gh workflow run "Deploy to GitHub Pages" --ref main
+            # This job has no checkout; `gh workflow run` shells out to git.
+            gh api --method POST \
+              "repos/${REPOSITORY}/actions/workflows/deploy.yml/dispatches" \
+              -f ref=main
           else
             gh pr merge "${pr_url}" --auto --squash
           fi
