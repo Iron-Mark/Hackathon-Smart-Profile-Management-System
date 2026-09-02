@@ -200,7 +200,7 @@ Reviewers can click through a complete loop without private backend accounts, st
 | CCIS theme | Light mint surfaces and dark green-black chrome share one brand, with a public theme toggle. |
 | Reviewer telemetry | Lower-right Web Vitals reports LCP, INP, CLS, FCP, and TTFB locally. |
 
-Public checkpoint: [`v2.1.1`](https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System/releases/tag/v2.1.1). Current release notes live in [`docs/release-status.md`](docs/release-status.md).
+Public checkpoint: [`v2.1.3`](https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System/releases/tag/v2.1.3). Current release notes live in [`docs/release-status.md`](docs/release-status.md).
 
 <details>
 <summary>Pull-request CI policy</summary>
