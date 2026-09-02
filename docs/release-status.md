@@ -49,7 +49,9 @@ For GitHub Pages-style local QA, use the build preview commands in `docs/demo-ch
 
 ## Unreleased Branch Work
 
-Product work from PRs #29 and #31 is on `main` (`0b855b1`, 2026-09-02) but is **not** the public Pages checkpoint yet. The live URL still matches the 2026-08-10 deployment: Trusted PR Lifecycle merged the promotion with `GITHUB_TOKEN`, which does not start the push-based Pages workflow.
+Product work from PRs #29 and #31 is on `main` (first landed in `0b855b1`, 2026-09-02) but is **not** the public Pages checkpoint yet. The live URL still matches the 2026-08-10 deployment.
+
+The Pages dispatcher from #35/#36 is now on `main` (`5e37508`). The next trusted `main` ← `dev` merge should dispatch **Deploy to GitHub Pages**.
 
 Until a Pages run for current `main` succeeds and the live URL is re-checked:
 
@@ -85,7 +87,7 @@ GitHub does not start new workflows from `push` events created by `GITHUB_TOKEN`
 
 After a `main` ← `dev` merge, Trusted PR Lifecycle waits until the pull request is merged, then dispatches `Deploy to GitHub Pages` on `main`. A human merge of `dev` into `main` still deploys through the normal `push` trigger.
 
-This dispatch only runs from the workflow file already on `main`. The first promotion that *introduces* the dispatch still needs a follow-up `main` ← `dev` merge (or a manual Actions run) before Pages updates.
+This dispatch only runs from the workflow file already on `main`. It landed in PR #36 (`5e37508`, 2026-09-02); that promotion itself did not publish because the old lifecycle performed the merge. Follow-up promotions can dispatch Pages.
 
 ## Future Release Checklist
 
