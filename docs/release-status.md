@@ -51,7 +51,7 @@ For GitHub Pages-style local QA, use the build preview commands in `docs/demo-ch
 
 Product work from PRs #29 and #31 is on `main` (first landed in `0b855b1`, 2026-09-02) but is **not** the public Pages checkpoint yet. The live URL still matches the 2026-08-10 deployment.
 
-The Pages dispatcher from #35/#36 is now on `main` (`5e37508`). The next trusted `main` ← `dev` merge should dispatch **Deploy to GitHub Pages**.
+The Pages dispatcher from #35/#36 is on `main`. PR #38 (`8c199f6`) tried to publish and failed: `gh workflow run` needs a git checkout that the lifecycle job does not have.
 
 Until a Pages run for current `main` succeeds and the live URL is re-checked:
 
@@ -85,9 +85,9 @@ Treat these as release evidence for the historical checkpoint. Re-run the verifi
 
 GitHub does not start new workflows from `push` events created by `GITHUB_TOKEN`. Trusted auto-merge therefore does **not** run `Deploy to GitHub Pages` on its own.
 
-After a `main` ← `dev` merge, Trusted PR Lifecycle waits until the pull request is merged, then dispatches `Deploy to GitHub Pages` on `main`. A human merge of `dev` into `main` still deploys through the normal `push` trigger.
+After a `main` ← `dev` merge, Trusted PR Lifecycle waits until the pull request is merged, then creates a `workflow_dispatch` on `deploy.yml` through the Actions API (`ref: main`). The lifecycle job has no git checkout, so `gh workflow run` cannot be used. A human merge of `dev` into `main` still deploys through the normal `push` trigger.
 
-This dispatch only runs from the workflow file already on `main`. It landed in PR #36 (`5e37508`, 2026-09-02); that promotion itself did not publish because the old lifecycle performed the merge. Follow-up promotions can dispatch Pages.
+PR #38 merged the first dispatch attempt (`8c199f6`, 2026-09-02) but Pages did not run: `gh workflow run` failed with `fatal: not a git repository`. Live Pages remains the 2026-08-10 build until a promotion that uses the API dispatch succeeds.
 
 ## Future Release Checklist
 
