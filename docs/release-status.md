@@ -49,13 +49,15 @@ For GitHub Pages-style local QA, use the build preview commands in `docs/demo-ch
 
 ## Unreleased Branch Work
 
-The following is verified locally on `agent/theme-contrast-overhaul-e65d` and is not yet the public Pages checkpoint:
+Product work from PRs #29 and #31 is on `main` (`0b855b1`, 2026-09-02) but is **not** the public Pages checkpoint yet. The live URL still matches the 2026-08-10 deployment: Trusted PR Lifecycle merged the promotion with `GITHUB_TOKEN`, which does not start the push-based Pages workflow.
+
+Until a Pages run for current `main` succeeds and the live URL is re-checked:
 
 - Light and dark CCIS green chrome with a public theme toggle. The landing hero stays a dark branded band in both modes.
 - Web Vitals button stays clickable above the login/register demo access panel.
 - Marketing README plus refreshed `docs/images/` stills, `docs/media/` preview GIF, feature GIFs, silent demo MP4, and dedicated 1200x630 Open Graph cards in `public/og/`.
 
-These do **not** replace `v2.1.1` until they are merged, deployed, and re-checked against the live URL.
+These do **not** replace `v2.1.1` until they are deployed and re-checked against the live URL. The next documented tag after that check must be newer than `v2.1.2`.
 
 ## Last Recorded Live Evidence
 
@@ -77,13 +79,21 @@ Treat these as release evidence for the historical checkpoint. Re-run the verifi
 - Clerk Organizations are showcase context only and do not grant admin access.
 - Browser-exposed OpenAI keys are for local experimentation only; production use would require a server-side proxy.
 
+## GitHub Pages Deploy Trigger
+
+GitHub does not start new workflows from `push` events created by `GITHUB_TOKEN`. Trusted auto-merge therefore does **not** run `Deploy to GitHub Pages` on its own.
+
+After a `main` ← `dev` merge, Trusted PR Lifecycle waits until the pull request is merged, then dispatches `Deploy to GitHub Pages` on `main`. A human merge of `dev` into `main` still deploys through the normal `push` trigger.
+
+This dispatch only runs from the workflow file already on `main`. The first promotion that *introduces* the dispatch still needs a follow-up `main` ← `dev` merge (or a manual Actions run) before Pages updates.
+
 ## Future Release Checklist
 
 1. Confirm the worktree is clean except intended release changes.
 2. Run the full verification gate.
 3. Build and test with the GitHub Pages base path from `docs/demo-checklist.md`.
 4. Merge the verified branch into the publish branch.
-5. Wait for GitHub Pages deployment to finish.
+5. Wait for GitHub Pages deployment to finish (Actions: **Deploy to GitHub Pages** on `main`). If the promotion was auto-merged, confirm the lifecycle job dispatched that workflow.
 6. Re-run the live Playwright suite against the public URL.
 7. Confirm public assets and sample files return HTTP 200.
-8. Tag only the verified commit.
+8. Tag only the verified commit. Do not reuse `v2.1.2` (that tag already points at the June 2026 cleanup checkpoint).

@@ -1,5 +1,8 @@
 name: Deploy to GitHub Pages
 
+# Human or PAT pushes to main trigger this workflow. Merges performed with
+# GITHUB_TOKEN (Trusted PR Lifecycle) do not create a push workflow run, so
+# that workflow dispatches this one after a successful main←dev merge.
 on:
   push:
     branches: ["main"]
