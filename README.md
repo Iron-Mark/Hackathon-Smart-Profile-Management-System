@@ -179,9 +179,10 @@ Refresh captures after UI changes (`npm run dev` in another terminal):
 ```bash
 npm run docs:screenshots
 npm run docs:media
+npm run docs:og
 ```
 
-Stills go to `docs/images/`. GIFs and the demo MP4 go to `docs/media/`. See [`docs/media/README.md`](docs/media/README.md) for clip names, size budget, and `DOCS_MEDIA_ONLY`.
+Stills go to `docs/images/`. GIFs and the demo MP4 go to `docs/media/`. Share cards (1200x630) go to `public/og-image.png` and `public/og/`. See [`docs/media/README.md`](docs/media/README.md).
 
 ---
 
@@ -330,7 +331,7 @@ To verify the built output with the same base path used by GitHub Pages, use the
 | Doc | What it covers |
 | --- | --- |
 | [`docs/PUBLIC_DEMO.md`](docs/PUBLIC_DEMO.md) | Fast reviewer path, safety notes, post-deploy smoke checks |
-| [`docs/media/README.md`](docs/media/README.md) | Preview GIF, feature GIFs, demo MP4, recapture, marketing reuse |
+| [`docs/media/README.md`](docs/media/README.md) | Preview GIF, feature GIFs, demo MP4, Open Graph cards, recapture |
 | [`docs/demo-checklist.md`](docs/demo-checklist.md) | Showcase script, theme checks, screenshot refresh, Pages preview |
 | [`docs/demo-backend.md`](docs/demo-backend.md) | Browser-local storage, reset behavior, optional Clerk/AI |
 | [`docs/seo-readiness.md`](docs/seo-readiness.md) | Canonical URL, indexing policy, AEO/GEO sources |

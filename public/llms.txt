@@ -10,6 +10,7 @@ profile proofing.
 - Canonical demo URL: https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/
 - Source repository: https://github.com/Iron-Mark/Hackathon-Smart-Profile-Management-System
 - Concise answer source: /Hackathon-Smart-Profile-Management-System/answers.md
+- Default social preview: /Hackathon-Smart-Profile-Management-System/og-image.png
 - Demo data is browser-local. Accounts, submissions, audit logs, and uploaded file metadata stay in the visitor's browser storage.
 - Visitors should use only generated sample files from the public demo. Do not upload private IDs, transcripts, licenses, or real faculty records.
 - Generated sample files include certificate, transcript, diploma, CV, and research summary records.

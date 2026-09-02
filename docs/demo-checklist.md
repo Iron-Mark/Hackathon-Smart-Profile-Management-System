@@ -89,7 +89,7 @@ Motion capture writes:
 - `feature-upload.gif`, `feature-approvals.gif`, `feature-profile.gif`
 - `feature-uploaded-files.gif`, `feature-theme.gif`, `feature-web-vitals.gif`
 
-Clip usage, size budget, and `DOCS_MEDIA_ONLY` are in `docs/media/README.md`. Override the capture target with `PLAYWRIGHT_BASE_URL` when needed.
+Clip usage, size budget, and `DOCS_MEDIA_ONLY` are in `docs/media/README.md`. Open Graph share cards are `npm run docs:og`. Override the capture target with `PLAYWRIGHT_BASE_URL` when needed.
 
 ## Static Hosting Deep Links
 
@@ -119,6 +119,7 @@ After deployment, verify:
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/llms.txt` describes the browser-local demo and sample-file guidance.
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/answers.md` provides concise answer-engine facts for AEO/GEO-style summaries.
 - `https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/og-image.png` returns the 1200x630 public share image.
+- Dedicated cards such as `.../og/login.png` and `.../og/faculty.png` also return 200.
 - Auth, admin, faculty, and demo-storage routes render but expose `noindex,nofollow`; matching private route prefixes are also disallowed for AI crawler groups in `robots.txt`.
 
 Local command:
