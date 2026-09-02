@@ -34,7 +34,7 @@ The app routes still work for reviewers, but they should not be treated as publi
 - `public/robots.txt` points crawlers to the sitemap and avoids intentional indexing of private app routes.
 - `public/llms.txt` gives AI crawlers factual project context without production overclaims.
 - `public/answers.md` provides concise answer-engine facts for AEO/GEO-style summaries.
-- `public/og-image.png` is the 1200x630 social preview image.
+- `public/og-image.png` is the 1200x630 default social preview. Dedicated cards for login, faculty, upload, profile, admin, approvals, theme, Web Vitals, and related surfaces live in `public/og/`. Recapture with `npm run docs:og`.
 
 ## AEO And GEO Readiness
 

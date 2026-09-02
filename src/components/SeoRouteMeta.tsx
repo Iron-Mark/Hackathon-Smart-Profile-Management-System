@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getRouteSeoMeta, SITE_URL, SOCIAL_IMAGE_URL } from '@/lib/seo';
+import { getRouteSeoMeta, SITE_URL, socialImageUrlFor } from '@/lib/seo';
 
 const INDEXABLE_ROBOTS = 'index,follow,max-image-preview:large';
 const NOINDEX_ROBOTS = 'noindex,nofollow';
@@ -41,6 +41,7 @@ export function SeoRouteMeta() {
   useEffect(() => {
     const routeMeta = getRouteSeoMeta(pathname);
     const robots = routeMeta.indexable ? INDEXABLE_ROBOTS : NOINDEX_ROBOTS;
+    const imageUrl = socialImageUrlFor(pathname);
 
     document.title = routeMeta.title;
     upsertCanonical(SITE_URL);
@@ -49,13 +50,14 @@ export function SeoRouteMeta() {
     upsertMetaByProperty('og:title', routeMeta.title);
     upsertMetaByProperty('og:description', routeMeta.description);
     upsertMetaByProperty('og:url', SITE_URL);
-    upsertMetaByProperty('og:image', SOCIAL_IMAGE_URL);
-    upsertMetaByProperty('og:image:secure_url', SOCIAL_IMAGE_URL);
+    upsertMetaByProperty('og:image', imageUrl);
+    upsertMetaByProperty('og:image:secure_url', imageUrl);
+    upsertMetaByProperty('og:image:alt', routeMeta.imageAlt);
     upsertMetaByName('twitter:title', routeMeta.title);
     upsertMetaByName('twitter:description', routeMeta.description);
-    upsertMetaByName('twitter:image', SOCIAL_IMAGE_URL);
+    upsertMetaByName('twitter:image', imageUrl);
+    upsertMetaByName('twitter:image:alt', routeMeta.imageAlt);
   }, [pathname]);
 
   return null;
 }
-

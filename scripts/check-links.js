@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { PUBLIC_OG_FILES } from './og-assets.mjs';
 
 const DEFAULT_SITE_URL = 'https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/';
 const REQUIRED_PUBLIC_ASSETS = [
@@ -12,6 +13,7 @@ const REQUIRED_PUBLIC_ASSETS = [
   'fav-icon.png',
   'llms.txt',
   'og-image.png',
+  ...PUBLIC_OG_FILES.filter((file) => file !== 'og-image.png'),
   'pwa-192x192.png',
   'pwa-512x512.png',
   'robots.txt',

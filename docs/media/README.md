@@ -28,6 +28,30 @@ Product **stills** stay in [`docs/images/`](../images/). Use those when a platfo
 
 Keep Web Vitals out of every clip except `feature-web-vitals.gif`. The capture script hides that overlay automatically.
 
+## Open Graph share cards
+
+Social previews are 1200x630 PNGs composed from the CCIS seal, `docs/images/` stills, and generated sample credentials. Recapture after stills change:
+
+```bash
+npm run docs:og
+```
+
+| File | Use |
+| --- | --- |
+| `public/og-image.png` | Default landing share image (`og:image` in `index.html`) |
+| `public/og/landing.png` | Named copy of the landing card |
+| `public/og/workflow.png` | Workflow, samples, and public facts |
+| `public/og/login.png` / `register.png` | Seeded login and local registration |
+| `public/og/faculty.png` / `upload.png` | Faculty workspace and smart upload |
+| `public/og/uploaded-files.png` | Uploaded files table |
+| `public/og/profile.png` | Profile builder |
+| `public/og/admin.png` / `approvals.png` | Admin dashboard and approval queue |
+| `public/og/theme.png` | Light mint and dark green-black chrome |
+| `public/og/web-vitals.png` | Local Core Web Vitals panel |
+| `public/og/preview.png` | Demo file preview |
+
+SPA fallback HTML under `dist/auth`, `dist/faculty`, and `dist/admin` gets the matching card at build time so crawlers and unfurls do not all show the landing image.
+
 ## Recapture
 
 The local Vite app must already be running (`npm run dev`, usually `http://127.0.0.1:5173`).

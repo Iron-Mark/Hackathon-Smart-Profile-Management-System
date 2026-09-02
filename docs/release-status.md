@@ -53,7 +53,7 @@ The following is verified locally on `agent/theme-contrast-overhaul-e65d` and is
 
 - Light and dark CCIS green chrome with a public theme toggle. The landing hero stays a dark branded band in both modes.
 - Web Vitals button stays clickable above the login/register demo access panel.
-- Marketing README plus refreshed `docs/images/` stills and `docs/media/` preview GIF, feature GIFs, and silent demo MP4.
+- Marketing README plus refreshed `docs/images/` stills, `docs/media/` preview GIF, feature GIFs, silent demo MP4, and dedicated 1200x630 Open Graph cards in `public/og/`.
 
 These do **not** replace `v2.1.1` until they are merged, deployed, and re-checked against the live URL.
 

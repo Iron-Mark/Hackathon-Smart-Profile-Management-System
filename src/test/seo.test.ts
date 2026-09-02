@@ -122,17 +122,39 @@ describe('static SEO metadata', () => {
     expect(getRouteSeoMeta('/')).toMatchObject({
       title: 'Smart Profile Management System | Public Demo',
       indexable: true,
+      image: 'og-image.png',
+    });
+    expect(getRouteSeoMeta('/auth/login')).toMatchObject({
+      title: 'Login | Smart Profile Management System',
+      image: 'og/login.png',
+      indexable: false,
     });
     expect(getRouteSeoMeta('/auth/register')).toMatchObject({
       title: 'Register | Smart Profile Management System',
+      image: 'og/register.png',
       indexable: false,
+    });
+    expect(getRouteSeoMeta('/faculty/uploaded')).toMatchObject({
+      image: 'og/uploaded-files.png',
+    });
+    expect(getRouteSeoMeta('/faculty/profile')).toMatchObject({
+      image: 'og/profile.png',
+    });
+    expect(getRouteSeoMeta('/admin/approvals')).toMatchObject({
+      image: 'og/approvals.png',
     });
     expect(getRouteSeoMeta('/admin/dashboard')).toMatchObject({
       title: 'Admin Workspace | Smart Profile Management System',
+      image: 'og/admin.png',
       indexable: false,
     });
     expect(getRouteSeoMeta('/demo-storage')).toMatchObject({
       title: 'Demo File Preview | Smart Profile Management System',
+      image: 'og/preview.png',
+      indexable: false,
+    });
+    expect(getRouteSeoMeta('/missing-route')).toMatchObject({
+      image: 'og-image.png',
       indexable: false,
     });
   });

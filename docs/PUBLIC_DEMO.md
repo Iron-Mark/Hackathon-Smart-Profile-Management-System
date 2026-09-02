@@ -36,6 +36,7 @@ These captures match the restored public chrome. Refresh stills with `npm run do
 - `docs/images/dashboard.png` — admin reviewer dashboard
 - `docs/images/approvals.png` — approval queue with Approve, Return, and View
 - `docs/images/web-vitals.png` — Core Web Vitals panel on the landing page
+- `public/og-image.png` / `public/og/*.png` — 1200x630 share cards composed from the seal and stills (`npm run docs:og`)
 
 ## Safety Notes
 
@@ -51,7 +52,7 @@ These captures match the restored public chrome. Refresh stills with `npm run do
 ## Share Preview
 
 - Public shares should resolve to the GitHub Pages URL above.
-- Link previews should use `public/og-image.png`.
+- Link previews should use `public/og-image.png` for the landing URL. Route-specific cards in `public/og/` are used for login, faculty, admin, and demo-storage unfurls.
 - Search crawlers should index the landing page and discover the public `answers.md` and `llms.txt` source files. Auth, admin, faculty, and demo-storage routes are app routes and are disallowed in `robots.txt` plus marked noindex after render.
 - Answer engines can use the visible **Public Demo Facts** section, FAQ JSON-LD, `llms.txt`, and `answers.md` for concise project context.
 

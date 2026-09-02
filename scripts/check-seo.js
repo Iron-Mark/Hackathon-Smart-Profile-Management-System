@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { PUBLIC_OG_FILES } from './og-assets.mjs';
 
 const DEFAULT_SITE_URL = 'https://iron-mark.github.io/Hackathon-Smart-Profile-Management-System/';
 const FORBIDDEN_SITEMAP_PATHS = ['/auth/', '/admin/', '/faculty/', '/demo-storage/'];
@@ -211,9 +212,11 @@ function checkSeo() {
     errors.push('answers.md must describe browser-local data and sample-file guidance');
   }
 
-  const dimensions = getPngDimensions('public/og-image.png');
-  if (!dimensions || dimensions.width !== 1200 || dimensions.height !== 630) {
-    errors.push('public/og-image.png must be a 1200x630 PNG');
+  for (const ogFile of PUBLIC_OG_FILES) {
+    const dimensions = getPngDimensions(`public/${ogFile}`);
+    if (!dimensions || dimensions.width !== 1200 || dimensions.height !== 630) {
+      errors.push(`public/${ogFile} must be a 1200x630 PNG`);
+    }
   }
 
   if (errors.length > 0) {
