@@ -31,9 +31,9 @@ jobs:
         run: |
           set -euo pipefail
 
-          read -r state draft author association head_owner current_head_sha base_ref head_ref < <(
+          read -r state draft author association head_owner current_head_sha base_ref head_ref head_repository < <(
             gh api "repos/${REPOSITORY}/pulls/${PR_NUMBER}" \
-              --jq '[.state, (.draft | tostring), .user.login, .author_association, .head.repo.owner.login, .head.sha, .base.ref, .head.ref] | @tsv'
+              --jq '[.state, (.draft | tostring), .user.login, .author_association, .head.repo.owner.login, .head.sha, .base.ref, .head.ref, .head.repo.full_name] | @tsv'
           )
 
           trusted=false
@@ -83,6 +83,11 @@ jobs:
             gh api --method POST \
               "repos/${REPOSITORY}/actions/workflows/deploy.yml/dispatches" \
               -f ref=main
-          else
-            gh pr merge "${pr_url}" --auto --squash
+          elif [[ "${base_ref}" == "dev" ]]; then
+            if [[ "${head_repository}" == "${REPOSITORY}" && "${head_ref}" == sync/main-to-dev-* ]]; then
+              # Back-merges must preserve main ancestry; squash would recreate divergence.
+              gh pr merge "${pr_url}" --auto --merge
+            else
+              gh pr merge "${pr_url}" --auto --squash
+            fi
           fi

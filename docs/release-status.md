@@ -80,6 +80,8 @@ This path succeeded for PR #42 (`b24fa02`, 2026-09-02). Earlier promotions #38 a
 
 ## Future Release Checklist
 
+If `dev` is behind `main`, first synchronize their histories through a same-repository `sync/main-to-dev-*` branch and a protected merge-commit PR into `dev`. Do not squash this synchronization: copying the files without the parent history recreates divergence. The setup and bootstrap requirements are in [CI Security Policy](../.github/CI_SECURITY.md#required-merge-gate).
+
 1. Confirm the worktree is clean except intended release changes.
 2. Run the full verification gate.
 3. Build and test with the GitHub Pages base path from `docs/demo-checklist.md`.
