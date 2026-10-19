@@ -2,34 +2,58 @@ name: Trusted PR Lifecycle
 
 on:
   workflow_run:
-    workflows: [CI]
+    workflows: [CI, CodeQL, PR Route Policy]
     types: [completed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Open PR number to recover after a missed completion event
+        type: string
+        required: true
 
 permissions:
+  checks: read
   actions: write
   contents: write
   pull-requests: write
+
+concurrency:
+  group: trusted-pr-lifecycle
+  cancel-in-progress: false
 
 jobs:
   queue-trusted-pr:
     name: queue-trusted-pr
     if: >-
-      github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.pull_requests[0] != null
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - name: Ready and queue trusted pull request
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.workflow_run.pull_requests[0].number }}
+          PR_NUMBER: ${{ inputs.pr_number || github.event.workflow_run.pull_requests[0].number }}
           REPOSITORY: ${{ github.repository }}
           REPOSITORY_OWNER: ${{ github.repository_owner }}
           RUN_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          TRIGGER_EVENT: ${{ github.event_name }}
         shell: bash
         run: |
           set -euo pipefail
+
+          if [[ -z "${PR_NUMBER}" && "${TRIGGER_EVENT}" == "workflow_run" ]]; then
+            PR_NUMBER="$(gh api "repos/${REPOSITORY}/commits/${RUN_HEAD_SHA}/pulls" \
+              --jq '[.[] | select(.state == "open")] | if length == 1 then .[0].number else empty end')"
+          fi
+          if [[ ! "${PR_NUMBER}" =~ ^[1-9][0-9]*$ ]]; then
+            echo "No unambiguous open PR number; leaving recovery manual."
+            exit 0
+          fi
+          if [[ "${TRIGGER_EVENT}" == "workflow_dispatch" ]]; then
+            RUN_HEAD_SHA="$(gh api "repos/${REPOSITORY}/pulls/${PR_NUMBER}" --jq '.head.sha')"
+          fi
 
           read -r state draft author association head_owner current_head_sha base_ref head_ref head_repository < <(
             gh api "repos/${REPOSITORY}/pulls/${PR_NUMBER}" \
@@ -53,15 +77,29 @@ jobs:
           fi
 
           pr_url="https://github.com/${REPOSITORY}/pull/${PR_NUMBER}"
-          if [[ "${draft}" == "true" ]]; then
+          # Fail closed for missing, running, skipped, cancelled, or failed required checks.
+          if ! checks_passed="$(gh pr checks "${pr_url}" --required --json state \
+            --jq 'length > 0 and all(.[]; .state == "SUCCESS")')" || [[ "${checks_passed}" != "true" ]]; then
+            echo "Required checks are not all successful; leaving PR unchanged."
+            exit 0
+          fi
+          latest_head_sha="$(gh api "repos/${REPOSITORY}/pulls/${PR_NUMBER}" --jq '.head.sha')"
+          if [[ "${latest_head_sha}" != "${current_head_sha}" ]]; then
+            echo "PR moved during validation; leaving it unchanged."
+            exit 0
+          fi
+          auto_merge_enabled="$(gh api "repos/${REPOSITORY}/pulls/${PR_NUMBER}" --jq '.auto_merge != null')"
+          if [[ "${draft}" == "true" && "${auto_merge_enabled}" != "true" ]]; then
             gh pr ready "${pr_url}"
           fi
           if [[ "${base_ref}" == "main" ]]; then
             # Auto-merge waits for remaining required checks (CodeQL analyze, route-policy).
-            if [[ "${head_ref}" == "dev" ]]; then
-              gh pr merge "${pr_url}" --auto --merge
+            if [[ "${auto_merge_enabled}" == "true" ]]; then
+              echo "PR is already queued for auto-merge; preserving its merge method."
+            elif [[ "${head_ref}" == "dev" ]]; then
+              gh pr merge "${pr_url}" --auto --merge --match-head-commit "${current_head_sha}"
             else
-              gh pr merge "${pr_url}" --auto --squash
+              gh pr merge "${pr_url}" --auto --squash --match-head-commit "${current_head_sha}"
             fi
 
             # GITHUB_TOKEN merges do not create a push workflow run, so Pages
@@ -83,11 +121,11 @@ jobs:
             gh api --method POST \
               "repos/${REPOSITORY}/actions/workflows/deploy.yml/dispatches" \
               -f ref=main
-          elif [[ "${base_ref}" == "dev" ]]; then
+          elif [[ "${base_ref}" == "dev" && "${auto_merge_enabled}" != "true" ]]; then
             if [[ "${head_repository}" == "${REPOSITORY}" && "${head_ref}" == sync/main-to-dev-* ]]; then
               # Back-merges must preserve main ancestry; squash would recreate divergence.
-              gh pr merge "${pr_url}" --auto --merge
+              gh pr merge "${pr_url}" --auto --merge --match-head-commit "${current_head_sha}"
             else
-              gh pr merge "${pr_url}" --auto --squash
+              gh pr merge "${pr_url}" --auto --squash --match-head-commit "${current_head_sha}"
             fi
           fi
