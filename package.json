@@ -69,8 +69,21 @@
     "tw-animate-css": "^1.2.9",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
-    "vite": "^8.0.16",
+    "vite": "^8.3.5",
     "vite-plugin-pwa": "^1.3.0",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.5"
+  },
+  "overrides": {
+    "@vitest/mocker": "^5.0.5",
+    "fast-uri": "^3.1.9",
+    "serialize-javascript": "^7.1.3",
+    "undici": "^7.30.1",
+    "deepmerge": "4.1.2",
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.5"
+    },
+    "workbox-build": {
+      "glob": "^14.0.4"
+    }
   }
 }
